@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { Container, FlexBox } from "../assets/style/commonStyles";
 import ProductCard from "./cards/ProductCard";
 import "slick-carousel/slick/slick.css";
@@ -6,50 +6,97 @@ import "slick-carousel/slick/slick-theme.css";
 import { HomeProductSliderSettings } from "../utils/data";
 import { useRouter } from "next/navigation";
 import CategoryProductSlider from "./sliders/CategoryProductSlider";
+import { updateSubs } from "../service/query";
 import { SeeAllText, TitleTag } from "../assets/style";
-import { GetCategoryProducts } from "../service/query";
-import { useLazyQuery } from "@apollo/client";
+import { useSubscription } from "@apollo/client";
 import { fetchCategoryWithProducts } from "../service/api";
-function TodayLowPriceProducts({ id }: Readonly<{ id: string }>) {
+import { useDispatch, useSelector } from "react-redux";
+import { updateCartData } from "../redux/slices/cartSlice";
+
+function TodayLowPriceProducts({ id }: { id: string }) {
   const [sliderData, setSliderData] = useState([]) as any;
   const { CategoryProductsSlider, CategoryProductsRefetch } =
-    fetchCategoryWithProducts(id);
+    fetchCategoryWithProducts(id) as any;
+  const dispatch = useDispatch();
+  const cart = useSelector((state: any) => state.cartData);
+  const { data: updateSubscriptionData } = useSubscription(updateSubs);
+  console.log("updaertee", updateSubscriptionData);
   useEffect(() => {
-    CategoryProductsRefetch()
-    setSliderData(CategoryProductsSlider?.getCategoryWithProductTypes);
-  }, [CategoryProductsSlider]);
+    console.log(
+      "CategoryProductsSliderCategoryProductsSlider",
+      CategoryProductsSlider
+    );
 
-  console.log("sliderrr", sliderData);
+    // setSliderData(CategoryProductsSlider?.getCategoryWithProductTypes);
+    dispatch(
+      updateCartData(CategoryProductsSlider?.getCategoryWithProductTypes)
+    );
+
+    console.log("cart456", cart);
+    // console.log("Cartsstt", cart)
+  }, []);
+
+  useEffect(() => {
+    if (updateSubscriptionData != undefined) {
+      const updatedProductList = cart.products.map((product: any) => {
+        if (product.id === updateSubscriptionData.updateCart.productId) {
+          return {
+            ...product,
+            variant: [
+              {
+                ...product.variant[0],
+                AddToCart: {
+                  ...product.variant[0].AddToCart,
+                  quantity: updateSubscriptionData.updateCart.quantity,
+                },
+              },
+            ],
+          };
+        }
+        return product;
+      });
+
+      console.log("updatedProductList", updatedProductList);
+
+      dispatch(updateCartData({ products: updatedProductList }));
+    }
+
+    // dispatch(updateCartData({ products: updatedProductList }));
+  }, [updateSubscriptionData]);
+
   const router = useRouter();
 
+  console.log("listingdfataa", updateSubscriptionData);
   return (
-    <Container>
-      {sliderData?.products ? (
-        <>
-          <FlexBox>
-            <TitleTag variant="productTitle">{sliderData?.name}</TitleTag>
+    <Suspense fallback={<div>Loading</div>}>
+      <Container>
+        {cart?.products ? (
+          <>
+            <FlexBox>
+              <TitleTag variant="productTitle">{cart?.name}</TitleTag>
 
-            <SeeAllText
-              onClick={() =>
-                router.push(
-                  `/category/everyday-low-prices/by-category-id/${sliderData?.id}`
-                )
-              }
-            >
-              See all
-            </SeeAllText>
-          </FlexBox>
+              <SeeAllText
+                onClick={() =>
+                  router.push(
+                    `/category/everyday-low-prices/by-category-id/${cart?.id}`
+                  )
+                }
+              >
+                See all
+              </SeeAllText>
+            </FlexBox>
 
-          <CategoryProductSlider settings={HomeProductSliderSettings}>
-            {sliderData?.products?.slice(0, 15).map((product: any) => (
-              <ProductCard key={product.id} data={product} slider={true} />
-            ))}
-          </CategoryProductSlider>
-        </>
-      ) : (
-        <h4>loading</h4>
-      )}
-    </Container>
+            <CategoryProductSlider settings={HomeProductSliderSettings}>
+              {cart?.products?.slice(0, 15).map((product: any) => (
+                <ProductCard key={product.id} data={product} slider={true} />
+              ))}
+            </CategoryProductSlider>
+          </>
+        ) : (
+          <h4>loading</h4>
+        )}
+      </Container>
+    </Suspense>
   );
 }
 

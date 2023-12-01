@@ -117,12 +117,12 @@ function UnitCard({
   product,
   variants,
   image,
-}: Readonly<{
+}: {
   product: any;
   variants: any;
   image: string;
   onClose: any;
-}>) {
+}) {
   const [count, setCount] = useState(0);
   const [variables, setVariables] = useState({});
   const [addToCartProduct, { data: AddToCartData }] = useMutation(AddToCart);

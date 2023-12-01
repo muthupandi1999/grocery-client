@@ -11,8 +11,8 @@ export const fetchCategoryWithProducts = (id: string) => {
   const {
     data: CategoryProductsSlider,
     refetch: CategoryProductsRefetch,
-    loading: CategoryProductsLoading,
-  } = useQuery(GetCategoryProducts, {
+    
+  } = useSuspenseQuery(GetCategoryProducts, {
     variables: {
       getCategoryWithProductTypesId: id,
     },
@@ -20,9 +20,23 @@ export const fetchCategoryWithProducts = (id: string) => {
   return {
     CategoryProductsSlider,
     CategoryProductsRefetch,
-    CategoryProductsLoading,
+    
   };
 };
+
+// export const fetchCategoryWithProducts = () => {
+//   const[ loadGreeting, {
+//     data: CategoryProductsSlider,
+//     refetch: CategoryProductsRefetch,
+//     loading: CategoryProductsLoading,
+//   }] = useLazyQuery(GetCategoryProducts);
+//   return {
+//     loadGreeting,
+//     CategoryProductsSlider,
+//     CategoryProductsRefetch,
+//     CategoryProductsLoading,
+//   };
+// };
 
 // export const GetAddToCartsApi = (userId: string) => {
 //   const { data: GetAddToCartData, refetch: AddToCartsRefetch, loading:AddTOCartLoading } = useQuery(

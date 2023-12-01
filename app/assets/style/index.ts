@@ -952,19 +952,19 @@ export const ProductTimerCard = styled.div<{ variant: string }>`
     height: 11px;
   }
 `;
-export const CustomAddButton = styled.button<{ $count: number }>`
+export const CustomAddButton = styled.button<{ $count: any }>`
   font-size: 13px;
 
   width: 66px;
   height: 31px;
   border: 2px solid #bf4f74;
   border-radius: 6px;
-  background-color: ${(props) =>
-    props.$count !== 0 ? "green" : "transparent"};
+  background-color: ${(props:any) =>
+    props.$count !== undefined ? "green" : "transparent"};
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${(props) => (props.$count !== 0 ? "white" : "#318616")};
+  color: ${(props:any) => (props.$count !==  undefined? "white" : "#318616")};
   border: 1px solid #318616;
   font-weight: 600;
   gap: 5px;

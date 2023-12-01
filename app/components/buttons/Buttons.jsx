@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { CustomAddButton } from "../../assets/style";
 import { HiPlusSm, HiMinusSm } from "react-icons/hi";
 import { useQuery, useMutation } from "@apollo/client";
@@ -24,11 +24,20 @@ export const AddButton = ({
   selectedSortOption,
 }) => {
   console.log("variables234", variables);
-  console.log("quantity", quantity);
+  console.log("quantity4567", quantity);
   console.log("categoryIdddddddd", categoryId);
 
   // const {CategoryListArr} = useContext(globalContext)
-  const [count, setCount] = useState(quantity || 0);
+  const [quantityIng, setQuantity] = useState(quantity);
+
+  // useEffect(() => {
+  //   if(count > 1){
+  //     setCount(quantity);
+  //   }
+    
+  // }, [count]);
+
+  // console.log("couttintttd", count);
 
   // const { AddToCartsRefetch } = GetAddToCartsApi("655379d96144626a275e8a14");
 
@@ -39,7 +48,7 @@ export const AddButton = ({
     selectedSortOption
   );
 
-  const { getUserCartRefetch } = fetchCartItems("65642fcb264c4f37a0b129be") ;
+  const { getUserCartRefetch } = fetchCartItems("65642fcb264c4f37a0b129be");
 
   console.log("coiuntttttt", quantity);
   const [
@@ -48,6 +57,20 @@ export const AddButton = ({
   ] = useMutation(updateAddToCart);
 
   const { data: AllData, loading } = useQuery(getAllCategories);
+
+  // const {
+
+  //   CategoryProductsRefetch,
+
+  // } = fetchCategoryWithProducts();
+  // useEffect(() => {
+  //   loadGreeting({
+  //     variables: {
+  //       getCategoryWithProductTypesId: id,
+  //     },
+  //   });
+  //   setSliderData(CategoryProductsSlider?.getCategoryWithProductTypes);
+  // }, [CategoryProductsSlider]);
 
   // const { getUserCartRefetch } = fetchCartItems("65642fcb264c4f37a0b129be");
 
@@ -76,7 +99,7 @@ export const AddButton = ({
           variantId: variables?.selectedVariantId,
         },
       },
-      onCompleted:getUserCartRefetch
+      // onCompleted:getUserCartRefetch
     });
 
     console.log("updateCart", updateCartProductData);
@@ -137,40 +160,41 @@ export const AddButton = ({
   return (
     <CustomAddButton
       disabled={disable || updateLoader}
-      $count={count}
+      $count={quantity}
       // onClick={}
       onClick={() => {
-        if (count === 0) {
-          setCount((prev) => prev + 1);
+        if (quantity ===  undefined) {
+          setQuantity((prev) => prev + 1);
           onClick();
           // onClick();
         }
       }}
     >
-      {count == 0 ? (
+      {quantity == undefined ? (
         <span>ADD</span>
       ) : (
         <>
           <span
             onClick={() => {
               updateCartProd(-1);
-              setCount((prev) => prev - 1);
+              setQuantity((prev) => prev - 1);
             }}
           >
-            {count === 1 && (
+            {quantity === 1 && (
               <DeleteIcon
                 sx={{ fontSize: "14px", marginTop: "2px" }}
                 color="white"
               />
             )}
-            {count > 1 && <HiMinusSm color="white" />}
+            {quantity > 1 && <HiMinusSm color="white" />}
           </span>
-          {count}
+          {quantity}
           <span
             onClick={() => {
               console.log("heyyyyyyyy");
               updateCartProd(+1);
-              setCount((prev) => prev + 1);
+              setQuantity((prev) => prev + 1);
+              // console.log("coutntinnfffff", count);
               // updateCartProd(+1);
             }}
           >

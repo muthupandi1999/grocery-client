@@ -28,7 +28,7 @@ import { useLazyQuery, useQuery, useSuspenseQuery } from "@apollo/client";
 import PageLoader from "@/app/components/loader/pageLoader";
 import { productTypeProductsByCategoryId } from "@/app/service/api";
 
-function DynamicPage({ params }: Readonly<{ params: any }>) {
+function DynamicPage({ params }: { params: any }) {
   const [selectedSortOption, setSelectSortOption] = useState("Revelance");
   const [dropDown, setDropDown] = useState(false);
   const dropdownRef = useRef(null);

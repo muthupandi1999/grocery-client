@@ -10,7 +10,7 @@ import {
   ProductInfoDetails,
 } from "@/app/assets/style";
 
-function CartProductCart({ e }: Readonly<{ e: any }>) {
+function CartProductCart({ e }: { e: any }) {
   console.log("carts", e);
   const [count, setCount] = useState(e.quantity);
   return (

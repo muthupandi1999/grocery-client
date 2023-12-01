@@ -336,7 +336,7 @@ function ProductCard({
 
   const [addToCartProduct, { data: AddToCartData, loading: addLoader, error }] =
     useMutation(AddToCart);
-  const { CategoryProductsRefetch } = fetchCategoryWithProducts(categoryId);
+  // const { CategoryProductsRefetch } = fetchCategoryWithProducts(categoryId);
 
   // const { AddToCartsRefetch } = GetAddToCartsApi("655379d96144626a275e8a14");
   const handleOpen = () => setOpen(true);
@@ -353,6 +353,7 @@ function ProductCard({
   console.log("dataaa", data);
 
   let quantity = data?.variant?.[0]?.AddToCart?.quantity;
+  console.log("hereeeeQua", quantity)
   console.log("quantittttt", data?.variant?.[0]?.AddToCart?.quantity);
   const addToCart = async () => {
     // console.log("CategoryListArr", CategoryListArr);
@@ -370,7 +371,7 @@ function ProductCard({
 
     if (addToCartData) {
       // AddToCartsRefetch();
-      CategoryProductsRefetch();
+      // CategoryProductsRefetch();
     }
   };
   return (

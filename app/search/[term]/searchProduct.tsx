@@ -11,7 +11,7 @@ import { useQuery } from "@apollo/experimental-nextjs-app-support/ssr";
 import { useLazyQuery } from "@apollo/client";
 import PageLoader from "@/app/components/loader/pageLoader";
 
-function SearchProduct({ params }: Readonly<{ params: any }>) {
+function SearchProduct({ params }: { params: any }) {
   const [products, setProducts] = useState<any>([]);
 
   const [loadGreeting, { loading: SearchProductLoading }] = useLazyQuery(

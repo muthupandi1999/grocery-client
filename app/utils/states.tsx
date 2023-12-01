@@ -8,6 +8,7 @@ export const globalContext = createContext(null);
 function GlobalContext({ children }) {
   const [categoryListArr, setCategoryListArr] = useState([]);
   const [categoryProducts, setCategoryProducts] = useState([]);
+  const [productsByCategoryId, setProductsByCategoryId]= useState([])
   const path = usePathname();
   const pathArr = path.split("/");
 

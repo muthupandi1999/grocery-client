@@ -19,7 +19,7 @@ let OfferText = styled.text`
    
 `
 
-function OfferTag({discount}:Readonly<{discount:any}>) {
+function OfferTag({discount}:{discount:any}) {
   return (
     <OfferTagWrapper>
       <svg

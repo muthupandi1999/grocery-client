@@ -75,7 +75,7 @@ export default function Home() {
         ))}
       </CategoryImageContainer>
       <TodayLowPriceProducts id={"65549be6b8cc555881cb43f3"} />
-      <TodayLowPriceProducts id={"6555c9459ad354780c2e6c4c"} />
+      {/* <TodayLowPriceProducts id={"6555c9459ad354780c2e6c4c"} /> */}
     </Wrapper>
   );
 }

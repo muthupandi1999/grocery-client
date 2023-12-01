@@ -17,7 +17,7 @@ const getAllInputValues = () => {
   return combinedValue;
 };
 
-function LoginCard({ onClose }: Readonly<{ onClose: any}>) {
+function LoginCard({ onClose }: { onClose: any}) {
   const [otpVerificationPage, setOtpVerificationPage] = useState(false);
   const [loginSuc, setLoginSuc] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");

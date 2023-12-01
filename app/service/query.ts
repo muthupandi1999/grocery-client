@@ -565,3 +565,127 @@ export const getProductVariant = gql`
 
 //subsc
 
+export const updateSubs = gql`
+  subscription Subscription {
+    updateCart {
+      id
+      product {
+        id
+        name
+        productCode
+        shortDescription
+        description {
+          key
+          value
+        }
+        variant {
+          id
+          size
+          unit
+          values
+          price
+          stock
+        }
+        tag
+        image {
+          id
+          image
+          imageList
+        }
+        rating
+        dicountType
+        dicountPercentage
+        ratingCount
+        isActive
+        ProductType {
+          id
+          name
+          image
+          isActive
+          defaultRoute
+          productCategory {
+            id
+            name
+            image
+            isActive
+            productTypes {
+              id
+              name
+              image
+              isActive
+              defaultRoute
+              productCategoryId
+            }
+            defaultRoute
+          }
+          productCategoryId
+          products {
+            id
+            name
+            productCode
+            shortDescription
+            tag
+            rating
+            dicountType
+            dicountPercentage
+            ratingCount
+            isActive
+            productTypeId
+          }
+        }
+        productTypeId
+      }
+      productId
+      quantity
+      totalPrice
+      user {
+        id
+        email
+        phoneNo
+        firstName
+        lastName
+        role
+        profileImage
+        isActive
+        Address {
+          id
+          address
+          apartment
+          label
+          userId
+          pincode
+        }
+      }
+      userId
+      deviceToken
+      isOrder
+      selectedVariantId
+      selectedVariant {
+        id
+        size
+        unit
+        values
+        price
+        stock
+        ProductInventory {
+          id
+          productId
+          branchId
+          variantId
+          availableStock
+          minimumAvailableStock
+        }
+        AddToCart {
+          id
+          productId
+          quantity
+          totalPrice
+          userId
+          deviceToken
+          isOrder
+          selectedVariantId
+        }
+      }
+    }
+  }
+`;
