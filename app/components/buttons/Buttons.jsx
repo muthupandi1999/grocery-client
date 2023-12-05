@@ -13,81 +13,32 @@ import {
   fetchCategoryWithProducts,
   productTypeProductsByCategoryId,
 } from "@/app/service/api";
+import { updateProductData } from "@/app/redux/slices/AllProductSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 export const AddButton = ({
   quantity,
   onClick,
   variables,
   disable,
-  categoryId,
   subListId,
   selectedSortOption,
 }) => {
-  console.log("variables234", variables);
-  console.log("quantity4567", quantity);
-  console.log("categoryIdddddddd", categoryId);
+  const [deleteUpdateData, setDeleteUpdateData] = useState([]);
+  console.log("variables5662", variables);
 
-  // const {CategoryListArr} = useContext(globalContext)
   const [quantityIng, setQuantity] = useState(quantity);
 
-  // useEffect(() => {
-  //   if(count > 1){
-  //     setCount(quantity);
-  //   }
-    
-  // }, [count]);
+  const dispatch = useDispatch();
 
-  // console.log("couttintttd", count);
+  const { getUserCartRefetch } = fetchCartItems("655379d96144626a275e8a14");
 
-  // const { AddToCartsRefetch } = GetAddToCartsApi("655379d96144626a275e8a14");
+  const [updateCartProduct, { loading: updateLoader }] =
+    useMutation(updateAddToCart);
 
-  // const { CategoryProductsRefetch } = fetchCategoryWithProducts(categoryId);
+  const { loading } = useQuery(getAllCategories);
 
-  const { refetchProducts } = productTypeProductsByCategoryId(
-    subListId,
-    selectedSortOption
-  );
-
-  const { getUserCartRefetch } = fetchCartItems("65642fcb264c4f37a0b129be");
-
-  console.log("coiuntttttt", quantity);
-  const [
-    updateCartProduct,
-    { data: updateCart, error, loading: updateLoader },
-  ] = useMutation(updateAddToCart);
-
-  const { data: AllData, loading } = useQuery(getAllCategories);
-
-  // const {
-
-  //   CategoryProductsRefetch,
-
-  // } = fetchCategoryWithProducts();
-  // useEffect(() => {
-  //   loadGreeting({
-  //     variables: {
-  //       getCategoryWithProductTypesId: id,
-  //     },
-  //   });
-  //   setSliderData(CategoryProductsSlider?.getCategoryWithProductTypes);
-  // }, [CategoryProductsSlider]);
-
-  // const { getUserCartRefetch } = fetchCartItems("65642fcb264c4f37a0b129be");
-
-  // const updateCartProd = async (quantity) => {
-  //   const updateCartProductData = await updateCartProduct({
-  //     variables: {
-  //       input: {
-  //         productId: variables?.product?.id || variables?.productId,
-  //         quantity: quantity,
-  //         userId: "655379d96144626a275e8a14",
-  //         variantId: variables?.selectedVariantId,
-  //       },
-  //     },
-  //   });
-
-  //   console.log("updateCart", updateCart);
-  // };
+  let allProducts = useSelector((state) => state.AllProducts);
 
   const updateCartProd = async (quantity) => {
     const updateCartProductData = await updateCartProduct({
@@ -95,65 +46,44 @@ export const AddButton = ({
         input: {
           productId: variables?.product?.id || variables?.productId,
           quantity: quantity,
-          userId: "65642fcb264c4f37a0b129be",
+          userId: "655379d96144626a275e8a14",
           variantId: variables?.selectedVariantId,
         },
       },
-      // onCompleted:getUserCartRefetch
+      onCompleted: getUserCartRefetch,
     });
 
-    console.log("updateCart", updateCartProductData);
-    // if (updateCartProductData) {
-    //   // getUserCartRefetch();
-    //   if (categoryId) {
-    //     CategoryProductsRefetch();
-    //   } else if (subListId) {
-    //     refetchProducts({
-    //       getProductTypeId: subListId,
-    //       filter: selectedSortOption,
-    //     });
-    //   }
+    // console.log("uopdateDPero", updateCartProductData);
 
-    //   // AddToCartsRefetch();
-    // }
+    if (
+      updateCartProductData &&
+      updateCartProductData?.data?.updateAddToCart === null
+    ) {
+      const updatedProducts = allProducts?.AllProducts.map((e) => {
+        if (e.id === (variables?.product?.id || variables?.productId)) {
+          // console.log("Eeee", e);
+          // Modify the addToCart field to null for the matched product
+          return {
+            ...e,
+            variant: [
+              {
+                ...e.variant[0],
+                AddToCart: null, // Set the addToCart field to null
+              },
+            ],
+          };
+        }
+        return e; // Return other products unchanged
+      });
+
+      dispatch(updateProductData(updatedProducts));
+      // console.log("allp", updatedProducts);
+
+      // Use updatedProducts as needed, e.g., update state, return, etc.
+      // console.log(updatedProducts); // Log the updated array
+    }
   };
 
-  // Debounce with a 1-second delay
-
-  console.log("onclickk", onClick);
-
-  // const addToCart = async () => {
-  //   // console.log("CategoryListArr", CategoryListArr);
-  //   console.log("clicking");
-
-  //   const addToCartData = await addToCartProduct({
-  //     variables: {
-  //       input: variables,
-  //     },
-  //   });
-
-  //   if (addToCartData) {
-  //     refetchFun();
-  //   }
-
-  //   console.log("dataaaaaa", AddToCartData);
-  // };
-
-  // const addToCart = async () => {
-  //   // console.log("CategoryListArr", CategoryListArr);
-  //   console.log("clicking");
-
-  //   const addToCartData = await addToCartProduct({
-  //     variables: {
-  //       input: variables,
-  //     },
-  //   });
-
-  //   if (addToCartData) {
-
-  //     refetchFun();
-
-  //   }
   if (loading || updateLoader) {
     <h4>Loading.....</h4>;
   }
@@ -163,7 +93,7 @@ export const AddButton = ({
       $count={quantity}
       // onClick={}
       onClick={() => {
-        if (quantity ===  undefined) {
+        if (quantity === undefined) {
           setQuantity((prev) => prev + 1);
           onClick();
           // onClick();
@@ -191,7 +121,7 @@ export const AddButton = ({
           {quantity}
           <span
             onClick={() => {
-              console.log("heyyyyyyyy");
+              // console.log("heyyyyyyyy");
               updateCartProd(+1);
               setQuantity((prev) => prev + 1);
               // console.log("coutntinnfffff", count);

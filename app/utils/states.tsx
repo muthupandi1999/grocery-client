@@ -8,14 +8,13 @@ export const globalContext = createContext(null);
 function GlobalContext({ children }) {
   const [categoryListArr, setCategoryListArr] = useState([]);
   const [categoryProducts, setCategoryProducts] = useState([]);
-  const [productsByCategoryId, setProductsByCategoryId]= useState([])
+  const [productsByCategoryId, setProductsByCategoryId] = useState([]);
   const path = usePathname();
   const pathArr = path.split("/");
 
   let routesArr = pathArr.slice(1, 4);
   routesArr.toString().split(",").join("/");
   const defaultRoutes = routesArr.toString().split(",").join("/");
-  console.log("defaultRoutes", defaultRoutes.length);
   return (
     <globalContext.Provider
       value={{
@@ -23,7 +22,7 @@ function GlobalContext({ children }) {
         setCategoryListArr,
         categoryProducts,
         setCategoryProducts,
-        defaultRoutes
+        defaultRoutes,
       }}
     >
       {children}

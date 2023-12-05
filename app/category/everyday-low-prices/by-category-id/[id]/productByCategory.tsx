@@ -7,20 +7,40 @@ import ProductCard from "../../../../components/cards/ProductCard";
 import React, { useEffect, useState, Suspense } from "react";
 import PageLoader from "@/app/components/loader/pageLoader";
 import { fetchCategoryWithProducts } from "@/app/service/api";
-import { useSubscription } from "@apollo/client";
-import { updateSubs } from "@/app/service/query";
+import { useLazyQuery, useQuery, useSubscription } from "@apollo/client";
+import { AddToCartRed, AllProducts, updateSubs } from "@/app/service/query";
+import { useDispatch, useSelector } from "react-redux";
+// import { updateProductData } from "@/app/redux/slices/AllProductSlice";
+import {
+  addProductData,
+  updateProductData,
+  updateProductData2,
+} from "../../../../redux/slices/AllProductSlice";
+// import { AddToCartRed } from "../service/query";
 
 function ProductByCategory({ params }: Readonly<{ params: any }>) {
   const [categoryProducts, setCategoryProducts] = useState<any>([]);
-  console.log("paramssss", params?.id);
-  // const {
-  //   CategoryProductsSlider,
-  //   CategoryProductsRefetch,
-  //   CategoryProductsLoading,
-  //   loadGreeting,
-  // } = fetchCategoryWithProducts();
+  const dispatch = useDispatch();
+  const allProducts = useSelector((state: any) => state.AllProducts);
 
   const { data: updateSubscriptionData } = useSubscription(updateSubs);
+  const { data: addSubscriptionData } = useSubscription(AddToCartRed);
+
+  useEffect(() => {
+    if (updateSubscriptionData !== undefined) {
+      let { productId, quantity } = updateSubscriptionData?.updateCart;
+
+      dispatch(
+        updateProductData2({ productId: productId, quantity: quantity })
+      );
+    }
+  }, [updateSubscriptionData]);
+
+  useEffect(() => {
+    if (addSubscriptionData != undefined) {
+      dispatch(addProductData({ addProduct: addSubscriptionData.addCart }));
+    }
+  }, [addSubscriptionData]);
 
   const { CategoryProductsSlider, CategoryProductsRefetch } =
     fetchCategoryWithProducts(params?.id);
@@ -30,41 +50,36 @@ function ProductByCategory({ params }: Readonly<{ params: any }>) {
     //     getCategoryWithProductTypesId: id,
     //   },
     // });
+
     setCategoryProducts(CategoryProductsSlider?.getCategoryWithProductTypes);
-    // console.log("sliderDataaaaaaaaa", sliderData);
   }, [CategoryProductsSlider]);
 
-  // useEffect(() => {
-  //   if (updateSubscriptionData) {
-  //     CategoryProductsRefetch(); // Trigger the refetch upon subscription update
-  //     // console.log("sliderDatasliderDatasliderData", sliderData)
+  // const getAllProducts = async (dispatch: any) => {
+  //   try {
+  //     const { data } = await loadGreeting(); // Assuming loadGreeting fetches data
+  //     if (data?.getAllProducts) {
+  //       // data.getAllProducts.forEach((product: any) => {
+  //       dispatch(updateProductData(data.getAllProducts)); // Dispatch each product individually
+  //       // });
+  //     }
+  //   } catch (error) {
+  //     // Handle errors if any
   //   }
-  // }, [updateSubscriptionData, CategoryProductsRefetch]);
+  // };
+  // let count = 1;
 
   // useEffect(() => {
-  //   loadGreeting({
-  //     variables: {
-  //       getCategoryWithProductTypesId: params.id,
-  //     },
-  //   });
-  //   setCategoryProducts(CategoryProductsSlider?.getCategoryWithProductTypes);
-  // }, [CategoryProductsSlider]);
+  //   // setSliderData(CategoryProductsSlider?.getCategoryWithProductTypes);
 
-  // useEffect(() => {
-  //   loadGreeting({
-  //     variables: {
-  //       getCategoryWithProductTypesId: params.id,
-  //     },
-  //   });
-  //   setCategoryProducts(CategoryProductsSlider?.getCategoryWithProductTypes);
+  //   // getAllProducts(dispatch);
+  //   // let allProducts = loadGreeting()
+  //   // console.log("allProducts", AllProductsList?.getAllProducts);
+  //   if (count === 1) {
+  //     getAllProducts(dispatch);
+  //     count = count + 1;
+  //   }
   // }, []);
 
-  // useEffect(() => {
-  //   CategoryProductsRefetch(); // Refetch query when location changes
-  //   setCategoryProducts(CategoryProductsSlider?.getCategoryWithProductTypes);
-  // }, [location]);
-
-  // if (CategoryProductsLoading) return <PageLoader />;
   return (
     <Suspense fallback={<div>Loading</div>}>
       {categoryProducts ? (
@@ -80,6 +95,7 @@ function ProductByCategory({ params }: Readonly<{ params: any }>) {
                 width="100%"
                 key={categoryProducts.id}
                 data={data}
+                
               />
             ))}
           </CategoryGridContainer>

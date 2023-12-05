@@ -25,10 +25,44 @@ import {
 } from "./service/query";
 import { useEffect, useState } from "react";
 import { globalContext } from "./utils/states";
-import { useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import PageLoader from "./components/loader/pageLoader";
+import { AllProducts } from "./service/query";
+import { useDispatch, useSelector } from "react-redux";
+import { updateProductData } from "./redux/slices/AllProductSlice";
 export default function Home() {
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  const [loadGreeting, { data: AllProductsList, loading: AllProductsLoading }] =
+    useLazyQuery(AllProducts);
+
+  let count = 1;
+
+  const getAllProducts = async (dispatch: any) => {
+    try {
+      const { data } = await loadGreeting(); // Assuming loadGreeting fetches data
+      if (data?.getAllProducts) {
+        // data.getAllProducts.forEach((product: any) => {
+          dispatch(updateProductData(data.getAllProducts)); // Dispatch each product individually
+        // });
+      }
+    } catch (error) {
+      // Handle errors if any
+    }
+  };
+
+  useEffect(() => {
+    // setSliderData(CategoryProductsSlider?.getCategoryWithProductTypes);
+
+    // getAllProducts(dispatch);
+    // let allProducts = loadGreeting()
+    // console.log("allProducts", AllProductsList?.getAllProducts);
+    if (count === 1) {
+      getAllProducts(dispatch);
+      count = count + 1;
+    }
+  }, []);
 
   const {
     loading: AllCategoriesLoading,
@@ -75,7 +109,7 @@ export default function Home() {
         ))}
       </CategoryImageContainer>
       <TodayLowPriceProducts id={"65549be6b8cc555881cb43f3"} />
-      {/* <TodayLowPriceProducts id={"6555c9459ad354780c2e6c4c"} /> */}
+      <TodayLowPriceProducts id={"6555c9459ad354780c2e6c4c"} />
     </Wrapper>
   );
 }

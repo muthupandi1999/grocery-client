@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 
 
 function CampaignCard({ e }: Readonly<{ e: any }>) {
-  console.log("e435234534", e)
   const router = useRouter()
   return (
     <CampaignCardWrapper  onClick={() => router.push(e?.ProductType?.defaultRoute)}  style={{ backgroundImage: `url(${e.image})` }}>

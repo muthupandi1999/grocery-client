@@ -22,7 +22,6 @@ function LoginCard({ onClose }: { onClose: any}) {
   const [loginSuc, setLoginSuc] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const combinedOTP = getAllInputValues();
-  console.log("comccccc", combinedOTP);
 
   const [LoginPhone] = useMutation(LoginViaPhone, {
     variables: { phoneNo: phoneNumber },
@@ -56,10 +55,8 @@ function LoginCard({ onClose }: { onClose: any}) {
 
     const combinedOTP = getAllInputValues();
     if (combinedOTP.length === 6 && phoneNumber.length === 10) {
-      console.log("heyyyyyyyyyyyyyyyyy");
       OtpVerifyPhone({ variables: { phoneNo: phoneNumber, otp: combinedOTP } })
         .then((res: any) => {
-          console.log("OTP verification response", res);
           let { data, accessToken, refreshToken } = res.data.loginPhoneNoOtpValidation;
           let Credentials: any = {
             userId:data?.id,
@@ -108,7 +105,6 @@ function LoginCard({ onClose }: { onClose: any}) {
 
           <button
             onClick={() => {
-              console.log("clcikii");
               if (phoneNumber.length === 10) {
                 // Add validation for phone number length
                 LoginPhone()

@@ -173,10 +173,9 @@ export const CartDrawer = (props: any) => {
   // }, [cartProducts]);
 
   const { cartProducts, getUserCartRefetch } = fetchCartItems(
-    "65642fcb264c4f37a0b129be"
+    "655379d96144626a275e8a14"
   );
 
-  console.log("Cartasss", cartProducts);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -194,10 +193,10 @@ export const CartDrawer = (props: any) => {
     };
 
     fetchData();
-    console.log("Hiiiiiii");
   }, [cartProducts]);
 
-  console.log("789", carts);
+  console.log("Carts",carts)
+
 
   let disCountAmount = carts?.carts?.reduce((acc: any, index: any) => {
     return (
@@ -208,7 +207,6 @@ export const CartDrawer = (props: any) => {
     );
   }, 0);
 
-  console.log("disCountAmount", disCountAmount);
   // if(AddTOCartLoading){return <p>Loading....</p>}
   return (
     <Suspense fallback={<div>Loading...</div>}>

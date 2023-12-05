@@ -398,8 +398,14 @@ export const updateAddToCart = gql`
 `;
 
 export const GetCategoryProducts = gql`
-  query GetCategoryWithProductTypes($getCategoryWithProductTypesId: ID!) {
-    getCategoryWithProductTypes(id: $getCategoryWithProductTypesId) {
+  query GetCategoryWithProductTypes(
+    $getCategoryWithProductTypesId: ID!
+    $sliceCount: Int
+  ) {
+    getCategoryWithProductTypes(
+      id: $getCategoryWithProductTypesId
+      sliceCount: $sliceCount
+    ) {
       id
       name
       image
@@ -565,6 +571,131 @@ export const getProductVariant = gql`
 
 //subsc
 
+export const AddToCartRed = gql`
+  subscription Subscription {
+    addCart {
+      id
+      product {
+        id
+        name
+        productCode
+        shortDescription
+        description {
+          key
+          value
+        }
+        variant {
+          id
+          size
+          unit
+          values
+          price
+          stock
+        }
+        tag
+        image {
+          id
+          image
+          imageList
+        }
+        rating
+        dicountType
+        dicountPercentage
+        ratingCount
+        isActive
+        ProductType {
+          id
+          name
+          image
+          isActive
+          defaultRoute
+          productCategory {
+            id
+            name
+            image
+            isActive
+            productTypes {
+              id
+              name
+              image
+              isActive
+              defaultRoute
+              productCategoryId
+            }
+            defaultRoute
+          }
+          productCategoryId
+          products {
+            id
+            name
+            productCode
+            shortDescription
+            tag
+            rating
+            dicountType
+            dicountPercentage
+            ratingCount
+            isActive
+            productTypeId
+          }
+        }
+        productTypeId
+      }
+      productId
+      quantity
+      totalPrice
+      user {
+        id
+        email
+        phoneNo
+        firstName
+        lastName
+        role
+        profileImage
+        isActive
+        Address {
+          id
+          address
+          apartment
+          label
+          userId
+          pincode
+        }
+      }
+      userId
+      deviceToken
+      isOrder
+      selectedVariantId
+      selectedVariant {
+        id
+        size
+        unit
+        values
+        price
+        stock
+        ProductInventory {
+          id
+          productId
+          branchId
+          variantId
+          availableStock
+          minimumAvailableStock
+        }
+        AddToCart {
+          id
+          productId
+          quantity
+          totalPrice
+          userId
+          deviceToken
+          isOrder
+          selectedVariantId
+        }
+      }
+    }
+  }
+`;
+
 export const updateSubs = gql`
   subscription Subscription {
     updateCart {
@@ -684,6 +815,22 @@ export const updateSubs = gql`
           deviceToken
           isOrder
           selectedVariantId
+        }
+      }
+    }
+  }
+`;
+
+export const AllProducts = gql`
+  query Query {
+    getAllProducts {
+      id
+      variant {
+        id
+        AddToCart {
+          id
+          productId
+          quantity
         }
       }
     }

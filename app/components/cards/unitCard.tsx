@@ -6,6 +6,8 @@ import { useMutation, useQuery } from "@apollo/client";
 import { AddToCart } from "@/app/service/query";
 import { branchId } from "@/app/utils/data";
 import { getAllCategories } from "@/app/service/query";
+import { getVariant } from "@/app/service/api";
+import { useSelector } from "react-redux";
 
 const UnitWrapper = styled.section`
   .closeIcon {
@@ -124,10 +126,11 @@ function UnitCard({
   onClose: any;
 }) {
   const [count, setCount] = useState(0);
-  const [variables, setVariables] = useState({});
+  // const [variables, setVariables] = useState({});
+
+  let variables:any;
   const [addToCartProduct, { data: AddToCartData }] = useMutation(AddToCart);
   // const { AddToCartsRefetch } = GetAddToCartsApi("655379d96144626a275e8a14");
-  console.log(" id: product?.product?.id,", product?.id);
   const addToCart = async (e: any) => {
     const addToCartProductData = await addToCartProduct({
       variables: {
@@ -136,33 +139,58 @@ function UnitCard({
           selectedVariantId: e?.id,
           totalPrice: e?.price,
           quantity: 1,
-          userId: "65642fcb264c4f37a0b129be",
+          userId: "655379d96144626a275e8a14",
           deviceToken: null,
         },
       },
     });
 
-    setVariables({
+    variables = {
       productId: product?.id,
       selectedVariantId: e?.id,
       totalPrice: e?.price,
       quantity: 1,
-      userId: "65642fcb264c4f37a0b129be",
+      userId: "655379d96144626a275e8a14",
       deviceToken: null,
-    });
+    };
 
     // console.log("dataaaaaa", AddToCartData);
-    console.log("vari567", variables);
   };
+
+  const allProducts = useSelector((state: any) => state.AllProducts);
 
   return (
     <UnitWrapper>
       {variants.map((e: any) => {
-        console.log("prodddddddddddd", product?.variant);
         // data?.variant?.[0]?.AddToCart?.quantity
 
-        let quantity = e?.AddToCart?.quantity;
-        console.log("quantttttttttttttttttttttttttttttt", quantity);
+        let variantInfo = getVariant(e?.id);
+
+        console.log("variantInfo", variantInfo);
+
+        // let quantity = e?.AddToCart?.quantity;
+
+        let findIndex = allProducts?.AllProducts?.findIndex(
+          (e: any) =>
+            e.id === variantInfo?.GetVariantInfo?.getProductVariant?.product?.id
+        );
+
+        let selectVariant = allProducts?.AllProducts?.[findIndex]?.variant;
+
+        console.log("selectedVa",selectVariant);
+        
+
+        let selectVariantId = selectVariant?.filter(
+          (variant: any) => variant.id === e?.id
+        );
+
+        console.log("sele", selectVariantId);
+        
+
+        let quantity = selectVariantId?.[0]?.AddToCart?.quantity;
+
+        console.log("aun", quantity);
+        
 
         const branchInventory = e?.ProductInventory?.find(
           (item: any) => item.branchId === branchId
@@ -190,10 +218,13 @@ function UnitCard({
                   <div>
                     {/* <p>Available: {availableStock}</p> */}
                     <AddButton
-                    onClick={() => addToCart(e)}
-                    variables={variables}
-                    quantity={quantity}
-                    disable={undefined} categoryId={undefined} subListId={undefined} selectedSortOption={undefined}                    />
+                      onClick={() => addToCart(e)}
+                      variables={variables}
+                      quantity={quantity}
+                      disable={undefined}
+                      subListId={undefined}
+                      selectedSortOption={undefined}
+                    />
                   </div>
                 ))}
             </div>

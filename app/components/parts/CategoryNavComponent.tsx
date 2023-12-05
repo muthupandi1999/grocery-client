@@ -30,7 +30,6 @@ function CategoryNavComponent() {
     allCategories?.getAllCategories?.length
   );
 
-  console.log("showonOnlIst", showonList);
 
   useEffect(() => {
     window.addEventListener("resize", () => {

@@ -37,12 +37,12 @@
 
 import { configureStore } from '@reduxjs/toolkit';
 import cartReducer from './slices/cartSlice'; // Import your cart slice here
-import CategorycartReducer from './slices/categorySlice';
+import AllProductsReducer from './slices/AllProductSlice';
 
 const store = configureStore({
   reducer: {
     cartData: cartReducer,
-    category:CategorycartReducer
+    AllProducts:AllProductsReducer
     // ... other reducers if any
   },
 });

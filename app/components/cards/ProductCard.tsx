@@ -201,6 +201,7 @@ import UnitCard from "./unitCard";
 import OfferTag from "@/app/products/OfferTag";
 import {
   AddToCart,
+  AllProductsWithSearch,
   GetAddToCarts,
   getAllCategories,
 } from "@/app/service/query";
@@ -208,6 +209,8 @@ import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { branchId } from "@/app/utils/data";
 import { globalContext } from "@/app/utils/states";
 import { fetchCategoryWithProducts } from "@/app/service/api";
+import { useDispatch, useSelector } from "react-redux";
+import { updateProductData } from "@/app/redux/slices/AllProductSlice";
 
 interface CardContainer {
   width?: string;
@@ -323,6 +326,7 @@ function ProductCard({
   categoryId,
   productTypeId,
   selectedSortOption,
+
 }: Readonly<{
   data: any;
   slider?: any;
@@ -330,12 +334,47 @@ function ProductCard({
   categoryId: string;
   productTypeId?: any;
   selectedSortOption?: any;
+
 }>) {
-  console.log("heloooooooooooooooooooo", data);
+  console.log("AllProducts2", data);
   const [open, setOpen] = React.useState(false);
+  const dispatch = useDispatch();
+
+  const [loadGreeting, { data: AllProductsList, loading: AllProductsLoading }] =
+    useLazyQuery(AllProductsWithSearch);
+
+  let count = 1;
+
+  const getAllProducts = async (dispatch: any) => {
+    try {
+      const { data } = await loadGreeting(); // Assuming loadGreeting fetches data
+      if (data?.getAllProducts) {
+        // data.getAllProducts.forEach((product: any) => {
+        dispatch(updateProductData(data.getAllProducts)); // Dispatch each product individually
+        // });
+      }
+    } catch (error) {
+      // Handle errors if any
+    }
+  };
+
+  useEffect(() => {
+    // setSliderData(CategoryProductsSlider?.getCategoryWithProductTypes);
+
+    // getAllProducts(dispatch);
+    // let allProducts = loadGreeting()
+    // console.log("allProducts", AllProductsList?.getAllProducts);
+    if (count === 1) {
+      getAllProducts(dispatch);
+      count = count + 1;
+    }
+  }, []);
+
+  const allProducts = useSelector((state: any) => state.AllProducts);
 
   const [addToCartProduct, { data: AddToCartData, loading: addLoader, error }] =
     useMutation(AddToCart);
+
   // const { CategoryProductsRefetch } = fetchCategoryWithProducts(categoryId);
 
   // const { AddToCartsRefetch } = GetAddToCartsApi("655379d96144626a275e8a14");
@@ -346,19 +385,28 @@ function ProductCard({
     productId: data?.id,
     quantity: 1,
     totalPrice: data?.variant?.[0]?.price,
-    userId: "65642fcb264c4f37a0b129be",
+    userId: "655379d96144626a275e8a14",
     deviceToken: null,
     selectedVariantId: data?.variant?.[0]?.id,
   };
-  console.log("dataaa", data);
 
-  let quantity = data?.variant?.[0]?.AddToCart?.quantity;
-  console.log("hereeeeQua", quantity)
-  console.log("quantittttt", data?.variant?.[0]?.AddToCart?.quantity);
+  console.log("Match1", allProducts);
+  console.log("Match2", data?.id);
+
+  let findIndex = allProducts?.AllProducts?.findIndex(
+    (e: any) => e.id === data?.id
+  );
+
+  console.log("quantity345", allProducts);
+
+  let quantity =
+    allProducts?.AllProducts?.[findIndex]?.variant?.[0].AddToCart?.quantity;
+
+  console.log("qunaitutt", quantity);
+
+  // let quantity = data?.variant?.[0]?.AddToCart?.quantity;
+
   const addToCart = async () => {
-    // console.log("CategoryListArr", CategoryListArr);
-    console.log("clicking");
-
     const addToCartData = await addToCartProduct({
       variables: {
         input: variables,
@@ -408,7 +456,6 @@ function ProductCard({
         {data?.variant?.length === 1 && (
           <UnitDiv>{`${data?.variant[0]?.values}${data?.variant?.[0].unit}`}</UnitDiv>
         )}
-        {console.log("e", data?.variant)}
         {data?.variant?.every(
           (f: any) =>
             f.ProductInventory?.filter((e: any) => e.branchId === branchId)
@@ -466,13 +513,12 @@ function ProductCard({
             onClick={() => addToCart()}
             quantity={quantity}
             disable={addLoader}
-            categoryId={categoryId}
+          
             subListId={productTypeId}
             selectedSortOption={selectedSortOption}
             // refetchFun={undefined}
           />
         </CardFooder>
-        {console.log("percentage", data?.discountPercentage)}
         {data?.dicountPercentage && (
           <OfferTag discount={data?.dicountPercentage} />
         )}

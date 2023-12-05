@@ -11,8 +11,10 @@ import {
 } from "@/app/assets/style";
 
 function CartProductCart({ e }: { e: any }) {
-  console.log("carts", e);
   const [count, setCount] = useState(e.quantity);
+  console.log("CartData", e)
+
+  
   return (
     <ProductWrapper>
       <ProductImageContainer>
@@ -27,7 +29,7 @@ function CartProductCart({ e }: { e: any }) {
         >{`${e?.selectedVariant?.values}${e?.selectedVariant?.unit}`}</UnitDiv>
         <Text style={{ fontSize: "12px" }}>${e?.selectedVariant?.price}</Text>
       </ProductInfoDetails>
-      <AddButton variables={e} quantity={e?.quantity} onClick={undefined} disable={undefined} categoryId={undefined} subListId={undefined} selectedSortOption={undefined} />
+      <AddButton variables={e} quantity={e?.quantity} onClick={undefined} disable={undefined}  subListId={undefined} selectedSortOption={undefined} />
     </ProductWrapper>
   );
 }

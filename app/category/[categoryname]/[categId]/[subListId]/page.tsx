@@ -1,12 +1,6 @@
 "use client";
 
-import React, {
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-  Suspense,
-} from "react";
+import React, { useContext, useEffect, useRef, useState, Suspense } from "react";
 
 import { globalContext } from "@/app/utils/states";
 import {
@@ -20,59 +14,105 @@ import { SortOptions } from "@/app/utils/data";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoChevronDownSharp } from "react-icons/io5";
 import { MdOutlineRadioButtonUnchecked } from "react-icons/md";
-import outFocus from "@/app/hooks/useOutFocus";
 import CategorySidebarComponents from "@/app/components/parts/CategorySidebarComponents";
-import { ProductTypes } from "@/app/assets/style/interface";
-import { GetProductTypeProducts } from "../../../../service/query";
-import { useLazyQuery, useQuery, useSuspenseQuery } from "@apollo/client";
 import PageLoader from "@/app/components/loader/pageLoader";
 import { productTypeProductsByCategoryId } from "@/app/service/api";
+import { useSubscription } from "@apollo/client";
+import { AddToCartRed, updateSubs } from "@/app/service/query";
+import { useDispatch, useSelector } from "react-redux";
+// import { updateProductData } from "@/app/redux/slices/AllProductSlice";
+// import { useDispatch, useSelector } from "react-redux";
+// import { updateProductData } from "@/app/redux/slices/AllProductSlice";
+import {
+  addProductData,
+  updateProductData,
+  updateProductData2,
+} from "../../../../redux/slices/AllProductSlice";
 
 function DynamicPage({ params }: { params: any }) {
   const [selectedSortOption, setSelectSortOption] = useState("Revelance");
   const [dropDown, setDropDown] = useState(false);
   const dropdownRef = useRef(null);
   const { categoryListArr } = useContext(globalContext) as any;
+  const [categoryTypeAndProducts, setCategoryTypeAndProducts] = useState([]) as any;
 
-  // const [categoryTypeAndProducts, setCategoryTypeAndProducts] = useState(
-  //   []
-  // ) as any;
+  const dispatch = useDispatch();
+  const { data: updateSubscriptionData } = useSubscription(updateSubs);
+  const { data: addSubscriptionData } = useSubscription(AddToCartRed);
+  console.log("updateData", updateSubscriptionData);
 
+  const allProducts = useSelector((state: any) => state.AllProducts);
 
-
-  const { categoryTypeAndProductsList, refetchProducts, productTypeLoading } =
+  const { categoryTypeAndProductsList, refetchProducts } =
     productTypeProductsByCategoryId(params?.subListId, selectedSortOption);
 
-  let categoryTypeAndProducts = categoryTypeAndProductsList?.getProductTypeId;
-  console.log("ideeeeeee", categoryTypeAndProducts);
-  // const { data: categoryTypeAndProductsList, loading: productTypeLoading, refetch: refetchProducts } =
-  //   useQuery(GetProductTypeProducts, {
-  //     variables: {
-  //       getProductTypeId: params?.subListId,
-  //       filter: selectedSortOption,
-  //     },
-  //     skip: !selectedSortOption, // Skip initial query if selectedSortOption is not set
-  //   });
-
-  // const categoryTypeAndProducts = categoryTypeAndProductsList?.getProductType
+  useEffect(() => {
+    refetchProducts()
+    setCategoryTypeAndProducts(categoryTypeAndProductsList?.getProductTypeId);
+    // let categoryTypeAndProducts = categoryTypeAndProductsList?.getProductTypeId;
+  }, [ params?.subListId, selectedSortOption]);
 
   useEffect(() => {
-    if (selectedSortOption) {
-      // refetchProducts({
-      //   getProductTypeId: params?.subListId,
-      //   filter: selectedSortOption,
-      // });
-    }
-  }, [selectedSortOption]);
+    if (updateSubscriptionData !== undefined) {
+      console.log("ipdayteDtaa", updateSubscriptionData)
+      let { productId, quantity } = updateSubscriptionData.updateCart;
 
-  if (productTypeLoading) {
-    console.log("Varukiren")
-    return <PageLoader />;
-  }
+      dispatch(
+        updateProductData2({ productId: productId, quantity: quantity })
+      );
+    }
+  }, [updateSubscriptionData]);
+
+  useEffect(() => {
+    if (addSubscriptionData != undefined) {
+      dispatch(addProductData({ addProduct: addSubscriptionData.addCart }));
+    }
+  }, [addSubscriptionData]);
+  // useEffect(() => {
+  //   if (updateSubscriptionData !== undefined) {
+  //     const productIdToUpdate = updateSubscriptionData.updateCart.productId;
+  //     const updatedQuantity = updateSubscriptionData.updateCart.quantity;
+
+  //     // Update the specific product in the state
+  //     const updatedProductList = allProducts.AllProducts.map((product: any) => {
+  //       if (product.id === productIdToUpdate) {
+  //         return {
+  //           ...product,
+  //           variant: [
+  //             {
+  //               ...product.variant[0],
+  //               AddToCart: {
+  //                 ...product.variant[0].AddToCart,
+  //                 quantity: updatedQuantity,
+  //               },
+  //             },
+  //           ],
+  //         };
+  //       }
+  //       return product;
+  //     });
+
+  //     console.log("updateProductListtt", updatedProductList);
+
+  //     // Dispatch the action to update the product data in the state
+  //     dispatch(updateProductData(updatedProductList));
+  //   }
+  // }, [updateSubscriptionData]);
+
+  // useEffect(() => {
+  //   if (selectedSortOption) {
+  //     // refetchProducts({
+  //     //   getProductTypeId: params?.subListId,
+  //     //   filter: selectedSortOption,
+  //     // });
+  //   }
+  // }, [selectedSortOption]);
+
+ 
   return (
-    <>
+    <Suspense fallback={<div>Loading...</div>}>
       <CategorySidebarComponents />
-      {!productTypeLoading && categoryTypeAndProducts?.products &&  (
+      { categoryTypeAndProducts?.products && (
         <CategoryContentContainer>
           <>
             <div className="content-header">
@@ -138,7 +178,7 @@ function DynamicPage({ params }: { params: any }) {
           </>
         </CategoryContentContainer>
       )}
-    </>
+    </Suspense>
   );
 }
 

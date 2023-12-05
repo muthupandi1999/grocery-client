@@ -11,15 +11,19 @@ export const fetchCategoryWithProducts = (id: string) => {
   const {
     data: CategoryProductsSlider,
     refetch: CategoryProductsRefetch,
+    loading:CategoryProductLoading
     
-  } = useSuspenseQuery(GetCategoryProducts, {
+  } = useQuery(GetCategoryProducts, {
     variables: {
       getCategoryWithProductTypesId: id,
+      sliceCount: 7,
+
     },
   });
   return {
     CategoryProductsSlider,
     CategoryProductsRefetch,
+    CategoryProductLoading
     
   };
 };
@@ -62,7 +66,6 @@ export const fetchCartItems =  (userId: string) => {
     }
   );
 
-  console.log("Cartsssssrttttt", cartProducts)
    return {
     cartProducts,
     getUserCartRefetch,
@@ -75,9 +78,9 @@ export const productTypeProductsByCategoryId = (
 ) => {
   const {
     data: categoryTypeAndProductsList,
-    loading: productTypeLoading,
+   
     refetch: refetchProducts,
-  } = useQuery(GetProductTypeProducts, {
+  } = useSuspenseQuery(GetProductTypeProducts, {
     variables: {
       getProductTypeId: subListId,
       filter: selectedSortOption,
@@ -85,7 +88,7 @@ export const productTypeProductsByCategoryId = (
     skip: !selectedSortOption, // Skip initial query if selectedSortOption is not set
   });
 
-  return { categoryTypeAndProductsList, refetchProducts, productTypeLoading };
+  return { categoryTypeAndProductsList, refetchProducts };
 };
 
 export const getVariant = (variantId: string) => {

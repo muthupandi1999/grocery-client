@@ -18,8 +18,7 @@ export default function RootLayout({
 }) {
   const path = usePathname();
   const pathhArr = path.split("/");
-  console.log("from lay", pathhArr[pathhArr.length - 1]);
-  console.log("Store234", store);
+
   return (
     <html>
       <head>
