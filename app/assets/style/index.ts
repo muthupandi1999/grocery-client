@@ -375,7 +375,7 @@ export const HeaderRow = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 0 20px;
+  padding: 10px 20px;
   @media only screen and (max-width: 1000px) {
     flex-direction: column;
     align-items: flex-start;
@@ -457,7 +457,7 @@ export const CategoryNavContainer = styled.div`
 export const NavListItem = styled.a`
   padding: 14px 13px;
   text-decoration: none;
-  color: ${(props) => props.theme.color.greyTertiary};
+  color: ${(props: any) => props.theme.color.greyTertiary};
   text-transform: capitalize;
   cursor: pointer;
   &:hover {
@@ -505,10 +505,10 @@ export const SideBarListContainer = styled.div<sidebarListContainer>`
   gap: 10px;
   padding: 10px;
   cursor: pointer;
-  background-color: ${(props) =>
+  background-color: ${(props: any) =>
     props.routeId ? props.theme.background.lightGreen : ""};
   border-left: 4px solid
-    ${(props) =>
+    ${(props: any) =>
       props.routeId ? props.theme.background.greenPrimary : "transparent"};
   .img-container {
     width: 48px;
@@ -555,9 +555,9 @@ export const CategoryContentContainer = styled.div`
         position: relative;
         z-index: 5;
         .select-options {
-          background-color: ${(props) => props.theme.color.white};
+          background-color: ${(props: any) => props.theme.color.white};
           position: absolute;
-          border: 1px solid ${(props) => props.theme.border.primary};
+          border: 1px solid ${(props: any) => props.theme.border.primary};
           width: 100%;
           transition: all 0.5s ease-in-out;
         }
@@ -565,7 +565,7 @@ export const CategoryContentContainer = styled.div`
     }
   }
 `;
-export const DropDownListItem = styled.li<dropdownListItem>`
+export const DropDownListItem: any = styled.li<dropdownListItem>`
   list-style: none;
   display: flex;
   align-items: center;
@@ -592,7 +592,7 @@ export const CustomSelectField = styled.div`
   height: 32px;
   border: 1px solid ${(props) => props.theme.border.primary};
   border-radius: 4px;
-  color: ${(props) => props.theme.color.greenPrimary};
+  color: ${(props: any) => props.theme.color.greenPrimary};
   font-weight: 600;
 `;
 export const CategoryGridContainer = styled.div`
@@ -618,7 +618,7 @@ export const CardContainer = styled.div<CardContainerI>`
   gap: 6px;
   display: flex;
   flex-direction: column;
-  opacity: ${(props) => (props.available ? 0.5 : 1)};
+  opacity: ${(props: any) => (props.available ? 0.5 : 1)};
   .img-container {
     display: flex;
     justify-content: center;
@@ -696,7 +696,7 @@ export const CardContainer = styled.div<CardContainerI>`
     height: 36px;
   }
 
-`;
+` as any;
 
 export const CardFooder = styled.section`
   display: flex;
@@ -845,14 +845,14 @@ export const ProductRightSection = styled.div`
       border-bottom: 1px solid ${(props) => props.theme.border.primary};
       padding: 10px 0 15px 0;
       a {
-        color: ${(props) => props.theme.color.greenPrimary};
+        color: ${(props: any) => props.theme.color.greenPrimary};
         font-size: 18px;
         text-decoration: none;
         display: flex;
         align-items: center;
       }
       .right-arrow {
-        color: ${(props) => props.theme.color.greenPrimary};
+        color: ${(props: any) => props.theme.color.greenPrimary};
         font-size: 12px;
       }
     }
@@ -913,7 +913,7 @@ export const ProductRightSection = styled.div`
           }
           span {
             font-size: 12px;
-            color: ${(props) => props.theme.color.greyTertiary};
+            color: ${(props: any) => props.theme.color.greyTertiary};
           }
         }
       }
@@ -925,8 +925,9 @@ export const ProductRightSection = styled.div`
 `;
 
 export const TitleTag = styled.h3<{ variant: string }>`
-  color: ${(props) => props.theme.color.black};
-  font-weight: ${(props) => (props.variant === "productTitle" ? 700 : 600)};
+  color: ${(props: any) => props.theme.color.black};
+  font-weight: ${(props: any) =>
+    props.variant === "productTitle" ? 700 : 600};
   font-size: 24px;
   text-transform: capitalize;
   padding: ${(props) =>
@@ -951,7 +952,7 @@ export const ProductTimerCard = styled.div<{ variant: string }>`
     width: 11px;
     height: 11px;
   }
-`;
+` as any;
 export const CustomAddButton = styled.button<{ $count: any }>`
   font-size: 13px;
 
@@ -959,12 +960,12 @@ export const CustomAddButton = styled.button<{ $count: any }>`
   height: 31px;
   border: 2px solid #bf4f74;
   border-radius: 6px;
-  background-color: ${(props:any) =>
+  background-color: ${(props: any) =>
     props.$count !== undefined ? "green" : "transparent"};
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${(props:any) => (props.$count !==  undefined? "white" : "#318616")};
+  color: ${(props: any) => (props.$count !== undefined ? "white" : "#318616")};
   border: 1px solid #318616;
   font-weight: 600;
   gap: 5px;
@@ -1238,7 +1239,7 @@ export const StyledLink = styled.li<StyleLink>`
   font-size: ${(props) => (props.variant === "categoryLink" ? "16px" : "14px")};
   text-transform: capitalize;
   margin: 5px 0;
-  color: ${(props) => props.theme.color.greyTertiary};
+  color: ${(props: any) => props.theme.color.greyTertiary};
 `;
 export const LinksTitleTag = styled.h3`
   color: ${(props) => props.theme.color.black};
@@ -1247,7 +1248,7 @@ export const LinksTitleTag = styled.h3`
 
   padding: 24px 0;
   span {
-    color: ${(props) => props.theme.color.greenPrimary};
+    color: ${(props: any) => props.theme.color.greenPrimary};
     margin-left: 20px;
     text-transform: lowercase;
   }
@@ -1325,6 +1326,11 @@ export const LoginModelContainer = styled.section`
     position: relative;
     width: 80%;
     padding: 15px 20px 15px 50px;
+    input.PhoneNoInput::-webkit-outer-spin-button,
+    input.PhoneNoInput::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
     .PhoneNoInput {
       border: 0;
     }
@@ -1348,6 +1354,11 @@ export const LoginModelContainer = styled.section`
     background-color: rgb(156, 156, 156);
     cursor: pointer;
     min-height: 50px;
+  }
+
+  .loginButton.phoneNoColorChange {
+    color: #fff;
+    background-color: green;
   }
   .policy {
     text-align: center;
@@ -1420,5 +1431,24 @@ export const VerifyBox = styled.section`
       border: 1px solid #eee;
       text-align: center;
     }
+    div {
+      display: flex;
+      justify-content: space-between;
+    }
+    div input {
+      width: 12% !important;
+      height: 40px;
+      border-radius: 6px;
+      border: 1px solid #eee;
+      text-align: center !important;
+    }
   }
+`;
+
+export const NofoundText = styled.text`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
 `;

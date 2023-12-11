@@ -83,8 +83,8 @@ import styled from "styled-components";
 import LoginCard from "../models/login";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import AddressModel from "../models/addressModel";
-import { fetchCartItems } from "@/app/service/api";
-const HeaderComponent =  () => {
+import { FetchCartItems } from "@/app/service/api";
+const HeaderComponent = () => {
   const [open, setOpen] = useState(false);
   const [startSearch, setStartSearch] = useState(false);
   const [search, setSearch] = useState("");
@@ -100,7 +100,7 @@ const HeaderComponent =  () => {
 
   const [carts, setCarts] = useState<any>([]);
 
-  const [cardBox, setCardBox] = useState(false)
+  const [cardBox, setCardBox] = useState(false);
 
   const router = useRouter();
   useEffect(() => {
@@ -110,12 +110,11 @@ const HeaderComponent =  () => {
   }, [search]);
   const path = usePathname();
   const pathArr = path.split("/");
+  console.log("patharrr", pathArr);
 
-  // const { cartProducts, getUserCartRefetch } = fetchCartItems(
+  // const { cartProducts, getUserCartRefetch } = FetchCartItems(
   //   "655379d96144626a275e8a14"
   // );
-
-
 
   const LoginModelBoxstyle = styled.section`
     position: absolute;
@@ -158,107 +157,107 @@ const HeaderComponent =  () => {
             <ImgTag $imgfit="contain" src={logo} alt="logo" />
           </Link>
         </LogoSec>
-        {!pathArr?.includes("search") && (
-          <LocationWrapper>
-            <LocationSec>
-              <h4 className="title">Delivery in 17 minutes</h4>
-              <div className="contentSec">
-                <p className="content">
-                  36P6+65H, 1st Main St, Y Block, Anna Nagar, Chennai, Tamil
-                  Nadu 600040, India
-                </p>
-                <ExpandMore />
-              </div>
-            </LocationSec>
-            <div className="login">
-              <IoMdContact size={32} color={"black"} />
-            </div>
-          </LocationWrapper>
-        )}
+        {!pathArr?.includes("checkout") && (
+          <>
+            {!pathArr?.includes("search") && (
+              <LocationWrapper>
+                <LocationSec>
+                  <h4 className="title">Delivery in 17 minutes</h4>
+                  <div className="contentSec">
+                    <p className="content">
+                      36P6+65H, 1st Main St, Y Block, Anna Nagar, Chennai, Tamil
+                      Nadu 600040, India
+                    </p>
+                    <ExpandMore />
+                  </div>
+                </LocationSec>
+                <div className="login">
+                  <IoMdContact size={32} color={"black"} />
+                </div>
+              </LocationWrapper>
+            )}
 
-        <SearchSec>
-          <SearchBox>
-            <input
-              onFocus={() => setStartSearch(true)}
-              onBlur={() => setStartSearch(false)}
-              onClick={(e: any) => {
-                if (e.target.value.length === 0) {
-                  router.push("/search");
-                }
-              }}
-              type="text"
-              placeholder="Search for atta dal and more"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-              }}
-            />
-            <Search className="searchIcon" />
-          </SearchBox>
-        </SearchSec>
+            <SearchSec>
+              <SearchBox>
+                <input
+                  onFocus={() => setStartSearch(true)}
+                  onBlur={() => setStartSearch(false)}
+                  onClick={(e: any) => {
+                    if (e.target.value.length === 0) {
+                      router.push("/search");
+                    }
+                  }}
+                  type="text"
+                  placeholder="Search for atta dal and more"
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                  }}
+                />
+                <Search className="searchIcon" />
+              </SearchBox>
+            </SearchSec>
 
-        <HeaderRightSec>
-          {JSON.parse(localStorage.getItem("Credentials") as any) ? (
-            <div className="AddressBox">
-              <h5 className="Accounts" onClick={handleOpenAddress}>
-                Account <ArrowDropDownIcon />
-              </h5>
-              <Modal
-                open={openAddress}
-                onClose={handleCloseAddress}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-                className="AddressModel"
+            <HeaderRightSec>
+              {JSON.parse(localStorage.getItem("Credentials") as any) ? (
+                <div className="AddressBox">
+                  <h5 className="Accounts" onClick={handleOpenAddress}>
+                    Account <ArrowDropDownIcon />
+                  </h5>
+                  <Modal
+                    open={openAddress}
+                    onClose={handleCloseAddress}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                    className="AddressModel"
+                  >
+                    <AddressModelBoxstyle>
+                      <AddressModel onClose={handleCloseAddress} />
+                    </AddressModelBoxstyle>
+                  </Modal>
+                </div>
+              ) : (
+                !pathArr.includes("search") && (
+                  <>
+                    <button onClick={handleOpenLogin} className="buttonLink">
+                      <Login />
+                      Login
+                    </button>
+                    <Modal
+                      open={openLogin}
+                      onClose={handleCloseLogin}
+                      aria-labelledby="modal-modal-title"
+                      aria-describedby="modal-modal-description"
+                    >
+                      <LoginModelBoxstyle>
+                        <LoginCard onClose={handleCloseLogin} />
+                      </LoginModelBoxstyle>
+                    </Modal>
+                  </>
+                )
+              )}
+
+              <Button $icon="left" onClick={handleOpen}>
+                <ShoppingCart />
+                <span>1 item My Cart</span>
+              </Button>
+              <Drawer
+                sx={{
+                  background: "1f1f1f",
+                  "& .css-1160xiw-MuiPaper-root-MuiDrawer-paper": {
+                    backgroundColor: "#f5f7fc",
+                  },
+                }}
+                anchor="right"
+                open={open}
+                onClose={handleClose}
+                
               >
-                <AddressModelBoxstyle>
-                  <AddressModel onClose={handleCloseAddress} />
-                </AddressModelBoxstyle>
-              </Modal>
-            </div>
-          ) : (
-            !pathArr.includes("search") && (
-              <>
-                <button onClick={handleOpenLogin} className="buttonLink">
-                  <Login />
-                  Login
-                </button>
-                <Modal
-                  open={openLogin}
-                  onClose={handleCloseLogin}
-                  aria-labelledby="modal-modal-title"
-                  aria-describedby="modal-modal-description"
-                >
-                  <LoginModelBoxstyle>
-                    <LoginCard onClose={handleCloseLogin} />
-                  </LoginModelBoxstyle>
-                </Modal>
-              </>
-            )
-          )}
-
-          <Button $icon="left" onClick={handleOpen}>
-            <ShoppingCart />
-            <span>1 item My Cart</span>
-          </Button>
-          <Drawer
-            sx={{
-              background: "1f1f1f",
-              "& .css-1160xiw-MuiPaper-root-MuiDrawer-paper": {
-                backgroundColor: "#f5f7fc",
-              },
-            }}
-            anchor="right"
-            open={open}
-            onClose={handleClose}
-          >
-            <CartDrawer
-           
-              open={open}
-              anchor="right"
-              onClose={handleClose}
-            />
-          </Drawer>
-        </HeaderRightSec>
+                <CartDrawer showLoginCard = {handleOpenLogin} open={open} anchor="right" onClose={handleClose} />
+              </Drawer>
+            </HeaderRightSec>
+          </>
+        )}
       </HeaderRow>
     </HeaderContainer>
   );

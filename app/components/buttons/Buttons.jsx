@@ -2,18 +2,25 @@
 import React, { useContext, useState, useEffect } from "react";
 import { CustomAddButton } from "../../assets/style";
 import { HiPlusSm, HiMinusSm } from "react-icons/hi";
-import { useQuery, useMutation } from "@apollo/client";
-import { getProductVariant, updateAddToCart } from "@/app/service/query";
+import { useQuery, useMutation, useSubscription } from "@apollo/client";
+import {
+  getProductVariant,
+  updateAddToCart,
+  updateSubs,
+} from "@/app/service/query";
 import { globalContext } from "@/app/utils/states";
 import { getAllCategories, AddToCart } from "../../service/query";
 import DeleteIcon from "@mui/icons-material/Delete";
 import debounce from "lodash/debounce";
-import { GetAddToCartsApi, fetchCartItems } from "@/app/service/api";
+import { GetAddToCartsApi, FetchCartItems } from "@/app/service/api";
 import {
-  fetchCategoryWithProducts,
-  productTypeProductsByCategoryId,
+  FetchCategoryWithProducts,
+  ProductTypeProductsByCategoryId,
 } from "@/app/service/api";
-import { updateProductData } from "@/app/redux/slices/AllProductSlice";
+import {
+  updateProductData,
+  updateProductData2,
+} from "@/app/redux/slices/AllProductSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 export const AddButton = ({
@@ -31,7 +38,7 @@ export const AddButton = ({
 
   const dispatch = useDispatch();
 
-  const { getUserCartRefetch } = fetchCartItems("655379d96144626a275e8a14");
+  const { getUserCartRefetch } = FetchCartItems("655379d96144626a275e8a14");
 
   const [updateCartProduct, { loading: updateLoader }] =
     useMutation(updateAddToCart);
@@ -39,6 +46,22 @@ export const AddButton = ({
   const { loading } = useQuery(getAllCategories);
 
   let allProducts = useSelector((state) => state.AllProducts);
+  const { data: updateSubscriptionData } = useSubscription(updateSubs);
+  useEffect(() => {
+    if (updateSubscriptionData !== undefined) {
+      console.log("updateSubscriptionData", updateSubscriptionData);
+      let { productId, quantity, selectedVariantId } =
+        updateSubscriptionData?.updateCart;
+
+      dispatch(
+        updateProductData2({
+          productId: productId,
+          quantity: quantity,
+          variantId: selectedVariantId,
+        })
+      );
+    }
+  }, [updateSubscriptionData]);
 
   const updateCartProd = async (quantity) => {
     const updateCartProductData = await updateCartProduct({
@@ -54,33 +77,34 @@ export const AddButton = ({
     });
 
     // console.log("uopdateDPero", updateCartProductData);
-
     if (
       updateCartProductData &&
-      updateCartProductData?.data?.updateAddToCart === null
+      updateCartProductData?.data?.updateAddToCart?.quantity === 0
     ) {
       const updatedProducts = allProducts?.AllProducts.map((e) => {
         if (e.id === (variables?.product?.id || variables?.productId)) {
-          // console.log("Eeee", e);
-          // Modify the addToCart field to null for the matched product
+          const updatedVariants = e?.variant.map((variant) => {
+            if (variant.id === variables?.selectedVariantId) {
+              return {
+                ...variant,
+                AddToCart: null, // Set AddToCart to null for the matched variant
+                // Other properties you want to update for this variant
+              };
+            }
+            return variant; // Keep other variants unchanged
+          });
+
+          // Return the modified product with updated variants
           return {
             ...e,
-            variant: [
-              {
-                ...e.variant[0],
-                AddToCart: null, // Set the addToCart field to null
-              },
-            ],
+            variant: updatedVariants,
           };
         }
         return e; // Return other products unchanged
       });
 
       dispatch(updateProductData(updatedProducts));
-      // console.log("allp", updatedProducts);
-
-      // Use updatedProducts as needed, e.g., update state, return, etc.
-      // console.log(updatedProducts); // Log the updated array
+      // Use updatedProducts as needed
     }
   };
 

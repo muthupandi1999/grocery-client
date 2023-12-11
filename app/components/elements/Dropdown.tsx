@@ -4,14 +4,14 @@ import React from 'react'
 import { FaCheckCircle } from 'react-icons/fa';
 import { MdOutlineRadioButtonUnchecked } from 'react-icons/md';
 
-function Dropdown({children,setDropDownState,setSelectedOption}) {
+function Dropdown({children,setDropDownState,setSelectedOption}:any) {
   return (
     <div className="select-options">
-    {SortOptions.map((data, i) =>
+    {SortOptions.map((data:any, i:any) =>
      (
-      <>
+    
         <DropDownListItem
-          $colorState={data === selectedSortOption}
+          $colorState={data === ""}
           $id={ SortOptions.length-2 < i }
           onClick={() => {
             setSelectedOption(data);
@@ -23,7 +23,7 @@ function Dropdown({children,setDropDownState,setSelectedOption}) {
 
           {data}
         </DropDownListItem>
-      </>
+    
     ))}
   </div>
   )

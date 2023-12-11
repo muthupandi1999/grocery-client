@@ -4,36 +4,7 @@ import { Interpolation } from "styled-components";
 declare module "styled-components" {
   export interface DefaultTheme {
     color: {
-      greyTertiary: Interpolation<
-        FastOmit<
-          DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
-          never
-        >
-      >;
-      greyPrimary: Interpolation<
-        FastOmit<
-          DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
-          never
-        >
-      >;
-      greyprimary: Interpolation<
-        FastOmit<
-          DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
-          never
-        >
-      >;
-      greenSecondary: Interpolation<
-        FastOmit<
-          DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
-          never
-        >
-      >;
-      greenPrimary: Interpolation<
-        FastOmit<
-          DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
-          never
-        >
-      >;
+    
       primary: string;
       secondary: string;
       black: string;
@@ -47,33 +18,11 @@ declare module "styled-components" {
       secondary: string;
     };
     border: {
-      black: Interpolation<
-        FastOmit<
-          DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
-          never
-        >
-      >;
-      white: Interpolation<
-        FastOmit<
-          DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
-          never
-        >
-      >;
+     
       primary: string;
     };
     background: {
-      lightGreen: Interpolation<
-        FastOmit<
-          DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
-          never
-        >
-      >;
-      greenPrimary: Interpolation<
-        FastOmit<
-          DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
-          never
-        >
-      >;
+      
       greyPrimary: string;
     };
     gradient: {

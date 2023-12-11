@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import styled from "styled-components";
-import { Text, SubText, BlockDiv } from "../AddToCart";
+import { Text, SubText } from "../AddToCart";
 import { AddButton } from "@/app/components/buttons/Buttons";
-import { UnitDiv } from "./ProductCard";
+import { UnitDiv } from "@/app/assets/style/productCardStyle";
 import {
   ProductWrapper,
   ProductImageContainer,

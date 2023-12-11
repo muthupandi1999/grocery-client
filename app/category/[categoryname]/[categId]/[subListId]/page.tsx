@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useContext, useEffect, useRef, useState, Suspense } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-import { globalContext } from "@/app/utils/states";
 import {
   CategoryContentContainer,
   CustomSelectField,
@@ -15,104 +14,89 @@ import { FaCheckCircle } from "react-icons/fa";
 import { IoChevronDownSharp } from "react-icons/io5";
 import { MdOutlineRadioButtonUnchecked } from "react-icons/md";
 import CategorySidebarComponents from "@/app/components/parts/CategorySidebarComponents";
-import PageLoader from "@/app/components/loader/pageLoader";
-import { productTypeProductsByCategoryId } from "@/app/service/api";
-import { useSubscription } from "@apollo/client";
-import { AddToCartRed, updateSubs } from "@/app/service/query";
-import { useDispatch, useSelector } from "react-redux";
-// import { updateProductData } from "@/app/redux/slices/AllProductSlice";
-// import { useDispatch, useSelector } from "react-redux";
-// import { updateProductData } from "@/app/redux/slices/AllProductSlice";
+import { useQuery, useSubscription } from "@apollo/client";
+import {
+  AddToCartRed,
+  GetProductTypeProducts,
+  updateSubs,
+} from "@/app/service/query";
+import { useDispatch } from "react-redux";
+
 import {
   addProductData,
-  updateProductData,
   updateProductData2,
 } from "../../../../redux/slices/AllProductSlice";
+import ProductCardLoader from "@/app/components/loader/productCardLoader";
 
 function DynamicPage({ params }: { params: any }) {
-  const [selectedSortOption, setSelectSortOption] = useState("Revelance");
   const [dropDown, setDropDown] = useState(false);
   const dropdownRef = useRef(null);
-  const { categoryListArr } = useContext(globalContext) as any;
-  const [categoryTypeAndProducts, setCategoryTypeAndProducts] = useState([]) as any;
+
+  const [categoryTypeAndProducts, setCategoryTypeAndProducts] = useState<any>([]);
+  const [selectedSortOption, setSelectSortOption] = useState("Revelance");
 
   const dispatch = useDispatch();
   const { data: updateSubscriptionData } = useSubscription(updateSubs);
   const { data: addSubscriptionData } = useSubscription(AddToCartRed);
   console.log("updateData", updateSubscriptionData);
 
-  const allProducts = useSelector((state: any) => state.AllProducts);
+  const { loading: categoryProductLoading, refetch: refetchProducts } =
+    useQuery(GetProductTypeProducts, {
+      variables: {
+        getProductTypeId: params?.subListId,
+        filter: selectedSortOption,
+      },
+      // skip: Boolean,
+      onCompleted: (data: any) => {
+        setCategoryTypeAndProducts(data?.getProductTypeId);
 
-  const { categoryTypeAndProductsList, refetchProducts } =
-    productTypeProductsByCategoryId(params?.subListId, selectedSortOption);
+        console.log("res", data);
+      },
+    });
 
   useEffect(() => {
-    refetchProducts()
-    setCategoryTypeAndProducts(categoryTypeAndProductsList?.getProductTypeId);
+    refetchProducts();
     // let categoryTypeAndProducts = categoryTypeAndProductsList?.getProductTypeId;
-  }, [ params?.subListId, selectedSortOption]);
+  }, [selectedSortOption]);
+
+  // useEffect(() => {
+  //   // refetchProducts();
+  //   setCategoryTypeAndProducts(categoryTypeAndProductsList?.getProductTypeId);
+  //   // let categoryTypeAndProducts = categoryTypeAndProductsList?.getProductTypeId;
+  // }, [params?.subListId, selectedSortOption]);
 
   useEffect(() => {
     if (updateSubscriptionData !== undefined) {
-      console.log("ipdayteDtaa", updateSubscriptionData)
-      let { productId, quantity } = updateSubscriptionData.updateCart;
+      console.log("ipdayteDtaa", updateSubscriptionData);
+      let { productId, quantity, selectedVariantId } =
+        updateSubscriptionData.updateCart;
 
       dispatch(
-        updateProductData2({ productId: productId, quantity: quantity })
+        updateProductData2({
+          productId: productId,
+          quantity: quantity,
+          variantId: selectedVariantId,
+        })
       );
     }
   }, [updateSubscriptionData]);
 
   useEffect(() => {
     if (addSubscriptionData != undefined) {
-      dispatch(addProductData({ addProduct: addSubscriptionData.addCart }));
+      dispatch(
+        addProductData({
+          addProduct: addSubscriptionData.addCart,
+          variantId: addSubscriptionData?.selectedVariantId,
+        })
+      );
     }
   }, [addSubscriptionData]);
-  // useEffect(() => {
-  //   if (updateSubscriptionData !== undefined) {
-  //     const productIdToUpdate = updateSubscriptionData.updateCart.productId;
-  //     const updatedQuantity = updateSubscriptionData.updateCart.quantity;
 
-  //     // Update the specific product in the state
-  //     const updatedProductList = allProducts.AllProducts.map((product: any) => {
-  //       if (product.id === productIdToUpdate) {
-  //         return {
-  //           ...product,
-  //           variant: [
-  //             {
-  //               ...product.variant[0],
-  //               AddToCart: {
-  //                 ...product.variant[0].AddToCart,
-  //                 quantity: updatedQuantity,
-  //               },
-  //             },
-  //           ],
-  //         };
-  //       }
-  //       return product;
-  //     });
-
-  //     console.log("updateProductListtt", updatedProductList);
-
-  //     // Dispatch the action to update the product data in the state
-  //     dispatch(updateProductData(updatedProductList));
-  //   }
-  // }, [updateSubscriptionData]);
-
-  // useEffect(() => {
-  //   if (selectedSortOption) {
-  //     // refetchProducts({
-  //     //   getProductTypeId: params?.subListId,
-  //     //   filter: selectedSortOption,
-  //     // });
-  //   }
-  // }, [selectedSortOption]);
-
- 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <>
       <CategorySidebarComponents />
-      { categoryTypeAndProducts?.products && (
+      {categoryTypeAndProducts && (
+        console.log("varommm"),
         <CategoryContentContainer>
           <>
             <div className="content-header">
@@ -149,7 +133,6 @@ function DynamicPage({ params }: { params: any }) {
                               />
                             )}
                           </span>
-
                           {data}
                         </DropDownListItem>
                       ))}
@@ -161,16 +144,26 @@ function DynamicPage({ params }: { params: any }) {
 
             {categoryTypeAndProducts?.products?.length > 0 ? (
               <CategoryGridContainer>
-                {categoryTypeAndProducts?.products?.map((data: any) => (
-                  <ProductCard
-                    productTypeId={params?.subListId}
-                    key={data.id}
-                    width="100%"
-                    data={data}
-                    selectedSortOption={selectedSortOption}
-                    categoryId={""}
-                  />
-                ))}
+                {categoryProductLoading ? (
+                  <>
+                    {[...Array(categoryTypeAndProducts?.products?.length)].map(
+                      (_: any, index: number) => (
+                        <ProductCardLoader />
+                      )
+                    )}
+                  </>
+                ) : (
+                  categoryTypeAndProducts?.products?.map((data: any) => (
+                    <ProductCard
+                      productTypeId={params?.subListId}
+                      key={data.id}
+                      width="100%"
+                      data={data}
+                      selectedSortOption={selectedSortOption}
+                      categoryId={""}
+                    />
+                  ))
+                )}
               </CategoryGridContainer>
             ) : (
               <h3 className="NodataFoundText">No data found</h3>
@@ -178,7 +171,7 @@ function DynamicPage({ params }: { params: any }) {
           </>
         </CategoryContentContainer>
       )}
-    </Suspense>
+    </>
   );
 }
 

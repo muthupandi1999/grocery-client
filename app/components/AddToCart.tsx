@@ -10,7 +10,17 @@ import "slick-carousel/slick/slick-theme.css";
 import { AddToCartProductSliderSettings } from "../utils/data";
 
 import { TitleProps } from "../assets/style/interface";
-import { fetchCartItems } from "../service/api";
+import { FetchCartItems } from "../service/api";
+import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { useRouter } from "next/navigation";
+import LoginCard from "./models/login";
+import { ClientSecret, getUserAddress } from "../service/query";
+import { useQuery, useMutation } from "@apollo/client";
+// import { PlaceOrderProducts } from "../service/query";
 
 export const Text = styled.h1<TitleProps>`
   margin: 0;
@@ -153,29 +163,99 @@ const CouponNote = styled.section`
   margin: 0 12px;
 `;
 
+export const AddressWrapper = styled.section`
+  position: relative;
+  .NewAddress {
+    cursor: pointer;
+    background-color: rgb(255, 255, 255);
+    padding: 18px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    .AddAddressIcon {
+      font-size: 30px;
+      color: rgb(12, 131, 31);
+    }
+    h3 {
+      color: rgb(0, 0, 0);
+      line-height: 20px;
+      font-size: 14px;
+      padding-left: 4%;
+      font-weight: 500;
+    }
+  }
+
+  .deliveryAddressBanner {
+    padding: 18px 18px 18px 22px;
+    background-color: rgb(238, 238, 238);
+    p {
+      line-height: 16px;
+      font-size: 12px;
+      color: rgb(153, 153, 153);
+    }
+  }
+
+  .doneBtn {
+    padding: 18px 12px;
+    border-radius: 0px;
+    background-color: rgb(136, 136, 136);
+    position: fixed;
+    bottom: 0;
+    width: 412px;
+    @media (max-width: 425px) {
+      width: 320px !important;
+    }
+    p {
+      text-align: center;
+      color: #fff;
+    }
+  }
+
+  .doneBtn.tick {
+    background-color: rgb(12, 131, 31);
+  }
+
+  .SelectAddressCard {
+    display: flex;
+    width: 100%;
+    padding: 18px;
+  }
+
+  .tickIcon {
+    font-size: 24px;
+    color: rgb(12, 131, 31);
+  }
+
+  .MoreIcon {
+    font-size: 28px;
+  }
+
+  .addressInfo {
+    width: 80%;
+    padding-left: 5%;
+  }
+`;
+
 export const CartDrawer = (props: any) => {
-  const { open, anchor, onClose } = props;
+  const { open, anchor, onClose, showLoginCard } = props;
   const [carts, setCarts] = useState<any>([]);
-  // const [loadGreeting, { refetch }] = useLazyQuery(GetAddToCarts, {
-  //   variables: {
-  //     userId: "655379d96144626a275e8a14",
-  //   },
-  // });
+  const [selectAddress, setSelectAddress] = useState(false);
+  const [tickAddress, setTickAddress] = useState("");
+  const router = useRouter();
+  const [address, setAddress] = useState<any>({});
 
-  // const { cartProducts, getUserCartRefetch } = fetchCartItems(
-  //   "65642fcb264c4f37a0b129be"
-  // ) as any;
-  // console.log("cartProducts", cartProducts);
-  // useEffect(() => {
-  //   getUserCartRefetch();
-  //   setCarts(cartProducts?.getAddToCartsByUserId?.carts)
-  //   // console.log("cartProducts123", cartProducts);
-  // }, [cartProducts]);
-
-  const { cartProducts, getUserCartRefetch } = fetchCartItems(
+  const { cartProducts, getUserCartRefetch } = FetchCartItems(
     "655379d96144626a275e8a14"
   );
 
+  const { data: UserAddress, refetch: AddressRefetch } = useQuery(
+    getUserAddress,
+    {
+      variables: {
+        userId: "655379d96144626a275e8a14",
+      },
+    }
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -183,10 +263,7 @@ export const CartDrawer = (props: any) => {
         if (cartProducts) {
           getUserCartRefetch();
           setCarts(cartProducts?.getAddToCartsByUserId);
-         
         }
-
-        
       } catch (error) {
         console.error("Error fetching cart items:", error);
       }
@@ -195,8 +272,12 @@ export const CartDrawer = (props: any) => {
     fetchData();
   }, [cartProducts]);
 
-  console.log("Carts",carts)
+  useEffect(() => {
+    AddressRefetch();
+    setAddress(UserAddress?.getUserById);
+  }, [selectAddress, cartProducts, tickAddress]);
 
+  console.log("address", address);
 
   let disCountAmount = carts?.carts?.reduce((acc: any, index: any) => {
     return (
@@ -212,120 +293,224 @@ export const CartDrawer = (props: any) => {
     <Suspense fallback={<div>Loading...</div>}>
       <DrawerBox style={{ width: "400px" }}>
         <Container>
-          <TitleWrapper>
-            <Text fontSize="15px" fontWeight={700} color="#000">
-              My Cart
-            </Text>
-            <CloseIcon sx={{ cursor: "pointer" }} onClick={onClose} />
-          </TitleWrapper>
-          <CartWrapper>
-            <FlexObject>
-              <DeliveryImageContainer>
-                <DeliveryImage src="https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=180/assets/eta-icons/15-mins-filled.png"></DeliveryImage>
-              </DeliveryImageContainer>
-              <DeliveryInfo>
-                <Text
-                  fontSize="15px"
-                  fontWeight={700}
-                  color="#000"
-                  padding="0 0 4px 0"
-                >
-                  Delivery in 9 minutes
+          {!selectAddress ? (
+            <>
+              <TitleWrapper>
+                <Text fontSize="15px" fontWeight={700} color="#000">
+                  My Cart
                 </Text>
-                <SubText>Shipment of 2 items</SubText>
-              </DeliveryInfo>
-            </FlexObject>
+                <CloseIcon sx={{ cursor: "pointer" }} onClick={onClose} />
+              </TitleWrapper>
+              <CartWrapper>
+                <FlexObject>
+                  <DeliveryImageContainer>
+                    <DeliveryImage src="https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=180/assets/eta-icons/15-mins-filled.png"></DeliveryImage>
+                  </DeliveryImageContainer>
+                  <DeliveryInfo>
+                    <Text
+                      fontSize="15px"
+                      fontWeight={700}
+                      color="#000"
+                      padding="0 0 4px 0"
+                    >
+                      Delivery in 9 minutes
+                    </Text>
+                    <SubText>Shipment of 2 items</SubText>
+                  </DeliveryInfo>
+                </FlexObject>
 
-            {carts?.carts?.map((e: any) => (
-              <CartProductCart key={e.id} e={e} />
-            ))}
-          </CartWrapper>
+                {carts?.carts?.map((e: any) => (
+                  <CartProductCart key={e.id} e={e} />
+                ))}
+              </CartWrapper>
 
-          <BillWrapper>
-            <Text padding="0 0 12px 0">Bill Details</Text>
-            <WrapperBillText>
-              <BillFlex>
-                <SubText>MRP</SubText>
-                <SubText>${carts?.subTotal}</SubText>
-              </BillFlex>
-            </WrapperBillText>
-            <WrapperBillText>
-              <BillFlex>
-                <SubText>Product discount</SubText>
-                <SubText color="#0c831f">
-                  -${Math.round(disCountAmount)}
+              <BillWrapper>
+                <Text padding="0 0 12px 0">Bill Details</Text>
+                <WrapperBillText>
+                  <BillFlex>
+                    <SubText>MRP</SubText>
+                    <SubText>${carts?.subTotal || 0}</SubText>
+                  </BillFlex>
+                </WrapperBillText>
+                <WrapperBillText>
+                  <BillFlex>
+                    <SubText>Product discount</SubText>
+                    <SubText color="#0c831f">
+                      -${Math.round(disCountAmount) || 0}
+                    </SubText>
+                  </BillFlex>
+                </WrapperBillText>
+                <WrapperBillText>
+                  <BillFlex>
+                    <SubText>Delivery Charge</SubText>
+                    <SubText>${carts?.subTotal > 0 ? 25 : 0}</SubText>
+                  </BillFlex>
+                </WrapperBillText>
+                <WrapperBillText>
+                  <SubText color="#0c831f">
+                    Shop for ₹15 more, to save ₹25 on delivery charge
+                  </SubText>
+                </WrapperBillText>
+                <BillFlex style={{ paddingTop: "8px" }}>
+                  <SubText fontSize="14px" color="#000" fontWeight={500}>
+                    Grand Total
+                  </SubText>
+                  <SubText fontSize="14px" color="#000" fontWeight={500}>
+                    ${carts?.subTotal - Math.round(disCountAmount) + 25 || 0}
+                  </SubText>
+                </BillFlex>
+              </BillWrapper>
+              <CouponNote>
+                <SubText>
+                  Coupons are only applicable on the Blinkit app
                 </SubText>
-              </BillFlex>
-            </WrapperBillText>
-            <WrapperBillText>
-              <BillFlex>
-                <SubText>Delivery Charge</SubText>
-                <SubText>$25</SubText>
-              </BillFlex>
-            </WrapperBillText>
-            <WrapperBillText>
-              <SubText color="#0c831f">
-                Shop for ₹15 more, to save ₹25 on delivery charge
-              </SubText>
-            </WrapperBillText>
-            <BillFlex style={{ paddingTop: "8px" }}>
-              <SubText fontSize="14px" color="#000" fontWeight={500}>
-                Grand Total
-              </SubText>
-              <SubText fontSize="14px" color="#000" fontWeight={500}>
-                ${carts?.subTotal - Math.round(disCountAmount) + 25}
-              </SubText>
-            </BillFlex>
-          </BillWrapper>
-          <CouponNote>
-            <SubText>Coupons are only applicable on the Blinkit app</SubText>
-          </CouponNote>
+              </CouponNote>
 
-          <ProductSuggestWrapper>
-            <Text padding="0 0 15px 0">Before you checkout</Text>
+              <ProductSuggestWrapper>
+                <Text padding="0 0 15px 0">Before you checkout</Text>
 
-            <Slider
-              className="addToCartSlider"
-              {...AddToCartProductSliderSettings}
-            >
-              {/* {FreshVegetables.products.map((product: any) => (
-              <ProductCard key={product.id} e={product} />
-            ))} */}
-            </Slider>
-          </ProductSuggestWrapper>
-
-          <PolicyWrapper>
-            <Text padding="0 0 8px 0">Cancellation Policy</Text>
-            <SubText fontWeight={500}>
-              Orders cannot be cancelled once packed for delivery. In case of
-              unexpected delays, a refund will be provided, if applicable.
-            </SubText>
-          </PolicyWrapper>
-
-          <ProceedWrapper>
-            <ProceedButton>
-              <BlockDiv>
-                <Text fontSize="15px" fontWeight={500} color="#fff">
-                  ${carts?.subTotal - Math.round(disCountAmount) + 25}
-                </Text>
-                <SubText
-                  style={{ opacity: 0.8 }}
-                  fontSize="11px"
-                  color="#fff"
-                  fontWeight={400}
-                  padding="4px 0 0 0"
+                <Slider
+                  className="addToCartSlider"
+                  {...AddToCartProductSliderSettings}
                 >
-                  TOTAL
+                  {/* {FreshVegetables.products.map((product: any) => (
+   <ProductCard key={product.id} e={product} />
+ ))} */}
+                </Slider>
+              </ProductSuggestWrapper>
+
+              <PolicyWrapper>
+                <Text padding="0 0 8px 0">Cancellation Policy</Text>
+                <SubText fontWeight={500}>
+                  Orders cannot be cancelled once packed for delivery. In case
+                  of unexpected delays, a refund will be provided, if
+                  applicable.
                 </SubText>
-              </BlockDiv>
-              <BlockDiv style={{ display: "flex", alignItems: "center" }}>
-                <Text fontSize="16px" fontWeight={400} color="#fff">
-                  Proceed
+              </PolicyWrapper>
+
+              <ProceedWrapper>
+                <ProceedButton>
+                  <BlockDiv>
+                    <Text fontSize="15px" fontWeight={500} color="#fff">
+                      ${carts?.subTotal - Math.round(disCountAmount) + 25 || 0}
+                    </Text>
+                    <SubText
+                      style={{ opacity: 0.8 }}
+                      fontSize="11px"
+                      color="#fff"
+                      fontWeight={400}
+                      padding="4px 0 0 0"
+                    >
+                      TOTAL
+                    </SubText>
+                  </BlockDiv>
+                  <BlockDiv
+                    onClick={async () => {
+                      if (tickAddress) {
+                        // await PlaceOrder({
+                        //   variables:{
+                        //     input: {
+
+                        //     }
+                        //   }
+                        // // })
+                        // const { data } = await createPaymentIntent({
+                        //   variables: {
+                        //     input: {
+                        //       name: "Test",
+                        //       email: "test1@gmail.com",
+                        //       amount: carts?.subTotal, // Amount in cents
+                        //       currency: "inr",
+                        //     },
+                        //   },
+                        // });
+
+                        // const clientSecret =
+                        //   data.cardPayment.clientSecret;
+                        // console.log("cleintsecrettdafds", clientSecret);
+                        router.push("/checkout");
+                        onClose();
+                      } else {
+                        if (localStorage?.getItem("Credentials")) {
+                          setSelectAddress(true);
+                        } else {
+                          showLoginCard();
+                        }
+                      }
+                    }}
+                    style={{ display: "flex", alignItems: "center" }}
+                  >
+                    {tickAddress ? (
+                      <Text fontSize="16px" fontWeight={400} color="#fff">
+                        ProceedToPay
+                      </Text>
+                    ) : (
+                      <Text fontSize="16px" fontWeight={400} color="#fff">
+                        Proceed
+                      </Text>
+                    )}
+
+                    <ChevronRightIcon fontSize="medium" />
+                  </BlockDiv>
+                </ProceedButton>
+              </ProceedWrapper>
+            </>
+          ) : (
+            <AddressWrapper>
+              <TitleWrapper>
+                <KeyboardBackspaceIcon
+                  onClick={() => setSelectAddress(false)}
+                  className="backicon"
+                />
+                <Text fontSize="15px" fontWeight={700} color="#000">
+                  My Address
                 </Text>
-                <ChevronRightIcon fontSize="medium" />
-              </BlockDiv>
-            </ProceedButton>
-          </ProceedWrapper>
+              </TitleWrapper>
+              <div className="NewAddress">
+                <AddCircleOutlineIcon className="AddAddressIcon" />
+                <h3>Add New address</h3>
+              </div>
+              <div className="deliveryAddressBanner">
+                <p>Choose Delivery Address</p>
+              </div>
+              <div className="SelectAddressCardContainer">
+                <ul className="SelectAddressCardLists">
+                  <li className="SelectAddressCardList">
+                    {address?.Address?.map((e: any) => (
+                      <div key={e.id} className="SelectAddressCard">
+                        {tickAddress === e.id ? (
+                          <CheckCircleIcon
+                            onClick={() => setTickAddress("")}
+                            className="tickIcon"
+                          />
+                        ) : (
+                          <RadioButtonUncheckedIcon
+                            onClick={() => setTickAddress(e?.id)}
+                            className="tickIcon"
+                          />
+                        )}
+                        <div className="addressInfo">
+                          <h3>{e?.address}</h3>
+                          <p>{e?.apartment}</p>
+                          <p>{e?.pincode}</p>
+                        </div>
+                        <MoreHorizIcon className="MoreIcon" />
+                      </div>
+                    ))}
+                  </li>
+                </ul>
+              </div>
+
+              <div
+                onClick={() =>
+                  tickAddress ? setSelectAddress(false) : setSelectAddress(true)
+                }
+                className={tickAddress ? "doneBtn tick" : "doneBtn"}
+              >
+                <p>Done</p>
+              </div>
+            </AddressWrapper>
+          )}
         </Container>
       </DrawerBox>
     </Suspense>

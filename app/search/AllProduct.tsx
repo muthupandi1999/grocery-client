@@ -5,26 +5,34 @@ import {
   AllProductsWithSearch,
   updateSubs,
 } from "@/app/service/query";
+
+import ProductCard from "@/app/components/cards/ProductCard";
+
+import { useLazyQuery, useSubscription } from "@apollo/client";
 import {
   CategoryContentContainer,
   CategoryGridContainer,
-} from "@/app/assets/style";
-import ProductCard from "@/app/components/cards/ProductCard";
-
-import { useQuery } from "@apollo/experimental-nextjs-app-support/ssr";
-import { useLazyQuery, useSubscription } from "@apollo/client";
-import PageLoader from "@/app/components/loader/pageLoader";
+  NofoundText,
+} from "../assets/style";
 import { useDispatch } from "react-redux";
 import {
   addProductData,
   updateProductData2,
-} from "@/app/redux/slices/AllProductSlice";
-import { NofoundText } from "@/app/assets/style";
-import ProductCardLoader from "@/app/components/loader/productCardLoader";
+} from "../redux/slices/AllProductSlice";
 
-function SearchProduct({ params }: { params: any }) {
-  const [products, setProducts] = useState<any>([]);
+function AllProduct() {
+  const [allProducts, setAllProducts] = useState([]) as any;
+
   const dispatch = useDispatch();
+
+  const [loadGreeting, { loading: AllProductsLoading }] = useLazyQuery(
+    AllProductsWithSearch,
+    {
+      variables: {
+        filter: "",
+      },
+    }
+  );
 
   const { data: updateSubscriptionData } = useSubscription(updateSubs);
   const { data: addSubscriptionData } = useSubscription(AddToCartRed);
@@ -56,50 +64,32 @@ function SearchProduct({ params }: { params: any }) {
     }
   }, [addSubscriptionData]);
 
-  const [loadGreeting, { loading: SearchProductLoading }] = useLazyQuery(
-    AllProductsWithSearch,
-    {
-      variables: {
-        filter: params?.term,
-      },
-    }
-  );
-
   useEffect(() => {
     const getAllProducts = async () => {
       const { data } = await loadGreeting();
-      setProducts(data?.getAllProducts);
+      setAllProducts(data?.getAllProducts);
     };
     getAllProducts();
   }, [loadGreeting]);
 
-  // if (SearchProductLoading) return <PageLoader />;
-
+  // if (AllProductsLoading) return <PageLoader />;
   return (
     <div>
-      {products ? (
+      {allProducts ? (
         <CategoryContentContainer>
           <div className="content-header">
-            <h1> Search results for {params?.term} </h1>
+            <h1> All Products </h1>
           </div>
 
           <CategoryGridContainer>
-            {SearchProductLoading ? (
-              <>
-                {[...Array(products?.length)].map((_: any, index: number) => (
-                  <ProductCardLoader key={index} />
-                ))}
-              </>
-            ) : (
-              products?.map((data: any) => (
-                <ProductCard
-                  width="100%"
-                  key={data.id}
-                  data={data}
-                  categoryId={""}
-                />
-              ))
-            )}
+            {allProducts?.map((data: any) => (
+              <ProductCard
+                width="100%"
+                key={data.id}
+                data={data}
+                categoryId={""}
+              />
+            ))}
           </CategoryGridContainer>
         </CategoryContentContainer>
       ) : (
@@ -109,4 +99,4 @@ function SearchProduct({ params }: { params: any }) {
   );
 }
 
-export default SearchProduct;
+export default AllProduct;

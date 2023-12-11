@@ -39,7 +39,7 @@ function ProductRight() {
             </p>
           </div>
           <div>
-            <AddButton $count={counter} setCount={setCounter} />
+            <AddButton quantity={undefined} onClick={undefined} variables={undefined} disable={undefined} subListId={undefined} selectedSortOption={undefined} />
           </div>
         </div>
       </div>

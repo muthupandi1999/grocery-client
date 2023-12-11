@@ -1,4 +1,4 @@
-import { useLazyQuery ,useQuery} from "@apollo/client";
+import { useQuery} from "@apollo/client";
 import {
   GetCategoryProducts,
   GetAddToCarts,
@@ -7,7 +7,7 @@ import {
 } from "../query";
 import { useSuspenseQuery } from "@apollo/experimental-nextjs-app-support/ssr";
 
-export const fetchCategoryWithProducts = (id: string) => {
+export const FetchCategoryWithProducts = (id: string) => {
   const {
     data: CategoryProductsSlider,
     refetch: CategoryProductsRefetch,
@@ -16,7 +16,7 @@ export const fetchCategoryWithProducts = (id: string) => {
   } = useQuery(GetCategoryProducts, {
     variables: {
       getCategoryWithProductTypesId: id,
-      sliceCount: 7,
+      sliceCount: 15,
 
     },
   });
@@ -56,7 +56,7 @@ export const fetchCategoryWithProducts = (id: string) => {
 
 // };
 
-export const fetchCartItems =  (userId: string) => {
+export const FetchCartItems =  (userId: string) => {
   const { data: cartProducts, refetch: getUserCartRefetch } = useQuery(
     GetAddToCarts,
     {
@@ -72,15 +72,15 @@ export const fetchCartItems =  (userId: string) => {
   };
 };
 
-export const productTypeProductsByCategoryId = (
+export const ProductTypeProductsByCategoryId = (
   subListId: any,
   selectedSortOption: any
 ) => {
   const {
     data: categoryTypeAndProductsList,
-   
+   loading:categoryProductLoading,
     refetch: refetchProducts,
-  } = useSuspenseQuery(GetProductTypeProducts, {
+  } = useQuery(GetProductTypeProducts, {
     variables: {
       getProductTypeId: subListId,
       filter: selectedSortOption,
@@ -88,10 +88,10 @@ export const productTypeProductsByCategoryId = (
     skip: !selectedSortOption, // Skip initial query if selectedSortOption is not set
   });
 
-  return { categoryTypeAndProductsList, refetchProducts };
+  return { categoryTypeAndProductsList, refetchProducts, categoryProductLoading };
 };
 
-export const getVariant = (variantId: string) => {
+export const GetVariant = (variantId: string) => {
   const { data: GetVariantInfo } = useQuery(getProductVariant, {
     variables: {
       getProductVariantId: variantId,

@@ -44,7 +44,7 @@ function Products() {
                   },
 
                   isHintEnabled: true,
-                }}
+                } as any}
               />
             </div>
           </div>

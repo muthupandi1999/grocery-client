@@ -188,11 +188,10 @@
 
 // export default ProductCard;
 
-import React, { useContext, useEffect, useState } from "react";
-import { ListTitle, ProductTimerCard } from "@/app/assets/style";
+import React, { useEffect } from "react";
+import { CardFooder, ListTitle, ProductTimerCard } from "@/app/assets/style";
 import { AddButton } from "@/app/components/buttons/Buttons";
 
-import { styled } from "styled-components";
 import { FlexBox } from "@/app/assets/style/commonStyles";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -203,121 +202,20 @@ import {
   AddToCart,
   AllProductsWithSearch,
   GetAddToCarts,
-  getAllCategories,
 } from "@/app/service/query";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import { branchId } from "@/app/utils/data";
-import { globalContext } from "@/app/utils/states";
-import { fetchCategoryWithProducts } from "@/app/service/api";
 import { useDispatch, useSelector } from "react-redux";
 import { updateProductData } from "@/app/redux/slices/AllProductSlice";
-
-interface CardContainer {
-  width?: string;
-  stock?: string;
-}
-const ModelBoxstyle = styled.section`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 500px;
-  border: none;
-  border-radius: 10px;
-  padding: 16px;
-  background-color: #f4f6fb;
-  outline: none;
-  &:focus {
-    outline: none;
-  }
-  @media only screen and (max-width: 560px) {
-    width: 300px;
-  }
-`;
-
-let CardContainer = styled.section<CardContainer>`
-  width: ${(props: any) => props.width ?? "96%"};
-  cursor: pointer;
-  background: rgb(255, 255, 255);
-  border: 0.5px solid rgb(232, 232, 232);
-  box-shadow: rgba(0, 0, 0, 0.04) 2px 2px 8px;
-  border-radius: 8px;
-  padding-bottom: 0.75rem;
-  position: relative;
-  @media (max-width: 768px) {
-    margin: auto;
-  }
-  .StockOutBtn {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #000;
-    color: #fff;
-    width: 80px;
-    height: 20px;
-    font-size: 10px;
-    border: none;
-    border-radius: 10px;
-  }
-`;
-export let FlexImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: scale-down;
-`;
-
-export let UnitDiv = styled.section`
-  display: flex;
-  align-items: center;
-  height: 26px;
-  color: #666666;
-  font-size: 12px;
-  margin-bottom: 24px;
-`;
-
-let CardFooder = styled.section`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  .priceBox {
-    display: flex;
-    flex-direction: column;
-  }
-`;
-let CardDetails = styled.section`
-  padding: 0 12px;
-  .productUnit {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #eee;
-    padding: 7px;
-    margin-bottom: 14px;
-    border-radius: 4px;
-  }
-  .unit {
-    font-size: 12px;
-  }
-
-  .unitIcon {
-    color: #785e5e;
-  }
-`;
-
-let ProductPrice = styled.text`
-  color: rgb(31, 31, 31);
-  font-weight: 600;
-  font-size: 12px;
-`;
-
-let ProductCumPrice = styled.text`
-  color: rgb(31, 31, 31);
-  font-weight: 600;
-  font-size: 12px;
-  color: #666;
-  text-decoration: line-through;
-`;
+import {
+  CardContainer,
+  CardDetails,
+  FlexImage,
+  ModelBoxstyle,
+  ProductCumPrice,
+  ProductPrice,
+  UnitDiv,
+} from "@/app/assets/style/productCardStyle";
 
 function ProductCard({
   data,
@@ -326,7 +224,6 @@ function ProductCard({
   categoryId,
   productTypeId,
   selectedSortOption,
-
 }: Readonly<{
   data: any;
   slider?: any;
@@ -334,9 +231,7 @@ function ProductCard({
   categoryId: string;
   productTypeId?: any;
   selectedSortOption?: any;
-
 }>) {
-  console.log("AllProducts2", data);
   const [open, setOpen] = React.useState(false);
   const dispatch = useDispatch();
 
@@ -380,29 +275,43 @@ function ProductCard({
   // const { AddToCartsRefetch } = GetAddToCartsApi("655379d96144626a275e8a14");
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  // const { CategoryListArr } = useContext(globalContext);
-  const variables = {
-    productId: data?.id,
-    quantity: 1,
-    totalPrice: data?.variant?.[0]?.price,
-    userId: "655379d96144626a275e8a14",
-    deviceToken: null,
-    selectedVariantId: data?.variant?.[0]?.id,
-  };
-
-  console.log("Match1", allProducts);
-  console.log("Match2", data?.id);
 
   let findIndex = allProducts?.AllProducts?.findIndex(
     (e: any) => e.id === data?.id
   );
 
+  const index = allProducts?.AllProducts?.[findIndex]?.variant?.findIndex(
+    (item: any) => item.AddToCart && item.AddToCart !== null
+  );
+
+  // If no such index is found, return the first index
+  const resultIndex = index !== -1 ? index : 0;
+  // const { CategoryListArr } = useContext(globalContext);
+  const variables = {
+    productId: data?.id,
+    quantity: 1,
+    totalPrice: data?.variant?.[resultIndex]?.price,
+    userId: "655379d96144626a275e8a14",
+    deviceToken: null,
+    selectedVariantId: data?.variant?.[resultIndex]?.id,
+  };
+
+  console.log("Match1", allProducts);
+  console.log("Match2", data?.id);
+
+ 
+
   console.log("quantity345", allProducts);
 
+  
+
   let quantity =
-    allProducts?.AllProducts?.[findIndex]?.variant?.[0].AddToCart?.quantity;
+    allProducts?.AllProducts?.[findIndex]?.variant?.[resultIndex].AddToCart
+      ?.quantity;
 
   console.log("qunaitutt", quantity);
+
+  console.log("resultIndex", resultIndex);
 
   // let quantity = data?.variant?.[0]?.AddToCart?.quantity;
 
@@ -462,49 +371,51 @@ function ProductCard({
               .availableStock === 0
         ) && <button className="StockOutBtn">Out Of Stock</button>}
 
-        {data?.variant?.length > 1 && (
-          <>
-            <div onClick={handleOpen} className="productUnit">
-              <p className="unit">{`${data?.variant[0]?.values}${data?.variant?.[0].unit}`}</p>
-              <ExpandMoreIcon className="unitIcon" fontSize="small" />
-            </div>
-            <Modal
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-              sx={{
-                "&:focus": {
-                  outline: "none",
-                },
-              }}
-            >
-              <ModelBoxstyle>
-                <UnitCard
-                  image={data?.image?.image}
-                  product={data}
-                  variants={data?.variant}
-                  onClose={handleClose}
-                />
-              </ModelBoxstyle>
-            </Modal>
-          </>
-        )}
+        {data?.variant?.length > 1 &&
+          (console.log("variant123", data?.variant),
+          (
+            <>
+              <div onClick={handleOpen} className="productUnit">
+                <p className="unit">{`${data?.variant[resultIndex]?.values}${data?.variant?.[resultIndex]?.unit}`}</p>
+                <ExpandMoreIcon className="unitIcon" fontSize="small" />
+              </div>
+              <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+                sx={{
+                  "&:focus": {
+                    outline: "none",
+                  },
+                }}
+              >
+                <ModelBoxstyle>
+                  <UnitCard
+                    image={data?.image?.image}
+                    product={data}
+                    variants={data?.variant}
+                    onClose={handleClose}
+                  />
+                </ModelBoxstyle>
+              </Modal>
+            </>
+          ))}
 
         <CardFooder>
           {data?.dicountPercentage === null && (
-            <ProductPrice>${data?.variant?.[0]?.price}</ProductPrice>
+            <ProductPrice>${data?.variant?.[resultIndex]?.price}</ProductPrice>
           )}
           {data?.dicountPercentage && (
             <div className="priceBox">
               <ProductPrice>
                 $
                 {Math.round(
-                  data?.variant?.[0].price -
-                    data?.variant?.[0].price * (data?.dicountPercentage / 100)
+                  data?.variant?.[resultIndex]?.price -
+                    data?.variant?.[resultIndex]?.price * (data?.dicountPercentage / 100)
                 )}
               </ProductPrice>
-              <ProductCumPrice>${data?.variant?.[0].price}</ProductCumPrice>
+              <ProductCumPrice>${data?.variant?.[resultIndex]?.price}</ProductCumPrice>
             </div>
           )}
 
@@ -513,7 +424,6 @@ function ProductCard({
             onClick={() => addToCart()}
             quantity={quantity}
             disable={addLoader}
-          
             subListId={productTypeId}
             selectedSortOption={selectedSortOption}
             // refetchFun={undefined}

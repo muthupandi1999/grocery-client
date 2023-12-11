@@ -1,7 +1,5 @@
 "use client"
 import React from "react";
-import { styled } from "styled-components";
-import { Text, SubText } from "@/app/components/AddToCart";
 import DynamicButton from "@/app/components/buttons/DynamicButton";
 import { CampaignCardWrapper } from "@/app/assets/style";
 import { useRouter } from "next/navigation";

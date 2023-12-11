@@ -1,82 +1,62 @@
-import React, { useState } from "react";
-import { styled } from "styled-components";
+import React, { useState, useEffect } from "react";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { LoginViaPhone, OtpValidationForPhone } from "@/app/service/query";
 import { LoginModelContainer, VerifyBox } from "@/app/assets/style";
 import { useMutation } from "@apollo/client";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import OtpInput from "react-otp-input";
+import toast from "react-hot-toast";
 
-const getAllInputValues = () => {
-  let combinedValue = "";
-  const otpInputs = document.querySelectorAll(".otpInputBox");
-
-  otpInputs.forEach((input: any) => {
-    combinedValue += input.value;
-  });
-
-  return combinedValue;
-};
-
-function LoginCard({ onClose }: { onClose: any}) {
+function LoginCard({ onClose }: Readonly<{ onClose: any }>) {
   const [otpVerificationPage, setOtpVerificationPage] = useState(false);
   const [loginSuc, setLoginSuc] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
-  const combinedOTP = getAllInputValues();
+  const [isColorChange, setIsColorChange] = useState(false);
+  const [otp, setOtp] = useState("");
+
+  // const formatNumber = (value: any) => {
+  //   return value.replace(/[^\d]/g, "");
+  // };
+  const PhoneNoInput = (e: any) => {
+    // var reg = new RegExp('^[0-9]$');
+    setPhoneNumber(e.target.value);
+    let mobileNo = e.target.value;
+    console.log("leng", mobileNo);
+    if (mobileNo.length === 10) {
+      setIsColorChange(true);
+    } else {
+      setIsColorChange(false);
+    }
+  };
 
   const [LoginPhone] = useMutation(LoginViaPhone, {
     variables: { phoneNo: phoneNumber },
   });
   const [OtpVerifyPhone] = useMutation(OtpValidationForPhone);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = e.target;
-    const [fieldName, fieldIndex] = name.split("-");
-    let fieldIntIndex = parseInt(fieldIndex, 10);
-
-    if (value.length >= 1) {
-      if (fieldIntIndex < 6) {
-        const nextField: any = document.querySelector(
-          `input[name=field-${fieldIntIndex + 1}]`
-        );
-        if (nextField !== null) {
-          nextField.focus();
-        }
-      }
-    } else {
-      if (fieldIntIndex > 1) {
-        const prevField: any = document.querySelector(
-          `input[name=field-${fieldIntIndex - 1}]`
-        );
-        if (prevField !== null) {
-          prevField.focus();
-        }
-      }
+  useEffect(() => {
+    if (otp.length === 6) {
+      OtpVerifyPhone({
+        variables: { phoneNo: phoneNumber, otp: otp },
+      }).then((res: any) => {
+        let { data, accessToken, refreshToken } = res.data.loginPhoneNoOtpValidation;
+        let Credentials: any = {
+          userId: data?.id,
+          phoneNo: data?.phoneNo,
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+        };
+        localStorage.setItem("Credentials", JSON.stringify(Credentials));
+        setLoginSuc(true);
+        setTimeout(() => {
+          onClose();
+        }, 2000);
+        
+      }).catch((err:any) => {
+        console.log(err)
+      })
     }
-
-    const combinedOTP = getAllInputValues();
-    if (combinedOTP.length === 6 && phoneNumber.length === 10) {
-      OtpVerifyPhone({ variables: { phoneNo: phoneNumber, otp: combinedOTP } })
-        .then((res: any) => {
-          let { data, accessToken, refreshToken } = res.data.loginPhoneNoOtpValidation;
-          let Credentials: any = {
-            userId:data?.id,
-            phoneNo: data?.phoneNo,
-            accessToken: accessToken,
-            refreshToken: refreshToken,
-          };
-          localStorage.setItem("Credentials", JSON.stringify(Credentials));
-          setLoginSuc(true);
-          setTimeout(() => {
-            onClose();
-          }, 2000);
-
-          // Proceed with logic after OTP verification
-        })
-        .catch((error: any) => {
-          console.error("OTP verification error", error);
-        });
-    }
-  };
+  }, [otp]);
 
   return (
     <LoginModelContainer>
@@ -88,7 +68,7 @@ function LoginCard({ onClose }: { onClose: any}) {
               alt=""
             />
           </div>
-          <h3>India's last minute app</h3>
+          <h3>India s last minute app</h3>
           <h4>
             <a href="#">Log in</a> or <a href="#">Sign up</a>
           </h4>
@@ -96,9 +76,10 @@ function LoginCard({ onClose }: { onClose: any}) {
             <input
               className="PhoneNoInput"
               placeholder="Enter mobile number"
-              type="text"
+              type="number"
               maxLength={10}
-              onInput={(e: any) => setPhoneNumber(e.target.value)}
+              value={phoneNumber.slice(0,10)}
+              onChange={PhoneNoInput}
             />
             <span className="phoneNoPrefix">+91</span>
           </div>
@@ -112,13 +93,16 @@ function LoginCard({ onClose }: { onClose: any}) {
                     console.log("Login response", res);
                     alert(res?.data?.loginViaPhone?.otp);
                     setOtpVerificationPage(true);
+                    setIsColorChange(false);
                   })
-                  .catch((error: any) => {
-                    console.error("Login error", error);
-                  });
+                  // .catch((error: any) => {
+                  //   console.error("Login error", error);
+                  // });
               }
             }}
-            className="loginButton"
+            className={
+              isColorChange ? "loginButton phoneNoColorChange" : "loginButton"
+            }
           >
             Continue
           </button>
@@ -135,47 +119,12 @@ function LoginCard({ onClose }: { onClose: any}) {
             <p>We have a send a verification code to</p>
             <h3>+91 {phoneNumber}</h3>
             <div className="otpBox">
-              <input
-                maxLength={1}
-                onChange={handleChange}
-                name="field-1"
-                className="otpInputBox"
-                type="text"
-              />
-              <input
-                maxLength={1}
-                onChange={handleChange}
-                name="field-2"
-                className="otpInputBox"
-                type="text"
-              />
-              <input
-                maxLength={1}
-                onChange={handleChange}
-                name="field-3"
-                className="otpInputBox"
-                type="text"
-              />
-              <input
-                maxLength={1}
-                onChange={handleChange}
-                name="field-4"
-                className="otpInputBox"
-                type="text"
-              />
-              <input
-                maxLength={1}
-                onChange={handleChange}
-                name="field-5"
-                className="otpInputBox"
-                type="text"
-              />
-              <input
-                maxLength={1}
-                onChange={handleChange}
-                name="field-6"
-                className="otpInputBox"
-                type="text"
+              <OtpInput
+                value={otp}
+                onChange={setOtp}
+                numInputs={6}
+                renderSeparator={<span></span>}
+                renderInput={(props) => <input {...props} />}
               />
             </div>
             <a className="resentText" href="#">

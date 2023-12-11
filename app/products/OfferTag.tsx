@@ -1,25 +1,7 @@
 import React from "react";
+import { OfferTagWrapper, OfferText } from "../assets/style/offerTagStyles";
 
-import { styled } from "styled-components";
-let OfferTagWrapper = styled.section`
-   position:absolute;
-   left:10%;
-   top:0;
-
-`;
-
-let OfferText = styled.text`
-    color:#fff;
-    font-size:8px;
-    position:absolute;
-    left: 0%;
-    top: 13%;
-    text-align:center;
-    width:100%
-   
-`
-
-function OfferTag({discount}:{discount:any}) {
+function OfferTag({ discount }: Readonly<{ discount: any }>) {
   return (
     <OfferTagWrapper>
       <svg
@@ -34,7 +16,9 @@ function OfferTag({discount}:{discount:any}) {
           fill="#538CEE"
         ></path>
       </svg>
-      <OfferText>{discount}%<br></br>Off</OfferText>
+      <OfferText>
+        {discount}%<br></br>Off
+      </OfferText>
     </OfferTagWrapper>
   );
 }

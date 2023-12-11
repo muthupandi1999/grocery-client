@@ -569,6 +569,24 @@ export const getProductVariant = gql`
   }
 `;
 
+export const getUserAddress = gql`
+  query GetUserById($userId: ID!) {
+    getUserById(userId: $userId) {
+      id
+      email
+      firstName
+      Address {
+        id
+        address
+        apartment
+        label
+        userId
+        pincode
+      }
+    }
+  }
+`;
+
 //subsc
 
 export const AddToCartRed = gql`
@@ -833,6 +851,22 @@ export const AllProducts = gql`
           quantity
         }
       }
+    }
+  }
+`;
+
+export const PlaceOrderProducts = gql`
+  mutation placeOrder($input: placeOrderInput!) {
+    placeOrder(input: $input) {
+      message
+    }
+  }
+`;
+
+export const ClientSecret = gql`
+  mutation Mutation($input: cardPaymentInput) {
+    cardPayment(input: $input) {
+      clientSecret
     }
   }
 `;

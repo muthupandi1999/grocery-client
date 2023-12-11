@@ -9,7 +9,7 @@ import CategoryProductSlider from "./sliders/CategoryProductSlider";
 import { AddToCartRed, updateSubs } from "../service/query";
 import { SeeAllText, TitleTag } from "../assets/style";
 import { useSubscription } from "@apollo/client";
-import { fetchCategoryWithProducts } from "../service/api";
+import { FetchCategoryWithProducts } from "../service/api";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -17,10 +17,14 @@ import {
   updateProductData,
   updateProductData2,
 } from "../redux/slices/AllProductSlice";
+import ProductCardLoader from "./loader/productCardLoader";
 
 function TodayLowPriceProducts({ id }: { id: string }) {
-  const { CategoryProductsSlider, CategoryProductLoading } =
-    fetchCategoryWithProducts(id) as any;
+  const {
+    CategoryProductsSlider,
+    CategoryProductLoading,
+    CategoryProductsRefetch,
+  } = FetchCategoryWithProducts(id) as any;
   const dispatch = useDispatch();
 
   const [categoryProductData, setCategoryProductData] = useState([]) as any;
@@ -31,67 +35,90 @@ function TodayLowPriceProducts({ id }: { id: string }) {
   const { data: addSubscriptionData } = useSubscription(AddToCartRed);
 
   useEffect(() => {
-    setCategoryProductData(CategoryProductsSlider?.getCategoryWithProductTypes);
+    CategoryProductsRefetch();
+    // setCategoryProductData(CategoryProductsSlider?.getCategoryWithProductTypes);
   }, [CategoryProductsSlider]);
 
   useEffect(() => {
     if (updateSubscriptionData !== undefined) {
-      let { productId, quantity } = updateSubscriptionData?.updateCart;
+      console.log("updateSubscriptionData", updateSubscriptionData);
+      let { productId, quantity, selectedVariantId } =
+        updateSubscriptionData?.updateCart;
 
       dispatch(
-        updateProductData2({ productId: productId, quantity: quantity })
+        updateProductData2({
+          productId: productId,
+          quantity: quantity,
+          variantId: selectedVariantId,
+        })
       );
     }
   }, [updateSubscriptionData]);
 
   useEffect(() => {
     if (addSubscriptionData != undefined) {
-      dispatch(addProductData({ addProduct: addSubscriptionData.addCart }));
+      dispatch(
+        addProductData({
+          addProduct: addSubscriptionData.addCart,
+          variantId: addSubscriptionData?.selectedVariantId,
+        })
+      );
     }
   }, [addSubscriptionData]);
 
   const router = useRouter();
 
+  if (CategoryProductLoading) {
+    return <div>Loading</div>;
+  }
+
   return (
-    <Suspense fallback={<div>Loading</div>}>
-      <Container>
-        {categoryProductData?.products ? (
-          (console.log("totalCarts", cart),
-          (
-            <>
-              <FlexBox>
-                <TitleTag variant="productTitle">
-                  {categoryProductData?.name}
-                </TitleTag>
+    <Container>
+      {CategoryProductsSlider?.getCategoryWithProductTypes?.products ? (
+        (console.log("totalCarts", cart),
+        (
+          <>
+            <FlexBox>
+              <TitleTag variant="productTitle">
+                {CategoryProductsSlider?.getCategoryWithProductTypes?.name}
+              </TitleTag>
 
-                <SeeAllText
-                  onClick={() =>
-                    router.push(
-                      `/category/everyday-low-prices/by-category-id/${categoryProductData?.id}`
-                    )
-                  }
-                >
-                  See all
-                </SeeAllText>
-              </FlexBox>
-
+              <SeeAllText
+                onClick={() =>
+                  router.push(
+                    `/category/everyday-low-prices/by-category-id/${CategoryProductsSlider?.getCategoryWithProductTypes?.id}`
+                  )
+                }
+              >
+                See all
+              </SeeAllText>
+            </FlexBox>
+            {CategoryProductLoading ? (
+              <div style={{display:"flex", gap:"5px"}}>
+                {[...Array(7)].map((_: any, index: number) => (
+                  <ProductCardLoader />
+                ))}
+              </div>
+            ) : (
               <CategoryProductSlider settings={HomeProductSliderSettings}>
-                {categoryProductData?.products
+                {CategoryProductsSlider?.getCategoryWithProductTypes?.products
                   ?.slice(0, 15)
                   .map((product: any) => (
                     <ProductCard
                       key={product.id}
                       data={product}
-                      slider={true} categoryId={""}                    />
+                      slider={true}
+                      categoryId={""}
+                    />
                   ))}
               </CategoryProductSlider>
-            </>
-          ))
-        ) : (
-          <h4>loading</h4>
-        )}
-      </Container>
-    </Suspense>
+            )}
+          </>
+        ))
+      ) : (
+        <h4>loading</h4>
+      )}
+    </Container>
   );
 }
 

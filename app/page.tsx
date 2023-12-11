@@ -64,6 +64,8 @@ export default function Home() {
     }
   }, []);
 
+  
+
   const {
     loading: AllCategoriesLoading,
     error,
@@ -75,13 +77,13 @@ export default function Home() {
     AllProductTypeBanner
   ) as any;
 
-  if (AllCategoriesLoading && AllProductTypeBannerLoading)
-    return <PageLoader />;
+  // if (AllCategoriesLoading && AllProductTypeBannerLoading)
+    // return <PageLoader />;
   return (
     <Wrapper>
       <Banner>
         <BannerInfo>
-          <BannerText>Don't miss out on tasty Grocery Deals</BannerText>
+          <BannerText>Dont miss out on tasty Grocery Deals</BannerText>
           <BannerSubText>
             Your Favourite grocery shop is now online
           </BannerSubText>
@@ -89,6 +91,7 @@ export default function Home() {
         </BannerInfo>
       </Banner>
       <CategoryProductSlider settings={CampaignSliderSettings}>
+        
         {AllBanner?.getAllBanner?.map((e: any) => (
           <CampaignCard key={e.id} e={e} />
         ))}

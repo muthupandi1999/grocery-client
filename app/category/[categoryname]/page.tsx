@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 function page() {
-  return (
-   null
-  )
+  return null;
 }
 
-export default page
+export default page;
