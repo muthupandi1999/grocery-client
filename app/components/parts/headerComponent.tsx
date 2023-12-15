@@ -81,9 +81,11 @@ import { globalContext } from "@/app/utils/states";
 import React from "react";
 import styled from "styled-components";
 import LoginCard from "../models/login";
+import { useQuery } from "@apollo/client";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import AddressModel from "../models/addressModel";
 import { FetchCartItems } from "@/app/service/api";
+import { gql } from "@apollo/client";
 const HeaderComponent = () => {
   const [open, setOpen] = useState(false);
   const [startSearch, setStartSearch] = useState(false);
@@ -115,6 +117,145 @@ const HeaderComponent = () => {
   // const { cartProducts, getUserCartRefetch } = FetchCartItems(
   //   "655379d96144626a275e8a14"
   // );
+  // const getCartProducts = gql`
+  //   query GetAddToCartsByUserId($userId: ID!, $index: Int, $limit: Int) {
+  //     getAddToCartsByUserId(userId: $userId, index: $index, limit: $limit) {
+  //       subTotal
+  //       count
+  //       carts {
+  //         id
+  //         product {
+  //           id
+  //           name
+  //           productCode
+  //           shortDescription
+  //           description {
+  //             key
+  //             value
+  //           }
+  //           variant {
+  //             id
+  //             size
+  //             unit
+  //             values
+  //             price
+  //             stock
+  //           }
+  //           tag
+  //           image {
+  //             id
+  //             image
+  //             imageList
+  //           }
+  //           rating
+  //           dicountType
+  //           dicountPercentage
+  //           ratingCount
+  //           isActive
+  //           ProductType {
+  //             id
+  //             name
+  //             image
+  //             isActive
+  //             defaultRoute
+  //             productCategory {
+  //               id
+  //               name
+  //               image
+  //               isActive
+  //               productTypes {
+  //                 id
+  //                 name
+  //                 image
+  //                 isActive
+  //                 defaultRoute
+  //                 productCategoryId
+  //               }
+  //               defaultRoute
+  //             }
+  //             productCategoryId
+  //             products {
+  //               id
+  //               name
+  //               productCode
+  //               shortDescription
+  //               tag
+  //               rating
+  //               dicountType
+  //               dicountPercentage
+  //               ratingCount
+  //               isActive
+  //               productTypeId
+  //             }
+  //           }
+  //           productTypeId
+  //         }
+  //         productId
+  //         quantity
+  //         totalPrice
+  //         user {
+  //           id
+  //           email
+  //           phoneNo
+  //           firstName
+  //           lastName
+  //           role
+  //           profileImage
+  //           isActive
+  //           Address {
+  //             id
+  //             address
+  //             apartment
+  //             label
+  //             userId
+  //             pincode
+  //           }
+  //         }
+  //         userId
+  //         deviceToken
+  //         isOrder
+  //         selectedVariantId
+  //         selectedVariant {
+  //           id
+  //           size
+  //           unit
+  //           values
+  //           price
+  //           stock
+  //           ProductInventory {
+  //             id
+  //             productId
+  //             branchId
+  //             variantId
+  //             availableStock
+  //             minimumAvailableStock
+  //           }
+  //           AddToCart {
+  //             id
+  //             productId
+  //             quantity
+  //             totalPrice
+  //             userId
+  //             deviceToken
+  //             isOrder
+  //             selectedVariantId
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // `;
+  // const {
+  //   data: cartProducts,
+  //   refetch: cartRefetch,
+  //   loading: cartLoader,
+  // } = useQuery(getCartProducts, {
+  //   variables: {
+  //     userId: "655379d96144626a275e8a14",
+  //     index: null,
+  //     limit: null,
+  //   },
+  // });
 
   const LoginModelBoxstyle = styled.section`
     position: absolute;
@@ -251,9 +392,13 @@ const HeaderComponent = () => {
                 anchor="right"
                 open={open}
                 onClose={handleClose}
-                
               >
-                <CartDrawer showLoginCard = {handleOpenLogin} open={open} anchor="right" onClose={handleClose} />
+                <CartDrawer
+                  showLoginCard={handleOpenLogin}
+                  open={open}
+                  anchor="right"
+                  onClose={handleClose}
+                />
               </Drawer>
             </HeaderRightSec>
           </>

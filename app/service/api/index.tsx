@@ -19,6 +19,7 @@ export const FetchCategoryWithProducts = (id: string) => {
       sliceCount: 15,
 
     },
+    // pollInterval:500
   });
   return {
     CategoryProductsSlider,
@@ -57,7 +58,7 @@ export const FetchCategoryWithProducts = (id: string) => {
 // };
 
 export const FetchCartItems =  (userId: string) => {
-  const { data: cartProducts, refetch: getUserCartRefetch } = useQuery(
+  const { data: cartProducts, refetch: getUserCartRefetch, loading:cartLoading } = useQuery(
     GetAddToCarts,
     {
       variables: {
@@ -69,6 +70,7 @@ export const FetchCartItems =  (userId: string) => {
    return {
     cartProducts,
     getUserCartRefetch,
+    cartLoading
   };
 };
 

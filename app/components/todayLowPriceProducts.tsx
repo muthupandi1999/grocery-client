@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Suspense } from "react";
-import { Container, FlexBox } from "../assets/style/commonStyles";
+import { Container, FlexBox, SliderHeader } from "../assets/style/commonStyles";
 import ProductCard from "./cards/ProductCard";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -11,7 +11,7 @@ import { SeeAllText, TitleTag } from "../assets/style";
 import { useSubscription } from "@apollo/client";
 import { FetchCategoryWithProducts } from "../service/api";
 import { useDispatch, useSelector } from "react-redux";
-
+import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import {
   addProductData,
   updateProductData,
@@ -57,6 +57,7 @@ function TodayLowPriceProducts({ id }: { id: string }) {
 
   useEffect(() => {
     if (addSubscriptionData != undefined) {
+      console.log("ADdddddddddddddddddddddddddddd")
       dispatch(
         addProductData({
           addProduct: addSubscriptionData.addCart,
@@ -78,7 +79,7 @@ function TodayLowPriceProducts({ id }: { id: string }) {
         (console.log("totalCarts", cart),
         (
           <>
-            <FlexBox>
+            <SliderHeader>
               <TitleTag variant="productTitle">
                 {CategoryProductsSlider?.getCategoryWithProductTypes?.name}
               </TitleTag>
@@ -91,8 +92,9 @@ function TodayLowPriceProducts({ id }: { id: string }) {
                 }
               >
                 See all
+                <ArrowRightAltIcon sx={{fontSize:"22px", position:"relative", top:"4px"}} />
               </SeeAllText>
-            </FlexBox>
+            </SliderHeader>
             {CategoryProductLoading ? (
               <div style={{display:"flex", gap:"5px"}}>
                 {[...Array(7)].map((_: any, index: number) => (

@@ -9,7 +9,7 @@ function CampaignCard({ e }: Readonly<{ e: any }>) {
   const router = useRouter()
   return (
     <CampaignCardWrapper  onClick={() => router.push(e?.ProductType?.defaultRoute)}  style={{ backgroundImage: `url(${e.image})` }}>
-      <h4 color={e.color}>{e.name}</h4>
+      <h4 color={e.color}>{e.title}</h4>
       <h5 color={e.color}>{e.description}</h5>
       <div className="orderButton">
         <DynamicButton color="#000" backgroundColor="#fff" name="Order Now" />

@@ -21,6 +21,8 @@ import {
 } from "@/app/redux/slices/AllProductSlice";
 import { NofoundText } from "@/app/assets/style";
 import ProductCardLoader from "@/app/components/loader/productCardLoader";
+import { CircularProgress } from "@mui/material";
+import { centerstyle } from "@/app/checkout/checkOut";
 
 function SearchProduct({ params }: { params: any }) {
   const [products, setProducts] = useState<any>([]);
@@ -77,33 +79,41 @@ function SearchProduct({ params }: { params: any }) {
 
   return (
     <div>
-      {products ? (
+      {products && !SearchProductLoading ? (
         <CategoryContentContainer>
           <div className="content-header">
             <h1> Search results for {params?.term} </h1>
           </div>
 
           <CategoryGridContainer>
-            {SearchProductLoading ? (
+            {products.length > 0 ? (
               <>
-                {[...Array(products?.length)].map((_: any, index: number) => (
-                  <ProductCardLoader key={index} />
+                {products?.map((data: any) => (
+                  <ProductCard
+                    width="100%"
+                    key={data.id}
+                    data={data}
+                    categoryId={""}
+                  />
                 ))}
               </>
             ) : (
-              products?.map((data: any) => (
-                <ProductCard
-                  width="100%"
-                  key={data.id}
-                  data={data}
-                  categoryId={""}
-                />
-              ))
+              <h3
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "48%",
+                  transform: "translate(-50%, -50%)",
+                }}
+                className="NodataFoundText"
+              >
+                No data found
+              </h3>
             )}
           </CategoryGridContainer>
         </CategoryContentContainer>
       ) : (
-        <NofoundText> No data found</NofoundText>
+        <CircularProgress style={{ color: "green" }} sx={centerstyle} />
       )}
     </div>
   );

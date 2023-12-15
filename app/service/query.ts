@@ -168,6 +168,7 @@ export const AllProductsWithSearch = gql`
           user {
             id
           }
+          isOrder
         }
       }
       tag
@@ -587,6 +588,18 @@ export const getUserAddress = gql`
   }
 `;
 
+export const getUserOrders = gql`
+  query GetUserOrder($userId: String) {
+    getUserOrder(userId: $userId) {
+      id
+      orderId
+      orderTime
+      orderAmount
+      orderStatus
+    }
+  }
+`;
+
 //subsc
 
 export const AddToCartRed = gql`
@@ -849,6 +862,7 @@ export const AllProducts = gql`
           id
           productId
           quantity
+          isOrder
         }
       }
     }

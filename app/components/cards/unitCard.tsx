@@ -109,7 +109,7 @@ function UnitCard({
 
         console.log("sele", selectVariantId);
 
-        let quantity = selectVariantId?.[0]?.AddToCart?.quantity;
+        let quantity = selectVariantId?.[0]?.AddToCart?.find((item:any) => item.isOrder === false)?.quantity ?? undefined;
 
         console.log("aun", quantity);
 

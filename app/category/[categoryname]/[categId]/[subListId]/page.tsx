@@ -27,20 +27,31 @@ import {
   updateProductData2,
 } from "../../../../redux/slices/AllProductSlice";
 import ProductCardLoader from "@/app/components/loader/productCardLoader";
+import { CircularProgress } from "@mui/material";
+import outFocus from "@/app/hooks/useOutFocus";
+const centerstyle = {
+  position: "absolute" as "absolute",
+  top: "45%",
+  left: "58%",
+  transform: "translate(-50%, -50%)",
+  color: "green",
+};
 
 function DynamicPage({ params }: { params: any }) {
   const [dropDown, setDropDown] = useState(false);
   const dropdownRef = useRef(null);
-
-  const [categoryTypeAndProducts, setCategoryTypeAndProducts] = useState<any>([]);
   const [selectedSortOption, setSelectSortOption] = useState("Revelance");
+
+  const [categoryTypeAndProducts, setCategoryTypeAndProducts] = useState<any>(
+    []
+  );
 
   const dispatch = useDispatch();
   const { data: updateSubscriptionData } = useSubscription(updateSubs);
   const { data: addSubscriptionData } = useSubscription(AddToCartRed);
   console.log("updateData", updateSubscriptionData);
 
-  const { loading: categoryProductLoading, refetch: refetchProducts } =
+  const { data: categoryTypeProducts, loading: categoryProductLoading, refetch: refetchProducts } =
     useQuery(GetProductTypeProducts, {
       variables: {
         getProductTypeId: params?.subListId,
@@ -55,9 +66,13 @@ function DynamicPage({ params }: { params: any }) {
     });
 
   useEffect(() => {
+    outFocus(dropdownRef, setDropDown);
+  }, []);
+
+  useEffect(() => {
     refetchProducts();
     // let categoryTypeAndProducts = categoryTypeAndProductsList?.getProductTypeId;
-  }, [selectedSortOption]);
+  }, [selectedSortOption,setSelectSortOption]);
 
   // useEffect(() => {
   //   // refetchProducts();
@@ -95,81 +110,70 @@ function DynamicPage({ params }: { params: any }) {
   return (
     <>
       <CategorySidebarComponents />
-      {categoryTypeAndProducts && (
-        console.log("varommm"),
-        <CategoryContentContainer>
-          <>
-            <div className="content-header">
-              <h1> Buy {categoryTypeAndProducts?.name} online </h1>
+      {categoryTypeAndProducts && !categoryProductLoading ? (
+        <CategoryContentContainer $variant="productType">
+          <div className="content-header">
+            <h1> Buy {categoryTypeAndProducts?.name} online </h1>
 
-              <div className="sort">
-                <span>Sort By</span>
-                <div className="dropDown" ref={dropdownRef}>
-                  <CustomSelectField onClick={() => setDropDown(!dropDown)}>
-                    {selectedSortOption}
-                    <span>
-                      <IoChevronDownSharp />
-                    </span>
-                  </CustomSelectField>
-                  {dropDown && (
-                    <div className="select-options">
-                      {SortOptions.map((data, i) => (
-                        <DropDownListItem
-                          $colorState={data === selectedSortOption}
-                          $id={SortOptions.length - 2 < i}
-                          $dropdownState={dropDown}
-                          onClick={() => {
-                            setSelectSortOption(data);
-                            setDropDown(false);
-                          }}
-                          key={i}
-                        >
-                          <span style={{}}>
-                            {selectedSortOption === data ? (
-                              <FaCheckCircle style={{ color: "green" }} />
-                            ) : (
-                              <MdOutlineRadioButtonUnchecked
-                                style={{ color: "gray" }}
-                              />
-                            )}
-                          </span>
-                          {data}
-                        </DropDownListItem>
-                      ))}
-                    </div>
-                  )}
-                </div>
+            <div className="sort">
+              <span>Sort By</span>
+              <div className="dropDown" ref={dropdownRef}>
+                <CustomSelectField onClick={() => setDropDown(!dropDown)}>
+                  {selectedSortOption}
+                  <span>
+                    <IoChevronDownSharp />
+                  </span>
+                </CustomSelectField>
+                {dropDown && (
+                  <div className="select-options">
+                    {SortOptions.map((data, i) => (
+                      <DropDownListItem
+                        $colorState={data === selectedSortOption}
+                        $id={SortOptions.length - 2 < i}
+                        $dropdownState={dropDown}
+                        onClick={() => {
+                          setSelectSortOption(data);
+                          setDropDown(false);
+                        }}
+                        key={i}
+                      >
+                        <span style={{}}>
+                          {selectedSortOption === data ? (
+                            <FaCheckCircle style={{ color: "green" }} />
+                          ) : (
+                            <MdOutlineRadioButtonUnchecked
+                              style={{ color: "gray" }}
+                            />
+                          )}
+                        </span>
+                        {data}
+                      </DropDownListItem>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
+          </div>
 
-            {categoryTypeAndProducts?.products?.length > 0 ? (
-              <CategoryGridContainer>
-                {categoryProductLoading ? (
-                  <>
-                    {[...Array(categoryTypeAndProducts?.products?.length)].map(
-                      (_: any, index: number) => (
-                        <ProductCardLoader />
-                      )
-                    )}
-                  </>
-                ) : (
-                  categoryTypeAndProducts?.products?.map((data: any) => (
-                    <ProductCard
-                      productTypeId={params?.subListId}
-                      key={data.id}
-                      width="100%"
-                      data={data}
-                      selectedSortOption={selectedSortOption}
-                      categoryId={""}
-                    />
-                  ))
-                )}
-              </CategoryGridContainer>
-            ) : (
-              <h3 className="NodataFoundText">No data found</h3>
-            )}
-          </>
+          {categoryTypeAndProducts?.products?.length > 0 && !categoryProductLoading ? (
+            <CategoryGridContainer>
+              {categoryTypeAndProducts?.products?.map((data: any) => (
+                <ProductCard
+                  productTypeId={params?.subListId}
+                  key={data.id}
+                  width="100%"
+                  data={data}
+                  selectedSortOption={selectedSortOption}
+                  categoryId={""}
+                />
+              ))}
+            </CategoryGridContainer>
+          ) : (
+            <h3 className="NodataFoundText">No data found</h3>
+          )}
         </CategoryContentContainer>
+      ) : (
+        <CircularProgress sx={centerstyle} />
       )}
     </>
   );

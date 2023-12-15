@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 
-interface CardContainer {
+interface PRODUCTCARDI {
   width?: string;
   stock?: string;
 }
@@ -24,7 +24,7 @@ export const ModelBoxstyle = styled.section`
   }
 `;
 
-export const CardContainer = styled.section<CardContainer>`
+export const CardContainer = styled.section<PRODUCTCARDI>`
   width: ${(props: any) => props.width ?? "96%"};
   cursor: pointer;
   background: rgb(255, 255, 255);
@@ -35,6 +35,75 @@ export const CardContainer = styled.section<CardContainer>`
   position: relative;
   @media (max-width: 768px) {
     margin: auto;
+  }
+  .cardDetails {
+    padding: 0 12px;
+    .productUnit {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      padding: 7px;
+      margin-bottom: 14px;
+      border-radius: 4px;
+      font-weight: 500;
+      padding-left:0px;
+    }
+
+    .productUnitVariant {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #eee;
+      padding: 7px;
+      margin-bottom: 14px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+    .unit {
+      font-size: 12px;
+    }
+
+    .unitIcon {
+      color: #785e5e;
+      font-size: 20px;
+      opacity: 0.7;
+    }
+    .productUnit {
+      display: flex;
+      align-items: center;
+      height: 26px;
+      color: #666666;
+      font-size: 12px;
+      margin-bottom: 24px;
+    }
+
+    .cardFooter {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .priceBox {
+        display: flex;
+        flex-direction: column;
+        .discountPrice {
+          color: rgb(31, 31, 31);
+          font-weight: 600;
+          font-size: 12px;
+        }
+      }
+      .productPrice {
+        color: rgb(31, 31, 31);
+        font-weight: 600;
+        font-size: 12px;
+      }
+      .cumulativePrice {
+        color: rgb(31, 31, 31);
+        font-weight: 600;
+        font-size: 12px;
+        color: #666;
+        text-decoration: line-through;
+      }
+    }
   }
   .StockOutBtn {
     position: absolute;
@@ -63,47 +132,4 @@ export const UnitDiv = styled.section`
   color: #666666;
   font-size: 12px;
   margin-bottom: 24px;
-`;
-
-export const CardFooder = styled.section`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  .priceBox {
-    display: flex;
-    flex-direction: column;
-  }
-`;
-export const CardDetails = styled.section`
-  padding: 0 12px;
-  .productUnit {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #eee;
-    padding: 7px;
-    margin-bottom: 14px;
-    border-radius: 4px;
-  }
-  .unit {
-    font-size: 12px;
-  }
-
-  .unitIcon {
-    color: #785e5e;
-  }
-`;
-
-export const ProductPrice = styled.text`
-  color: rgb(31, 31, 31);
-  font-weight: 600;
-  font-size: 12px;
-`;
-
-export const ProductCumPrice = styled.text`
-  color: rgb(31, 31, 31);
-  font-weight: 600;
-  font-size: 12px;
-  color: #666;
-  text-decoration: line-through;
 `;

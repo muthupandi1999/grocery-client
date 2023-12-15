@@ -36,29 +36,27 @@ function page() {
           },
           0
         );
-        console.log("discoutn", disCountAmount);
-        
-        if (disCountAmount) {
-          const { data } = await createPaymentIntent({
-            variables: {
-              input: {
-                name: "Muthupandi",
-                email: "Test@gmail.com",
-                amount:
-                  cartProducts?.getAddToCartsByUserId?.subTotal -
-                  disCountAmount +
-                  25,
-              },
-            },
-          });
-          if (data) {
-            setClientSecret(data?.cardPayment?.clientSecret);
-            setCheckoutPage(true);
+        disCountAmount = Math.round(disCountAmount);
 
-            console.log("clientSecret", clientSecret);
-          }
-          console.log("data45", data?.cardPayment);
+        const { data } = await createPaymentIntent({
+          variables: {
+            input: {
+              name: "Muthupandi",
+              email: "Test@gmail.com",
+              amount:
+                cartProducts?.getAddToCartsByUserId?.subTotal -
+                disCountAmount +
+                25,
+            },
+          },
+        });
+        if (data) {
+          setClientSecret(data?.cardPayment?.clientSecret);
+          setCheckoutPage(true);
+
+          console.log("clientSecret", clientSecret);
         }
+        console.log("data45", data?.cardPayment);
       } catch (error) {}
 
       // const clientSecret = data.cardPayment.clientSecret;
@@ -76,6 +74,7 @@ function page() {
       /*...*/
     },
   };
+  console.log("checkoutPagecheckoutPage1", clientSecret);
   return (
     <>
       {checkoutPage && (

@@ -16,9 +16,11 @@ import Image from "next/image";
 import { white } from "./themeColor";
 import { Grid, Popover } from "@mui/material";
 // font-family: 'Open Sans', sans-serif;
+// font-family: 'Radio Canada', sans-serif;
 export const GlobalStyle = createGlobalStyle`
     body{
-      font-family: 'Radio Canada', sans-serif;
+
+      font-family: 'Montserrat', sans-serif;
         font-size:14px;
     }
     *{
@@ -194,7 +196,19 @@ export const GlobalStyle = createGlobalStyle`
 		stroke-dashoffset: 40.84;
 	}
 }
-  
+div::-webkit-scrollbar {
+  background: #fff;
+  width: 3px;
+  height: 3px; 
+}
+
+div::-webkit-scrollbar-thumb {
+  background: green;
+}
+
+
+
+
 `;
 export const ImgTag = styled(Image)<IImgTag>`
   object-position: center;
@@ -416,18 +430,18 @@ justify-content:space-between;
 `;
 export const HeaderContainer = styled.div`
   border-bottom: 1px solid ${(props) => props.theme.border.primary};
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
   z-index: 1;
   background-color: white;
 `;
-export const ChildContainer = styled.div`
-  max-width: 1300px;
-  margin: 120px auto 0;
-  padding-right: 60px;
-
+interface CHILDCONTAINERI {
+  paddingTop: string;
+}
+export const ChildContainer = styled.div<CHILDCONTAINERI>`
+  max-width: 1440px;
+  margin: auto;
+  padding-top: ${(props) => props.paddingTop || "48px"};
   @media only screen and (max-width: 1300px) {
     padding-right: 0;
     margin: 120px 20px 0 20px;
@@ -440,18 +454,19 @@ export const ChildContainer = styled.div`
 //category
 export const CategoryNavContainer = styled.div`
   background-color: #fff;
-  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.15);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
+    rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+  border-top: 0.5px solid #8080801f;
   position: fixed;
-  top: 82px;
+  top: 110px;
   left: 0;
   right: 0;
   z-index: 1;
   .navList {
-    max-width: 1430px;
+    max-width: 1440px;
     margin: 0 auto;
     display: flex;
     justify-content: space-evenly;
-    padding: 0 60px;
   }
 `;
 export const NavListItem = styled.a`
@@ -477,7 +492,6 @@ export const CategoryHiddenListPopper = styled(Popover)`
   }
 `;
 export const CategoryContainer = styled.div`
-  margin-top: 131px;
   display: flex;
   height: 100%;
   position: relative;
@@ -485,13 +499,13 @@ export const CategoryContainer = styled.div`
   overflow: auto;
   border-bottom: 1px solid ${(props) => props.theme.border.primary};
   border-right: 1px solid ${(props) => props.theme.border.primary};
-
+  padding-top: 40px;
   &::-webkit-scrollbar {
     display: none;
   }
 `;
 export const CategorySidebarContainer = styled.div`
-  width: 250px;
+  width: 20%;
   position: sticky;
   top: 0;
 
@@ -523,9 +537,15 @@ export const SideBarListContainer = styled.div<sidebarListContainer>`
     text-transform: capitalize;
   }
 `;
-export const CategoryContentContainer = styled.div`
-  width: 100%;
 
+interface CATEGORYCONTAINERI {
+  $variant?: string;
+  paddingTop?: string;
+}
+
+export const CategoryContentContainer = styled.div<CATEGORYCONTAINERI>`
+  width: ${(props: any) => (props.$variant === "productType" ? "80%" : "100%")};
+  padding-top: ${(props) => props.paddingTop || "0px"};
   .NodataFoundText {
     position: absolute;
     top: 50%;
@@ -553,8 +573,9 @@ export const CategoryContentContainer = styled.div`
       gap: 15px;
       .dropDown {
         position: relative;
-        z-index: 5;
+
         .select-options {
+          z-index: 5;
           background-color: ${(props: any) => props.theme.color.white};
           position: absolute;
           border: 1px solid ${(props: any) => props.theme.border.primary};
@@ -672,6 +693,8 @@ export const CardContainer = styled.div<CardContainerI>`
     }
     .unitIcon {
       color: #785e5e;
+      position:relative;
+      bottom:11px;
     }
   }
   
@@ -927,7 +950,7 @@ export const ProductRightSection = styled.div`
 export const TitleTag = styled.h3<{ variant: string }>`
   color: ${(props: any) => props.theme.color.black};
   font-weight: ${(props: any) =>
-    props.variant === "productTitle" ? 700 : 600};
+    props.variant === "productTitle" ? 600 : 500};
   font-size: 24px;
   text-transform: capitalize;
   padding: ${(props) =>
@@ -986,9 +1009,33 @@ export const ListTitle = styled.p<ListTitleText>`
   text-overflow: ellipsis;
 `;
 
+export const Text1 = styled.h1<ListTitleText>`
+  margin-bottom: ${(props: any) => props.marginBottom || "8px"};
+  font-size: ${(props: any) => props.fontSize || "14px"};
+  font-weight: 600;
+  line-height: 25px;
+  color: ${(props: any) => props.theme.color.black};
+  text-transform: capitalize;
+  min-height: 45px;
+  white-space: wrap;
+  width: 80%;
+  overflow: hidden;
+  max-height: 36px;
+  text-overflow: ellipsis;
+`;
+
 //home page
 export const Wrapper = styled.section`
   margin: auto;
+  .bannerCards {
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(var(--auto-grid-min-size), 1fr)
+    );
+    --auto-grid-min-size: 15rem;
+    grid-gap: 1rem;
+  }
 `;
 
 export const CategoryFlexBox = styled.section`
@@ -1000,6 +1047,7 @@ export const Banner = styled.section`
   background-repeat: no-repeat;
   background-size: cover;
   height: 15rem;
+  margin-top: 48px;
   background-size: cover;
   background-position: 40% 60%;
   margin-bottom: 30px;
@@ -1049,8 +1097,8 @@ export const CategoryProductSliderWrapper = styled.div`
     background-size: 15px 15px;
     background-repeat: no-repeat;
     background-position: center;
-    box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 5px -1px,
-      rgba(0, 0, 0, 0.14) 0px 6px 10px 0px, rgba(0, 0, 0, 0.12) 0px 1px 18px 0px;
+    box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+      rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
     border-radius: 50%;
     width: 34px;
     height: 34px;
@@ -1060,42 +1108,40 @@ export const CategoryProductSliderWrapper = styled.div`
   .slick-next:before {
     content: "";
   }
+
   .slick-prev {
-    background-image: url(https://cdn-icons-png.flaticon.com/512/271/271220.png);
-    left: -8px;
+    background-image: url(https://cdn-icons-png.flaticon.com/128/2722/2722991.png);
+    background-position: center;
+    background-size: 60%;
+    left: unset;
     z-index: 1;
+    right: 50px !important;
+    top: -30px;
   }
 
   .slick-arrow.slick-prev.slick-disabled {
-    display: none !important;
+    display: block !important;
+    opacity: 0.3;
+    z-index: -1;
   }
   .slick-arrow.slick-next.slick-disabled {
-    display: none !important;
+    display: block !important;
+    opacity: 0.3;
+    z-index: -1;
   }
   .slick-next {
-    background-image: url(https://cdn-icons-png.flaticon.com/512/32/32213.png) !important;
-    right: -11px;
+    background-image: url(https://cdn-icons-png.flaticon.com/128/2989/2989988.png) !important;
+    background-position: center;
+    background-size: 60%;
+    right: 5px;
+    top: -30px;
   }
 `;
+
 export const CategoryImageContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(var(--auto-grid-min-size), 1fr)
-  );
-  --auto-grid-min-size: 5rem;
-  grid-gap: 0.5rem;
-  @media screen and (max-width: 1020px) {
-    grid-template-columns: repeat(6, 1fr);
-  }
-  @media screen and (max-width: 720px) {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  @media screen and (max-width: 480px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  margin: 20px 5px;
   .categoryCartBox {
-    background: #efefef;
+    background: #fff;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -1103,12 +1149,23 @@ export const CategoryImageContainer = styled.div`
     padding: 10px;
     cursor: pointer;
     border-radius: 20px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 1px 10px;
+    transition: transform 0.5s, box-shadow 0.1s;
+    width: 90%;
+    margin: 10px 0;
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    }
   }
   .img-container {
-    width: 70px;
-    height: 70px;
+    width: 50px;
+    height: 50px;
     overflow: hidden;
     object-fit: fill;
+    position: relative;
+    margin: 20px 0;
+
     img {
       width: 100%;
       height: 100%;
@@ -1118,6 +1175,55 @@ export const CategoryImageContainer = styled.div`
     text-align: center;
   }
 `;
+// export const CategoryImageContainer = styled.div`
+//   display: grid;
+//   grid-template-columns: repeat(
+//     auto-fill,
+//     minmax(var(--auto-grid-min-size), 1fr)
+//   );
+//   --auto-grid-min-size: 7rem;
+//   grid-gap: 1rem;
+//   @media screen and (max-width: 1020px) {
+//     grid-template-columns: repeat(6, 1fr);
+//   }
+//   @media screen and (max-width: 720px) {
+//     grid-template-columns: repeat(4, 1fr);
+//   }
+//   @media screen and (max-width: 480px) {
+//     grid-template-columns: repeat(3, 1fr);
+//   }
+//   .categoryCartBox {
+//     background: #fff;
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: center;
+//     align-items: center;
+//     padding: 10px;
+//     cursor: pointer;
+//     border-radius: 20px;
+//     box-shadow: rgba(149, 157, 165, 0.2) 0px 4px 10px;
+//     transition: transform 0.5s, box-shadow 0.1s;
+//     &:hover {
+//       transform: translateY(-5px);
+//       box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+//     }
+//   }
+//   .img-container {
+//     width: 50px;
+//     height: 50px;
+//     overflow: hidden;
+//     object-fit: fill;
+//     position: relative;
+
+//     img {
+//       width: 100%;
+//       height: 100%;
+//     }
+//   }
+//   p {
+//     text-align: center;
+//   }
+// `;
 //cards
 export const CampaignCardWrapper = styled.section`
   width: 95%;
@@ -1129,14 +1235,14 @@ export const CampaignCardWrapper = styled.section`
   cursor: pointer;
 
   h4 {
-    font-size: 25px;
+    font-size: 20px;
     width: 80%;
     padding: 30px 0 10px 30px;
     color: #fff;
     font-weight: 500;
   }
   h5 {
-    font-size: 18px;
+    font-size: 16px;
     width: 80%;
     padding: 0 0 10px 30px;
     color: #fff;
@@ -1216,20 +1322,59 @@ export const CaregoryCardWrapper = styled.section`
 
 //footer
 export const FooterContainer = styled(Grid)`
-  margin: 48px auto auto;
+  max-width: 1440px;
+  margin: auto;
+  .subscripe {
+    text-transform: uppercase;
+    font-size: 16px;
+    font-weight: 600;
+    padding-bottom: 20px;
+  }
+  .subscripeInput {
+    position: relative;
+    input {
+      border: 0.4px solid #e6e6e6;
+      padding: 10px;
+      border-radius: 4px;
+      width: 100%;
+    }
+    .subscripeIcon {
+      position: absolute;
+      right: 1.1%;
+      font-size: 31px;
+      top: 7%;
+      background: #adadad;
+      padding: 6px;
+      color: #fff;
+    }
+  }
+  .followUs {
+    padding-top: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .followIcons {
+    text-align: center;
+    padding-top: 20px;
+    .Icon {
+      margin: 0 10px;
+    }
+  }
 `;
 
 export const Rights = styled.section`
-  margin: 20px 0;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  background: #e6e6e6;
-  padding: 10px 20px;
-  border-radius: 10px;
-  .Icon {
+  background: #fff;
+  max-width: 1440px;
+  margin: auto;
+  padding: 10px 0px;
+  border-top: 1px solid #d8d8d8 .Icon {
     margin: 0 4px;
     cursor: pointer;
   }
@@ -1240,13 +1385,17 @@ export const StyledLink = styled.li<StyleLink>`
   text-transform: capitalize;
   margin: 5px 0;
   color: ${(props: any) => props.theme.color.greyTertiary};
+  padding: 3px 0;
+  width: 80%;
+  line-height: 26px;
 `;
 export const LinksTitleTag = styled.h3`
   color: ${(props) => props.theme.color.black};
   font-weight: 600;
-  font-size: 18px;
-
-  padding: 24px 0;
+  font-size: 16px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  width: fit-content;
   span {
     color: ${(props: any) => props.theme.color.greenPrimary};
     margin-left: 20px;
@@ -1451,4 +1600,50 @@ export const NofoundText = styled.text`
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 20px;
+`;
+
+export const FooterAbout = styled.div`
+  padding: 50px 0;
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(var(--auto-grid-min-size), 1fr)
+  );
+  --auto-grid-min-size: 12rem;
+  grid-gap: 1rem;
+  @media screen and (max-width: 1020px) {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  @media screen and (max-width: 720px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  @media screen and (max-width: 480px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .col {
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    padding: 20px 10px;
+    border-radius: 12px;
+  }
+  .footerAboutContainer {
+    display: flex;
+    align-items: flex-start;
+  }
+  .footerAboutContainerDetails {
+    display: flex;
+    flex-direction: column;
+    h5 {
+      font-size: 16px;
+      padding-bottom: 12px;
+      font-weight: 600;
+    }
+    p {
+      line-height: 25px;
+      font-size: 14px;
+    }
+  }
+
+  .footerAboutIcon {
+    margin: 0 12px;
+  }
 `;

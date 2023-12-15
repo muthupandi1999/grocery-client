@@ -1,10 +1,10 @@
 "use client";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { FetchCartItems } from "../service/api";
 import { usePathname } from "next/navigation";
-import { Stripe, loadStripe } from "@stripe/stripe-js";
+import { PaymentIntentResult, Stripe, loadStripe } from "@stripe/stripe-js";
 import getStripe from "../utils/get-stripejs";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -16,14 +16,26 @@ import Paper from "@mui/material/Paper";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import Pagination from "@mui/material/Pagination";
-import { ClientSecret } from "../service/query";
-import { useMutation } from "@apollo/client";
+import { AllProductsWithSearch, ClientSecret } from "../service/query";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import toast, { Toaster } from "react-hot-toast";
 import {
   useStripe,
   useElements,
   PaymentElement,
 } from "@stripe/react-stripe-js";
+import { PlaceOrderProducts } from "../service/query";
+import { updateProductData } from "../redux/slices/AllProductSlice";
+import { useDispatch } from "react-redux";
+import {
+  Button,
+  Modal,
+  Box,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { ModelBoxstyle } from "@/app/assets/style/productCardStyle";
 
 const CheckOutBtn = styled.button`
   background-color: green;
@@ -218,13 +230,27 @@ export const CheckoutWrapper = styled.section`
     }
   }
 `;
+
+export const centerstyle = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  height: "200px",
+  width: "400px",
+};
 function CheckOut({ clientSecrett }: any) {
+  console.log("checkoutPagecheckoutPage2", clientSecrett);
   const [carts, setCarts] = useState<any>([]);
   const selectPaymentMethod = useState("COD");
 
   const { cartProducts, getUserCartRefetch } = FetchCartItems(
     "655379d96144626a275e8a14"
   );
+  const router = useRouter();
+
+  const [orderType, setOrderType] = useState("");
+  const [paymentType, setPaymentType] = useState("");
 
   const itemsPerPage = 5; // Number of items to show per page
 
@@ -237,8 +263,37 @@ function CheckOut({ clientSecrett }: any) {
 
   const stripe = useStripe();
   const elements = useElements();
+  const dispatch = useDispatch();
+
+  const [stripePayment, setStripePayment] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [loading, setLoading] = useState(false); // Control loading state
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const [errorMessage, setErrorMessage] = useState<any>(null);
+
+  console.log("orderType", orderType);
+  console.log("paymentType", paymentType);
+
+  const [placeOrder] = useMutation(PlaceOrderProducts);
+
+  const [loadGreeting, { data: AllProductsList, loading: AllProductsLoading }] =
+    useLazyQuery(AllProductsWithSearch);
+
+  const getAllProducts = async (dispatch: any) => {
+    try {
+      const { data } = await loadGreeting(); // Assuming loadGreeting fetches data
+      if (data?.getAllProducts) {
+        // data.getAllProducts.forEach((product: any) => {
+        dispatch(updateProductData(data.getAllProducts)); // Dispatch each product individually
+        // });
+      }
+    } catch (error) {
+      // Handle errors if any
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -274,28 +329,80 @@ function CheckOut({ clientSecrett }: any) {
     if (!stripe || !elements) {
       // Stripe.js hasn't yet loaded.
       // Make sure to disable form submission until Stripe.js has loaded.
-      return;
-    }
-
-    const { error } = await stripe.confirmPayment({
-      //`Elements` instance that was used to create the Payment Element
-      elements,
-      confirmParams: {
-        return_url: "http://localhost:3000/checkout/success",
-      },
-    });
-
-    if (error) {
-      // This point will only be reached if there is an immediate error when
-      // confirming the payment. Show error to your customer (for example, payment
-      // details incomplete)
-      setErrorMessage(error.message);
+      setLoading(true);
     } else {
-      console.log("heyyyyyyyyyyyyyyyyyyyy42354325");
-      // Your customer will be redirected to your `return_url`. For some payment
-      // methods like iDEAL, your customer will be redirected to an intermediate
-      // site first to authorize the payment, then redirected to the `return_url`.
+      await stripe
+        .confirmPayment({
+          elements,
+          //`Elements` instance that was used to create the Payment Element
+          // clientSecret: clientSecrett,
+          confirmParams: {
+            return_url: "http://localhost:3000/orders",
+          },
+          redirect: "if_required",
+        })
+        .then(async function (result: PaymentIntentResult) {
+          console.log("resultresultresult", result);
+          if (result?.paymentIntent?.status === "succeeded") {
+            setLoading(true);
+            try {
+              // Call the placeOrder mutation with the necessary parameters
+              const { data } = await placeOrder({
+                variables: {
+                  input: {
+                    orderType,
+                    address: {
+                      address: "North St",
+                      apartment: "Bungalow",
+                      label: "Home",
+                      pincode: 625018,
+                    },
+                    addToCartId: carts?.carts?.map(
+                      (cartItem: any) => cartItem.id
+                    ), // Assuming you need to pass cart item IDs
+                    userId: "655379d96144626a275e8a14",
+                    paymentType,
+                    orderAmount: Math.round(
+                      carts?.subTotal - disCountAmount + 25
+                    ),
+                    branchId: "653f711d4bd8c0f11a3e7106",
+                  },
+                },
+              });
+              if (data) {
+                setTimeout(() => {
+                  setLoading(false);
+                  setStripePayment(true);
+                }, 3000);
+
+                setTimeout(() => {
+                  setStripePayment(false);
+                  toast.success("Order placed successfully!");
+                  getAllProducts(dispatch).then(() => {
+                    router.push("/orders");
+                  });
+                }, 6000);
+              }
+              console.log("Order placed:", data);
+
+              // Display a success message or perform any other necessary actions
+            } catch (error) {
+              console.error("Error placing order:", error);
+              toast.error("Failed to place order");
+            }
+          } else if (result.error) {
+            // Inform the customer that there was an error.
+            setErrorMessage(result?.error.message);
+          }
+        });
     }
+
+    // const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecrett, {
+    //   payment_method: {
+    //     card: elements.getElement(PaymentElement),
+    //   } as any,
+    //   return_url: "http://localhost:3000/checkout/success",// Setting the success URL during payment confirmation
+    // });
   };
 
   return (
@@ -481,8 +588,11 @@ function CheckOut({ clientSecrett }: any) {
                 type="radio"
                 id="deliveryInfo1"
                 name="delivery"
-                value="delivery"
+                value="Delivery"
                 style={{ marginRight: "10px" }}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setOrderType(e.target.value)
+                }
               />
               <label>Delivery</label>
               <br />
@@ -492,8 +602,11 @@ function CheckOut({ clientSecrett }: any) {
                 type="radio"
                 id="deliveryInfo2"
                 name="delivery"
-                value="takeaway"
+                value="Takeaway"
                 style={{ marginRight: "10px" }}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setOrderType(e.target.value)
+                }
               />
               <label>Takeaway</label>
             </div>
@@ -512,8 +625,11 @@ function CheckOut({ clientSecrett }: any) {
                 type="radio"
                 id="paymentInfo1"
                 name="payment"
-                value="stripe"
+                value="CARD"
                 style={{ marginRight: "10px" }}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setPaymentType(e.target.value)
+                }
               />
               <label>Stripe</label>
               <br />
@@ -523,18 +639,24 @@ function CheckOut({ clientSecrett }: any) {
                 type="radio"
                 id="paymentInfo2"
                 name="payment"
-                value="paypal"
+                value="BANK"
                 style={{ marginRight: "10px" }}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setPaymentType(e.target.value)
+                }
               />
-              <label>Paypal</label>
+              <label>BANK</label>
             </div>
             <div style={{ marginRight: "20px", display: "flex" }}>
               <input
                 type="radio"
                 id="paymentInfo3"
                 name="payment"
-                value="COD"
+                value="CASH"
                 style={{ marginRight: "10px" }}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setPaymentType(e.target.value)
+                }
               />
               <label>COD</label>
             </div>
@@ -547,12 +669,53 @@ function CheckOut({ clientSecrett }: any) {
             type="text"
             id="amount"
             name="amount"
-            value={carts?.subTotal - disCountAmount + 25}
+            value={Math.round(carts?.subTotal - disCountAmount + 25)}
           />
           <CheckOutBtn disabled={!stripe}>Submit</CheckOutBtn>
-          {/* Show error message to your customers  */}
           {errorMessage && toast.error(errorMessage)}
         </form>
+      </div>
+      <div>
+        {loading ? ( // Display loader while loading is true
+          <Modal
+            open={loading} // Show modal only when both conditions are true
+            onClose={() => setLoading(false)}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <div>
+              <CircularProgress sx={centerstyle} />
+            </div>
+          </Modal>
+        ) : (
+          <Modal
+            open={stripePayment} // Show modal only when both conditions are true
+            onClose={() => setStripePayment(false)}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <ModelBoxstyle>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Typography
+                  mr={2}
+                  id="modal-modal-title"
+                  variant="h6"
+                  component="h2"
+                  sx={{ fontSize: "16px" }}
+                >
+                  Payment Success!
+                </Typography>
+                <CheckCircleIcon sx={{ color: "#149914" }} />
+              </div>
+            </ModelBoxstyle>
+          </Modal>
+        )}
       </div>
     </CheckoutWrapper>
   );

@@ -1,14 +1,16 @@
 import { AddressBox } from "@/app/assets/style/addressModelStyles";
+import { useRouter } from "next/navigation";
 import React from "react";
 
-function AddressModel({onClose}:Readonly<{onClose:any}>) {
+function AddressModel({ onClose }: Readonly<{ onClose: any }>) {
   let userDta: any = localStorage?.getItem("Credentials");
   let data: any = JSON.parse(userDta);
+  const router = useRouter();
 
   const Logout = () => {
     localStorage.clear();
     onClose();
-  }
+  };
 
   return (
     <AddressBox>
@@ -18,7 +20,15 @@ function AddressModel({onClose}:Readonly<{onClose:any}>) {
       </div>
       <div>
         <ul className="UserInfo">
-          <li className="UserInfoList">My Orders</li>
+          <li
+            className="UserInfoList"
+            onClick={() => {
+              onClose();
+              router.push("/orders");
+            }}
+          >
+            My Orders
+          </li>
           <li className="UserInfoList">Saved Address</li>
           <li className="UserInfoList">
             <div id="userWallet">
@@ -27,7 +37,9 @@ function AddressModel({onClose}:Readonly<{onClose:any}>) {
             </div>
           </li>
           <li className="UserInfoList">FAQ s</li>
-          <li onClick={() => Logout()} className="UserInfoList">Log Out</li>
+          <li onClick={() => Logout()} className="UserInfoList">
+            Log Out
+          </li>
         </ul>
       </div>
       <div className="QrInfo">

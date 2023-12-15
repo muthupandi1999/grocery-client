@@ -49,6 +49,10 @@ function CategoryNavComponent() {
       });
   }, []);
 
+  useEffect(() => {
+    outFocus(hiddenRef, setHiddenNav);
+  }, []);
+
   const open = Boolean(anchorEL);
 
   const id = open ? "simple-popover" : undefined;

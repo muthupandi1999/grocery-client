@@ -76,7 +76,7 @@ function AllProduct() {
   return (
     <div>
       {allProducts ? (
-        <CategoryContentContainer>
+        <CategoryContentContainer paddingTop="0px">
           <div className="content-header">
             <h1> All Products </h1>
           </div>

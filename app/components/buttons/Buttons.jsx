@@ -32,7 +32,7 @@ export const AddButton = ({
   selectedSortOption,
 }) => {
   const [deleteUpdateData, setDeleteUpdateData] = useState([]);
-  console.log("variables5662", variables);
+  console.log("variables5662QUnr", quantity);
 
   const [quantityIng, setQuantity] = useState(quantity);
 

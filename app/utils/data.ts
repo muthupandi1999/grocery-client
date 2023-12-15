@@ -2340,6 +2340,67 @@ export const HomeProductSliderSettings = {
   ],
 };
 
+export const CategoryProductSliderSettings = {
+  dots: false,
+  infinite: false,
+  speed: 1000,
+  slidesToShow: 6,
+  slidesToScroll: 1,
+  swipe: false,
+  responsive: [
+    {
+      breakpoint: 1440, // Adjust settings for screens with a width up to 1024px
+      settings: {
+        slidesToShow: 6.5,
+        slidesToScroll: 4,
+        dots: false,
+        infinite: false,
+        speed: 500,
+      },
+    },
+    {
+      breakpoint: 960, // Adjust settings for screens with a width up to 1024px
+      settings: {
+        slidesToShow: 3,
+        slidesToScroll: 3,
+        dots: false,
+        infinite: true,
+        speed: 500,
+      },
+    },
+    {
+      breakpoint: 720, // Adjust settings for screens with a width up to 1024px
+      settings: {
+        slidesToShow: 2,
+        slidesToScroll: 2,
+        dots: false,
+        infinite: true,
+        speed: 500,
+      },
+    },
+    {
+      breakpoint: 480, // Adjust settings for screens with a width up to 768px
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        dots: false,
+        infinite: true,
+        speed: 500,
+      },
+    },
+    // {
+    //   breakpoint: 480, // Adjust settings for screens with a width up to 480px
+    //   settings: {
+    //     slidesToShow: 1,
+    //     slidesToScroll: 1,
+    //     dots: false,
+    //     infinite: true,
+    //     speed: 500,
+    //   },
+    // },
+  ],
+};
+
 export const AddToCartProductSliderSettings = {
   dots: false,
   infinite: false,
