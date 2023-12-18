@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { styled } from "styled-components";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { getUserOrders } from "@/app/service/query";
 import { useQuery } from "@apollo/client";
 import Pagination from "@mui/material/Pagination";
 import OrderStatusSlider from "./statusSlider";
+import { Drawer } from "@mui/material";
 import AirportShuttleIcon from "@mui/icons-material/AirportShuttle";
+import OrderDetailsCard from "@/app/components/models/viewOrderDetails";
 export const OrdersWrappers = styled.div`
   h3.title {
     font-size: 24px;
@@ -41,7 +43,7 @@ export const OrdersWrappers = styled.div`
   }
   .orderCard {
     display: flex;
-    padding-bottom: 20px;
+    padding-bottom: 15px;
     border-bottom: 1px dashed #e6e6e6;
     .OrderInfo {
       display: flex;
@@ -106,13 +108,16 @@ const PagenationWrapper = styled.section`
 
 function Orders() {
   const [orderList, setOrderList] = useState([]);
+  const [open, setOpen] = useState(false);
+
+  const handleClose = useCallback(() => setOpen(false), []);
 
   const itemsPerPage = 3; // Number of items to show per page
 
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(orderList.length / itemsPerPage);
-
+  const [ordersData, setOrdersData] = useState({});
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, orderList?.length);
   const { loading: OrderListLoading, refetch: orderListRefetch } = useQuery(
@@ -126,7 +131,10 @@ function Orders() {
       },
     }
   );
-  useEffect(() => {}, []);
+  useEffect(() => {
+    orderListRefetch();
+  }, []);
+
   return (
     <>
       <OrdersWrappers>
@@ -148,7 +156,15 @@ function Orders() {
                       <h3 className="orderDate">
                         {new Date(e?.orderTime).toLocaleString()}
                       </h3>
-                      <button className="viewDetails">view details</button>
+                      <button
+                        onClick={() => {
+                          setOpen(true);
+                          setOrdersData(e);
+                        }}
+                        className="viewDetails"
+                      >
+                        view details
+                      </button>
                     </div>
                   </div>
                   <div className="deliveryInfo">
@@ -172,11 +188,11 @@ function Orders() {
                         color: "#fff",
                         display: "flex",
                         alignItems: "center",
-                        border:" 1px solid #008000c7",
+                        border: " 1px solid #008000c7",
                         padding: "10px 20px",
                         marginTop: "10px",
-                        background: "linear-gradient(135deg, rgb(33,167,131) 0%,rgb(192,223,125) 100%)"
-                    
+                        background:
+                          "linear-gradient(135deg, rgb(33,167,131) 0%,rgb(192,223,125) 100%)",
                       }}
                     >
                       DELIVERED
@@ -194,6 +210,19 @@ function Orders() {
           ) : (
             <p>Loading</p>
           )}
+          <Drawer
+            sx={{
+              background: "1f1f1f",
+              "& .css-1160xiw-MuiPaper-root-MuiDrawer-paper": {
+                backgroundColor: "#f5f7fc",
+              },
+            }}
+            anchor="right"
+            open={open}
+            onClose={handleClose}
+          >
+            <OrderDetailsCard e={ordersData} onClose={handleClose} />
+          </Drawer>
         </>
       </OrdersWrappers>
 

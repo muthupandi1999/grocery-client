@@ -379,7 +379,7 @@ function CheckOut({ clientSecrett }: any) {
                   setStripePayment(false);
                   toast.success("Order placed successfully!");
                   getAllProducts(dispatch).then(() => {
-                    router.push("/orders");
+                    router.push("/account/orders");
                   });
                 }, 6000);
               }

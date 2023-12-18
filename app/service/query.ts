@@ -599,6 +599,69 @@ export const getUserOrders = gql`
     }
   }
 `;
+export const getOrder = gql`
+query GetOrder($orderId: String!) {
+  getOrder(orderId: $orderId) {
+    id
+    orderId
+    orderTime
+    orderType
+    orderStatus
+    address {
+      id
+      address
+      apartment
+      label
+      userId
+      pincode
+    }
+    deliveryAddressId
+    addToCart {
+      id
+      product {
+        id
+        name
+      }
+      quantity
+      totalPrice
+      userId
+      selectedVariantId
+      selectedVariant {
+        id
+        unit
+        values
+      }
+    }
+    cartId
+    user {
+      id
+      email
+      phoneNo
+      firstName
+      lastName
+    }
+    userId
+    branch {
+      id
+      name
+    }
+    branchId
+    coupon {
+      id
+      name
+      code
+      discount
+      discountType
+    }
+    couponId
+    paymentStatus
+    paymentType
+    orderAmount
+    orderDiscountPrice
+    totalOrderPrice
+  }
+}
+`
 
 //subsc
 

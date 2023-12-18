@@ -29,7 +29,10 @@ export default function RootLayout({
         />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" />
-        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&family=Public+Sans:wght@300;400;500;600;700&family=Quicksand:wght@300;400;500;600;700&family=Radio+Canada:wght@300;400;500;600;700&family=Rubik:wght@300;400;500;600;700;800&family=Zilla+Slab:wght@400;500;600;700&display=swap" rel="stylesheet"></link>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&family=Public+Sans:wght@300;400;500;600;700&family=Quicksand:wght@300;400;500;600;700&family=Radio+Canada:wght@300;400;500;600;700&family=Rubik:wght@300;400;500;600;700;800&family=Zilla+Slab:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        ></link>
         {/* <link
           href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
           rel="stylesheet"
@@ -47,8 +50,9 @@ export default function RootLayout({
               <ApolloWrapper>
                 <Provider store={store}>
                   <HeaderComponent />
-                  <ChildContainer paddingTop="0px">{children}</ChildContainer>
-                  {pathhArr[pathhArr.length - 1] !== "category" && !pathhArr.includes("orders") &&
+                  <ChildContainer>{children}</ChildContainer>
+                  {pathhArr[pathhArr.length - 1] !== "category" &&
+                    !pathhArr.includes("account") &&
                     !pathhArr.includes("search") && <FooterComponent />}
                 </Provider>
               </ApolloWrapper>

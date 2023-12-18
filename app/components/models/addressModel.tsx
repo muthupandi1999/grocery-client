@@ -24,13 +24,19 @@ function AddressModel({ onClose }: Readonly<{ onClose: any }>) {
             className="UserInfoList"
             onClick={() => {
               onClose();
-              router.push("/orders");
+              router.push("/account/orders");
             }}
           >
             My Orders
           </li>
-          <li className="UserInfoList">Saved Address</li>
-          <li className="UserInfoList">
+          <li className="UserInfoList"   onClick={() => {
+              onClose();
+              router.push("/account/addresses");
+            }}>Saved Address</li>
+          <li className="UserInfoList"   onClick={() => {
+              onClose();
+              router.push("/account/myWallet");
+            }}>
             <div id="userWallet">
               <p>My Wallet</p>
               <p>$0</p>

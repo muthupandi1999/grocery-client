@@ -51,19 +51,22 @@ function DynamicPage({ params }: { params: any }) {
   const { data: addSubscriptionData } = useSubscription(AddToCartRed);
   console.log("updateData", updateSubscriptionData);
 
-  const { data: categoryTypeProducts, loading: categoryProductLoading, refetch: refetchProducts } =
-    useQuery(GetProductTypeProducts, {
-      variables: {
-        getProductTypeId: params?.subListId,
-        filter: selectedSortOption,
-      },
-      // skip: Boolean,
-      onCompleted: (data: any) => {
-        setCategoryTypeAndProducts(data?.getProductTypeId);
+  const {
+    data: categoryTypeProducts,
+    loading: categoryProductLoading,
+    refetch: refetchProducts,
+  } = useQuery(GetProductTypeProducts, {
+    variables: {
+      getProductTypeId: params?.subListId,
+      filter: selectedSortOption,
+    },
+    // skip: Boolean,
+    onCompleted: (data: any) => {
+      setCategoryTypeAndProducts(data?.getProductTypeId);
 
-        console.log("res", data);
-      },
-    });
+      console.log("res", data);
+    },
+  });
 
   useEffect(() => {
     outFocus(dropdownRef, setDropDown);
@@ -72,7 +75,7 @@ function DynamicPage({ params }: { params: any }) {
   useEffect(() => {
     refetchProducts();
     // let categoryTypeAndProducts = categoryTypeAndProductsList?.getProductTypeId;
-  }, [selectedSortOption,setSelectSortOption]);
+  }, [selectedSortOption, setSelectSortOption]);
 
   // useEffect(() => {
   //   // refetchProducts();
@@ -155,7 +158,8 @@ function DynamicPage({ params }: { params: any }) {
             </div>
           </div>
 
-          {categoryTypeAndProducts?.products?.length > 0 && !categoryProductLoading ? (
+          {categoryTypeAndProducts?.products?.length > 0 &&
+          !categoryProductLoading ? (
             <CategoryGridContainer>
               {categoryTypeAndProducts?.products?.map((data: any) => (
                 <ProductCard

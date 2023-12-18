@@ -291,7 +291,7 @@ export const CartDrawer = (props: any) => {
   console.log("opeemeeeeeee", open);
   const [carts, setCarts] = useState<any>([]);
   const [selectAddress, setSelectAddress] = useState(false);
-  const [tickAddress, setTickAddress] = useState("");
+  const [tickAddress, setTickAddress] = useState<any>("");
   const router = useRouter();
   const [address, setAddress] = useState<any>({});
   const [imageTransform, setImageTransform] = useState(false);
@@ -456,21 +456,22 @@ export const CartDrawer = (props: any) => {
 
                   <ProceedWrapper>
                     {tickAddress && (
+                      console.log("tickadfsdf", tickAddress),
                       <div className="AddressInfoWithChange">
                         <PlaceOutlinedIcon className="locationIcon" />
                         <div className="AddressTextWithChange">
                           <h5>
-                            Delivering to{" "}
+                            Delivering to {""}
                             {
-                              address?.Address.find(
-                                (e: any) => e.id === tickAddress
+                              address?.Address?.find(
+                                (e: any) => e.id === tickAddress?.id
                               )?.label
                             }
                           </h5>
                           <p>
                             {
-                              address?.Address.find(
-                                (e: any) => e.id === tickAddress
+                              address?.Address?.find(
+                                (e: any) => e.id === tickAddress?.id
                               )?.address
                             }
                           </p>
@@ -575,6 +576,7 @@ export const CartDrawer = (props: any) => {
                           alt=""
                         />
                       </div>
+                      <p style={{paddingTop:"20px", textAlign:"center"}}>Your cart is empty</p>
                     </div>
                   )}
                 </>

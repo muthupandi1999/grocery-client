@@ -19,9 +19,17 @@ import { Grid, Popover } from "@mui/material";
 // font-family: 'Radio Canada', sans-serif;
 export const GlobalStyle = createGlobalStyle`
     body{
-
       font-family: 'Montserrat', sans-serif;
-        font-size:14px;
+      font-size:14px;
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      width: 100%;
+    }
+    html {
+      height: 100%;
+      overflow: hidden;
+      width: 100%;
     }
     *{
         margin:0;
@@ -430,8 +438,10 @@ justify-content:space-between;
 `;
 export const HeaderContainer = styled.div`
   border-bottom: 1px solid ${(props) => props.theme.border.primary};
-  position: sticky;
+  position: fixed;
   top: 0;
+  right: 0;
+  left: 0;
   z-index: 1;
   background-color: white;
 `;
@@ -441,7 +451,7 @@ interface CHILDCONTAINERI {
 export const ChildContainer = styled.div<CHILDCONTAINERI>`
   max-width: 1440px;
   margin: auto;
-  padding-top: ${(props) => props.paddingTop || "48px"};
+  margin-top: 158px;
   @media only screen and (max-width: 1300px) {
     padding-right: 0;
     margin: 120px 20px 0 20px;
@@ -499,7 +509,6 @@ export const CategoryContainer = styled.div`
   overflow: auto;
   border-bottom: 1px solid ${(props) => props.theme.border.primary};
   border-right: 1px solid ${(props) => props.theme.border.primary};
-  padding-top: 40px;
   &::-webkit-scrollbar {
     display: none;
   }
@@ -508,7 +517,6 @@ export const CategorySidebarContainer = styled.div`
   width: 20%;
   position: sticky;
   top: 0;
-
   border-left: 1px solid ${(props) => props.theme.border.primary};
   border-right: 1px solid ${(props) => props.theme.border.primary};
   overflow: auto;
@@ -545,7 +553,6 @@ interface CATEGORYCONTAINERI {
 
 export const CategoryContentContainer = styled.div<CATEGORYCONTAINERI>`
   width: ${(props: any) => (props.$variant === "productType" ? "80%" : "100%")};
-  padding-top: ${(props) => props.paddingTop || "0px"};
   .NodataFoundText {
     position: absolute;
     top: 50%;
