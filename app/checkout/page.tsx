@@ -19,7 +19,7 @@ function page() {
   const [checkoutPage, setCheckoutPage] = useState(false);
 
   const { cartProducts, getUserCartRefetch } = FetchCartItems(
-    "655379d96144626a275e8a14"
+    "65642fcb264c4f37a0b129be"
   );
 
   useEffect(() => {
@@ -54,9 +54,7 @@ function page() {
           setClientSecret(data?.cardPayment?.clientSecret);
           setCheckoutPage(true);
 
-          console.log("clientSecret", clientSecret);
         }
-        console.log("data45", data?.cardPayment);
       } catch (error) {}
 
       // const clientSecret = data.cardPayment.clientSecret;
@@ -74,7 +72,6 @@ function page() {
       /*...*/
     },
   };
-  console.log("checkoutPagecheckoutPage1", clientSecret);
   return (
     <>
       {checkoutPage && (

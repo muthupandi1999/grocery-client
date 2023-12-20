@@ -23,6 +23,7 @@ import {
   ModelBoxstyle,
 } from "@/app/assets/style/productCardStyle";
 import { styled } from "styled-components";
+import { useRouter } from "next/navigation";
 
 function ProductCard({
   data,
@@ -41,7 +42,7 @@ function ProductCard({
 }>) {
   const [open, setOpen] = React.useState(false);
   const dispatch = useDispatch();
-
+  const router = useRouter();
   const [loadGreeting] = useLazyQuery(AllProductsWithSearch);
 
   let count = 1;
@@ -72,13 +73,17 @@ function ProductCard({
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  console.log("allProducts?.AllProducts", allProducts?.AllProducts);
+
   let findIndex = allProducts?.AllProducts?.findIndex(
     (e: any) => e.id === data?.id
   );
 
   const index = allProducts?.AllProducts?.[findIndex]?.variant?.findIndex(
-    (item: any) => item.AddToCart && item.AddToCart !== null
+    (item: any) => item?.AddToCart?.length > 0
   );
+
+  console.log("index", index);
 
   // If no such index is found, return the first index
   const resultIndex = index !== -1 ? index : 0;
@@ -87,7 +92,7 @@ function ProductCard({
     productId: data?.id,
     quantity: 1,
     totalPrice: data?.variant?.[resultIndex]?.price,
-    userId: "655379d96144626a275e8a14",
+    userId: "65642fcb264c4f37a0b129be",
     deviceToken: null,
     selectedVariantId: data?.variant?.[resultIndex]?.id,
   };
@@ -98,6 +103,11 @@ function ProductCard({
     ]?.AddToCart?.find((item: any) => item.isOrder === false)?.quantity ??
     undefined;
 
+  // console.log("quanity", quantity);
+  // console.log(
+  //   "allProducts?.AllProducts?.[findIndex]",
+  //   allProducts?.AllProducts?.[findIndex]?.variant?.[resultIndex]
+  // );
   const addToCart = async () => {
     const addToCartData = await addToCartProduct({
       variables: {
@@ -124,6 +134,7 @@ function ProductCard({
           ? 0.5
           : 1,
       }}
+      onClick={() => router.push(`/products/${data?.id}`)}
     >
       <FlexBox width="140px" height="140px">
         <FlexImage src={data?.image?.image}></FlexImage>
@@ -141,50 +152,49 @@ function ProductCard({
         </div>
         <div className="title">
           <Text1 fontSize="13px" marginBottom="6px">
-            {data.name.length < 40 ? data?.name : data?.name.substring(0, 50) + "..."}
+            {data.name.length < 40
+              ? data?.name
+              : data?.name.substring(0, 50) + "..."}
           </Text1>
         </div>
 
         {data?.variant?.length === 1 && (
           <div className="productUnit">{`${data?.variant[0]?.values}${data?.variant?.[0].unit}`}</div>
         )}
-        {console.log("vairnaqtttt", data?.variant)}
         {data?.variant?.every(
           (f: any) =>
             f.ProductInventory?.filter((e: any) => e?.branchId === branchId)
               .availableStock === 0
         ) && <button className="StockOutBtn">Out Of Stock</button>}
 
-        {data?.variant?.length > 1 &&
-          (console.log("variant123", data?.variant),
-          (
-            <>
-              <div onClick={handleOpen} className="productUnitVariant">
-                <p className="unit">{`${data?.variant[resultIndex]?.values}${data?.variant?.[resultIndex]?.unit}`}</p>
-                <ExpandMoreIcon className="unitIcon" fontSize="small" />
-              </div>
-              <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-                sx={{
-                  "&:focus": {
-                    outline: "none",
-                  },
-                }}
-              >
-                <ModelBoxstyle>
-                  <UnitCard
-                    image={data?.image?.image}
-                    product={data}
-                    variants={data?.variant}
-                    onClose={handleClose}
-                  />
-                </ModelBoxstyle>
-              </Modal>
-            </>
-          ))}
+        {data?.variant?.length > 1 && (
+          <>
+            <div onClick={handleOpen} className="productUnitVariant">
+              <p className="unit">{`${data?.variant[resultIndex]?.values}${data?.variant?.[resultIndex]?.unit}`}</p>
+              <ExpandMoreIcon className="unitIcon" fontSize="small" />
+            </div>
+            <Modal
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+              sx={{
+                "&:focus": {
+                  outline: "none",
+                },
+              }}
+            >
+              <ModelBoxstyle>
+                <UnitCard
+                  image={data?.image?.image}
+                  product={data}
+                  variants={data?.variant}
+                  onClose={handleClose}
+                />
+              </ModelBoxstyle>
+            </Modal>
+          </>
+        )}
 
         <div className="cardFooter">
           {data?.dicountPercentage === null && (

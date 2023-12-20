@@ -49,7 +49,6 @@ function DynamicPage({ params }: { params: any }) {
   const dispatch = useDispatch();
   const { data: updateSubscriptionData } = useSubscription(updateSubs);
   const { data: addSubscriptionData } = useSubscription(AddToCartRed);
-  console.log("updateData", updateSubscriptionData);
 
   const {
     data: categoryTypeProducts,
@@ -64,7 +63,6 @@ function DynamicPage({ params }: { params: any }) {
     onCompleted: (data: any) => {
       setCategoryTypeAndProducts(data?.getProductTypeId);
 
-      console.log("res", data);
     },
   });
 
@@ -85,7 +83,6 @@ function DynamicPage({ params }: { params: any }) {
 
   useEffect(() => {
     if (updateSubscriptionData !== undefined) {
-      console.log("ipdayteDtaa", updateSubscriptionData);
       let { productId, quantity, selectedVariantId } =
         updateSubscriptionData.updateCart;
 

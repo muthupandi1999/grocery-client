@@ -23,27 +23,24 @@ function UnitCard({
 }) {
   const [count, setCount] = useState(0);
   // const [variables, setVariables] = useState({});
- 
-  const dispatch = useDispatch()
+
+  const dispatch = useDispatch();
   const [addToCartProduct, { data: AddToCartData }] = useMutation(AddToCart);
   const { data: addSubscriptionData } = useSubscription(AddToCartRed);
   const allProducts = useSelector((state: any) => state.AllProducts);
 
   useEffect(() => {
     if (addSubscriptionData != undefined) {
-      console.log("addSubscriptionData541", addSubscriptionData)
       dispatch(
         addProductData({
           addProduct: addSubscriptionData.addCart,
           variantId: addSubscriptionData?.selectedVariantId,
         })
       );
-      console.log("Hiiiii", allProducts)
     }
   }, [addSubscriptionData]);
 
-
-  // const { AddToCartsRefetch } = GetAddToCartsApi("655379d96144626a275e8a14");
+  // const { AddToCartsRefetch } = GetAddToCartsApi("65642fcb264c4f37a0b129be");
   const addToCart = async (e: any) => {
     const addToCartProductData = await addToCartProduct({
       variables: {
@@ -52,7 +49,7 @@ function UnitCard({
           selectedVariantId: e?.id,
           totalPrice: e?.price,
           quantity: 1,
-          userId: "655379d96144626a275e8a14",
+          userId: "65642fcb264c4f37a0b129be",
           deviceToken: null,
         },
       },
@@ -63,34 +60,28 @@ function UnitCard({
     //   selectedVariantId: e?.id,
     //   totalPrice: e?.price,
     //   quantity: 1,
-    //   userId: "655379d96144626a275e8a14",
+    //   userId: "65642fcb264c4f37a0b129be",
     //   deviceToken: null,
     // });
 
     // console.log("dataaaaaa", AddToCartData);
   };
 
-
-
   return (
     <UnitWrapper>
       {variants.map((e: any) => {
         // data?.variant?.[0]?.AddToCart?.quantity
 
-        console.log("eeeeee", e)
-
         let variantInfo = GetVariant(e?.id);
-
-        console.log("variantInfo", variantInfo);
 
         let variables = {
           productId: product?.id,
           selectedVariantId: e?.id,
           totalPrice: e?.price,
           quantity: 1,
-          userId: "655379d96144626a275e8a14",
+          userId: "65642fcb264c4f37a0b129be",
           deviceToken: null,
-        }
+        };
 
         // let quantity = e?.AddToCart?.quantity;
 
@@ -101,22 +92,18 @@ function UnitCard({
 
         let selectVariant = allProducts?.AllProducts?.[findIndex]?.variant;
 
-        console.log("selectedVa", selectVariant);
-
         let selectVariantId = selectVariant?.filter(
           (variant: any) => variant.id === e?.id
         );
 
-        console.log("sele", selectVariantId);
-
-        let quantity = selectVariantId?.[0]?.AddToCart?.find((item:any) => item.isOrder === false)?.quantity ?? undefined;
-
-        console.log("aun", quantity);
+        let quantity =
+          selectVariantId?.[0]?.AddToCart?.find(
+            (item: any) => item.isOrder === false
+          )?.quantity ?? undefined;
 
         const branchInventory = selectVariant?.[0]?.ProductInventory.find(
           (item: any) => item.branchId === branchId
         );
-        console.log("banchInd", branchInventory)
         const availableStock = branchInventory?.availableStock || 0;
 
         return (
@@ -126,7 +113,9 @@ function UnitCard({
                 <img className="image" src={image} alt="" />
               </div>
 
-              <p style={{ width: "20%", textAlign:"center" }}>{`${e?.values}${e?.unit}`}</p>
+              <p
+                style={{ width: "20%", textAlign: "center" }}
+              >{`${e?.values}${e?.unit}`}</p>
 
               <Text>${e.price}</Text>
 
@@ -134,21 +123,19 @@ function UnitCard({
                 <p className="outOfStockText">Out of Stock</p>
               )}
 
-              {availableStock > 0 &&
-                (console.log("variables", variables),
-                (
-                  <div>
-                    {/* <p>Available: {availableStock}</p> */}
-                    <AddButton
-                      onClick={() => addToCart(e)}
-                      variables={variables}
-                      quantity={quantity}
-                      disable={undefined}
-                      subListId={undefined}
-                      selectedSortOption={undefined}
-                    />
-                  </div>
-                ))}
+              {availableStock > 0 && (
+                <div>
+                  {/* <p>Available: {availableStock}</p> */}
+                  <AddButton
+                    onClick={() => addToCart(e)}
+                    variables={variables}
+                    quantity={quantity}
+                    disable={undefined}
+                    subListId={undefined}
+                    selectedSortOption={undefined}
+                  />
+                </div>
+              )}
             </div>
           </div>
         );

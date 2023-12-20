@@ -19,14 +19,16 @@ function LoginCard({ onClose }: Readonly<{ onClose: any }>) {
   // };
   const PhoneNoInput = (e: any) => {
     // var reg = new RegExp('^[0-9]$');
-    setPhoneNumber(e.target.value);
+    // setPhoneNumber(e.target.value);
     let mobileNo = e.target.value;
-    console.log("leng", mobileNo);
     if (mobileNo.length === 10) {
       setIsColorChange(true);
     } else {
       setIsColorChange(false);
     }
+
+    const result = e.target.value.replace(/\D/g, "");
+    setPhoneNumber(result);
   };
 
   const [LoginPhone] = useMutation(LoginViaPhone, {
@@ -38,23 +40,25 @@ function LoginCard({ onClose }: Readonly<{ onClose: any }>) {
     if (otp.length === 6) {
       OtpVerifyPhone({
         variables: { phoneNo: phoneNumber, otp: otp },
-      }).then((res: any) => {
-        let { data, accessToken, refreshToken } = res.data.loginPhoneNoOtpValidation;
-        let Credentials: any = {
-          userId: data?.id,
-          phoneNo: data?.phoneNo,
-          accessToken: accessToken,
-          refreshToken: refreshToken,
-        };
-        localStorage.setItem("Credentials", JSON.stringify(Credentials));
-        setLoginSuc(true);
-        setTimeout(() => {
-          onClose();
-        }, 2000);
-        
-      }).catch((err:any) => {
-        console.log(err)
       })
+        .then((res: any) => {
+          let { data, accessToken, refreshToken } =
+            res.data.loginPhoneNoOtpValidation;
+          let Credentials: any = {
+            userId: data?.id,
+            phoneNo: data?.phoneNo,
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          };
+          localStorage.setItem("Credentials", JSON.stringify(Credentials));
+          setLoginSuc(true);
+          setTimeout(() => {
+            onClose();
+          }, 2000);
+        })
+        .catch((err: any) => {
+          console.log(err);
+        });
     }
   }, [otp]);
 
@@ -76,9 +80,9 @@ function LoginCard({ onClose }: Readonly<{ onClose: any }>) {
             <input
               className="PhoneNoInput"
               placeholder="Enter mobile number"
-              type="number"
+              type="text"
               maxLength={10}
-              value={phoneNumber.slice(0,10)}
+              value={phoneNumber}
               onChange={PhoneNoInput}
             />
             <span className="phoneNoPrefix">+91</span>
@@ -88,16 +92,14 @@ function LoginCard({ onClose }: Readonly<{ onClose: any }>) {
             onClick={() => {
               if (phoneNumber.length === 10) {
                 // Add validation for phone number length
-                LoginPhone()
-                  .then((res: any) => {
-                    console.log("Login response", res);
-                    alert(res?.data?.loginViaPhone?.otp);
-                    setOtpVerificationPage(true);
-                    setIsColorChange(false);
-                  })
-                  // .catch((error: any) => {
-                  //   console.error("Login error", error);
-                  // });
+                LoginPhone().then((res: any) => {
+                  alert(res?.data?.loginViaPhone?.otp);
+                  setOtpVerificationPage(true);
+                  setIsColorChange(false);
+                });
+                // .catch((error: any) => {
+                //   console.error("Login error", error);
+                // });
               }
             }}
             className={

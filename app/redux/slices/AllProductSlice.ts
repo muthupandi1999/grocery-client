@@ -101,7 +101,6 @@ const AllProductsSlice = createSlice({
         (variant: any) => variant.id === variantId
       );
 
-      console.log("variantIndex", variantIndex);
 
       if (productIndex !== -1) {
         // Create a new object for the updated product with an updated quantity
@@ -109,7 +108,7 @@ const AllProductsSlice = createSlice({
         const updatedVariants = state.AllProducts[productIndex].variant.map(
           (variant: any) => {
             if (variant.id === variantId) {
-              const updatedAddToCart = variant.AddToCart.map((cartItem: any) => {
+              const updatedAddToCart = variant?.AddToCart?.map((cartItem: any) => {
                 if (cartItem.isOrder === false) {
                   // Modify the object where isOrder is false
                   return {
@@ -155,14 +154,12 @@ const AllProductsSlice = createSlice({
           ...state.AllProducts.slice(productIndex + 1),
         ];
 
-        console.log("state.AllProducts");
       }
     },
 
     addProductData(state: any, action: PayloadAction<any>) {
       const { addProduct, variantId } = action.payload;
-      console.log("1dsflka", addProduct);
-      console.log("1dsflka", variantId);
+ 
 
       // Find the index of the product with the matching productId
       const productIndex = state.AllProducts.findIndex(
@@ -217,92 +214,6 @@ const AllProductsSlice = createSlice({
     // Other reducers...
   },
 });
-
-// addProductData(state: any, action: PayloadAction<any>) {
-//   const { addProduct, variantId } = action.payload;
-
-//   // Find the index of the product with the matching productId
-//   const productIndex = state.AllProducts.findIndex(
-//     (product: any) => product.id === addProduct?.productId
-//   );
-
-//   const variantIndex = state.AllProducts[productIndex].variant.findIndex(
-//     (variant: any) => variant.id === variantId
-//   );
-
-//   if (variantIndex !== -1) {
-//     const updatedProduct = {
-//       ...state.AllProducts[productIndex],
-//       variant: [
-//         {
-//           ...state.AllProducts[productIndex].variant[variantIndex],
-//           AddToCart: {
-//             ...state.AllProducts[productIndex].variant[variantIndex]
-//               .AddToCart,
-//             quantity: addProduct?.quantity,
-//           },
-//         },
-//       ],
-//     };
-
-//     // const existingProduct = state.AllProducts[productIndex];
-//     // const existingVariantIndex = existingProduct.variant.findIndex(
-//     //   (variant: any) => variant.id === variantId
-//     // );
-
-//     // if (existingVariantIndex === -1) {
-//     //   // If the variant doesn't exist, create a new variant and add it to the existing product's variants
-//     //   const newVariant = {
-//     //     id: variantId,
-//     //     // Other properties for the new variant
-//     //     // ...
-//     //     AddToCart: {
-//     //       quantity: addProduct?.quantity || 0,
-//     //       // Other properties for AddToCart
-//     //       // ...
-//     //     },
-//     //   };
-
-//     //   const updatedVariants = [...existingProduct.variant, newVariant];
-
-//     //   // Create a new updated product with the added variant
-//     //   const updatedProduct = {
-//     //     ...existingProduct,
-//     //     variant: updatedVariants,
-//     //   };
-
-//     //   // Update the state with the modified product
-//     //   state.AllProducts = [
-//     //     ...state.AllProducts.slice(0, productIndex),
-//     //     updatedProduct,
-//     //     ...state.AllProducts.slice(productIndex + 1),
-//     //   ];
-//     // } else {
-//     //   // Variant already exists, you might want to handle this case differently
-//     //   console.log('Variant already exists for this product');
-//     // }
-//     // // Create a new object for the updated product with an updated quantity
-//     // const updatedProduct = {
-//     //   ...state.AllProducts[productIndex],
-//     //   variant: [
-//     //     {
-//     //       ...state.AllProducts[productIndex].variant[0],
-//     //       AddToCart: {
-//     //         ...state.AllProducts[productIndex].variant[0].AddToCart,
-//     //         quantity: addProduct?.quantity,
-//     //       },
-//     //     },
-//     //   ],
-//     // };
-
-//     // Create a new state array with the updated product
-//     state.AllProducts = [
-//       ...state.AllProducts.slice(0, productIndex),
-//       updatedProduct,
-//       ...state.AllProducts.slice(productIndex + 1),
-//     ];
-//   }
-// },
 
 export const { updateProductData, updateProductData2, addProductData } =
   AllProductsSlice.actions;

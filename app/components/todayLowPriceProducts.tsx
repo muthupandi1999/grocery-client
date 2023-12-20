@@ -30,7 +30,6 @@ function TodayLowPriceProducts({ id }: { id: string }) {
   const [categoryProductData, setCategoryProductData] = useState([]) as any;
   let cart = useSelector((state: any) => state.cartData);
   const allProducts = useSelector((state: any) => state.AllProducts);
-  console.log("AllProductssss", allProducts);
   const { data: updateSubscriptionData } = useSubscription(updateSubs);
   const { data: addSubscriptionData } = useSubscription(AddToCartRed);
 
@@ -41,7 +40,6 @@ function TodayLowPriceProducts({ id }: { id: string }) {
 
   useEffect(() => {
     if (updateSubscriptionData !== undefined) {
-      console.log("updateSubscriptionData", updateSubscriptionData);
       let { productId, quantity, selectedVariantId } =
         updateSubscriptionData?.updateCart;
 
@@ -57,7 +55,6 @@ function TodayLowPriceProducts({ id }: { id: string }) {
 
   useEffect(() => {
     if (addSubscriptionData != undefined) {
-      console.log("ADdddddddddddddddddddddddddddd")
       dispatch(
         addProductData({
           addProduct: addSubscriptionData.addCart,
@@ -76,47 +73,46 @@ function TodayLowPriceProducts({ id }: { id: string }) {
   return (
     <Container>
       {CategoryProductsSlider?.getCategoryWithProductTypes?.products ? (
-        (console.log("totalCarts", cart),
-        (
-          <>
-            <SliderHeader>
-              <TitleTag variant="productTitle">
-                {CategoryProductsSlider?.getCategoryWithProductTypes?.name}
-              </TitleTag>
+        <>
+          <SliderHeader>
+            <TitleTag variant="productTitle">
+              {CategoryProductsSlider?.getCategoryWithProductTypes?.name}
+            </TitleTag>
 
-              <SeeAllText
-                onClick={() =>
-                  router.push(
-                    `/category/everyday-low-prices/by-category-id/${CategoryProductsSlider?.getCategoryWithProductTypes?.id}`
-                  )
-                }
-              >
-                See all
-                <ArrowRightAltIcon sx={{fontSize:"22px", position:"relative", top:"4px"}} />
-              </SeeAllText>
-            </SliderHeader>
-            {CategoryProductLoading ? (
-              <div style={{display:"flex", gap:"5px"}}>
-                {[...Array(7)].map((_: any, index: number) => (
-                  <ProductCardLoader />
+            <SeeAllText
+              onClick={() =>
+                router.push(
+                  `/category/everyday-low-prices/by-category-id/${CategoryProductsSlider?.getCategoryWithProductTypes?.id}`
+                )
+              }
+            >
+              See all
+              <ArrowRightAltIcon
+                sx={{ fontSize: "22px", position: "relative", top: "4px" }}
+              />
+            </SeeAllText>
+          </SliderHeader>
+          {CategoryProductLoading ? (
+            <div style={{ display: "flex", gap: "5px" }}>
+              {[...Array(7)].map((_: any, index: number) => (
+                <ProductCardLoader />
+              ))}
+            </div>
+          ) : (
+            <CategoryProductSlider settings={HomeProductSliderSettings}>
+              {CategoryProductsSlider?.getCategoryWithProductTypes?.products
+                ?.slice(0, 15)
+                .map((product: any) => (
+                  <ProductCard
+                    key={product.id}
+                    data={product}
+                    slider={true}
+                    categoryId={""}
+                  />
                 ))}
-              </div>
-            ) : (
-              <CategoryProductSlider settings={HomeProductSliderSettings}>
-                {CategoryProductsSlider?.getCategoryWithProductTypes?.products
-                  ?.slice(0, 15)
-                  .map((product: any) => (
-                    <ProductCard
-                      key={product.id}
-                      data={product}
-                      slider={true}
-                      categoryId={""}
-                    />
-                  ))}
-              </CategoryProductSlider>
-            )}
-          </>
-        ))
+            </CategoryProductSlider>
+          )}
+        </>
       ) : (
         <h4>loading</h4>
       )}

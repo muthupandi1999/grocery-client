@@ -112,10 +112,9 @@ const HeaderComponent = () => {
   }, [search]);
   const path = usePathname();
   const pathArr = path.split("/");
-  console.log("patharrr", pathArr);
 
   // const { cartProducts, getUserCartRefetch } = FetchCartItems(
-  //   "655379d96144626a275e8a14"
+  //   "65642fcb264c4f37a0b129be"
   // );
   // const getCartProducts = gql`
   //   query GetAddToCartsByUserId($userId: ID!, $index: Int, $limit: Int) {
@@ -251,7 +250,7 @@ const HeaderComponent = () => {
   //   loading: cartLoader,
   // } = useQuery(getCartProducts, {
   //   variables: {
-  //     userId: "655379d96144626a275e8a14",
+  //     userId: "65642fcb264c4f37a0b129be",
   //     index: null,
   //     limit: null,
   //   },

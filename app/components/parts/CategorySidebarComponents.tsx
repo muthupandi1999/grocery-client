@@ -16,7 +16,6 @@ function CategorySidebarComponents() {
   const pathArr = path.split("/");
   const Router = useRouter();
 
-  console.log("pathArr", pathArr);
 
   const { data: categoryProductTypes } = useQuery(CategoryProductTypeList, {
     variables: {

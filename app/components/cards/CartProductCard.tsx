@@ -11,7 +11,6 @@ import {
 
 function CartProductCart({ e }: { e: any }) {
   const [count, setCount] = useState(e.quantity);
-  console.log("CartData", e)
 
   
   return (

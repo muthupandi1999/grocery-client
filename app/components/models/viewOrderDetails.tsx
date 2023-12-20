@@ -85,17 +85,20 @@ const OrderCardWrapper = styled.div`
       font-size: 12px;
       color: #000;
       font-weight: 600;
+      padding-bottom:20px;
     }
     .productList {
       padding: 10px 0;
       display: flex;
       width: 100%;
       justify-content: space-between;
+      align-items:center;
      
       h6 {
         font-size: 11px;
         color: #000;
         font-weight: 500;
+        padding-left:10px;
       }
       p {
         font-size: 12px;
@@ -146,7 +149,6 @@ function OrderDetailsCard({ onClose, e }: Readonly<{ onClose: any; e: any }>) {
   if (error) {
     return <p>error</p>;
   }
-  console.log("orderData", orderData);
   return (
     <>
       {orderData && (
@@ -185,6 +187,10 @@ function OrderDetailsCard({ onClose, e }: Readonly<{ onClose: any; e: any }>) {
             <h5>{orderData?.addToCart?.length} ITEM</h5>
             {orderData?.addToCart?.map((e: any) => (
               <div className="productList" key={e?.id}>
+                <div style={{display:"flex", alignItems:"center"}}>
+                <div style={{width:"60px",height:"60px"}}>
+                  <img width={"100%"} height={"100%"} src={e?.product?.image?.image} alt="" />
+                </div>
                 <h6>
                   {e?.product?.name}({e?.selectedVariant?.values}{" "}
                   {e?.selectedVariant?.unit}){" "}
@@ -194,6 +200,8 @@ function OrderDetailsCard({ onClose, e }: Readonly<{ onClose: any; e: any }>) {
                     {e?.quantity}
                   </span>
                 </h6>
+                </div>
+              
                 <p>${e?.totalPrice}</p>
               </div>
             ))}

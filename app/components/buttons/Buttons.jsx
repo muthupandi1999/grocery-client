@@ -22,6 +22,7 @@ import {
   updateProductData2,
 } from "@/app/redux/slices/AllProductSlice";
 import { useDispatch, useSelector } from "react-redux";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export const AddButton = ({
   quantity,
@@ -31,14 +32,50 @@ export const AddButton = ({
   subListId,
   selectedSortOption,
 }) => {
-  const [deleteUpdateData, setDeleteUpdateData] = useState([]);
-  console.log("variables5662QUnr", quantity);
+  const [quantityIng, setQuantityIng] = useState(null);
 
-  const [quantityIng, setQuantity] = useState(quantity);
+  useEffect(() => {
+    if (quantity) {
+      setQuantityIng(quantity);
+    }
+  }, [quantity]);
+
+  const [showQuantity, setShowQuantity] = useState(false);
+
+  const [first, setFirst] = useState(false);
+
+  const [clicking, setClicking] = useState(false);
+
+  const [firstTime, setFirstTime] = useState(true);
+
+  const handleClick = () => {
+    setClicking(true);
+    setFirst(true);
+  };
+
+  useEffect(() => {
+    let timer;
+
+    if (!clicking) {
+      // Function to trigger when clicking stops
+
+      if (first) {
+        updateCartProd(quantityIng);
+      }
+    } else {
+      timer = setTimeout(() => {
+        setClicking(false);
+      }, 250); // Adjust the delay to consider the duration of continuous clicks
+    }
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [clicking, quantityIng]);
 
   const dispatch = useDispatch();
 
-  const { getUserCartRefetch } = FetchCartItems("655379d96144626a275e8a14");
+  const { getUserCartRefetch } = FetchCartItems("65642fcb264c4f37a0b129be");
 
   const [updateCartProduct, { loading: updateLoader }] =
     useMutation(updateAddToCart);
@@ -49,7 +86,6 @@ export const AddButton = ({
   const { data: updateSubscriptionData } = useSubscription(updateSubs);
   useEffect(() => {
     if (updateSubscriptionData !== undefined) {
-      console.log("updateSubscriptionData", updateSubscriptionData);
       let { productId, quantity, selectedVariantId } =
         updateSubscriptionData?.updateCart;
 
@@ -69,7 +105,7 @@ export const AddButton = ({
         input: {
           productId: variables?.product?.id || variables?.productId,
           quantity: quantity,
-          userId: "655379d96144626a275e8a14",
+          userId: "65642fcb264c4f37a0b129be",
           variantId: variables?.selectedVariantId,
         },
       },
@@ -87,7 +123,7 @@ export const AddButton = ({
             if (variant.id === variables?.selectedVariantId) {
               return {
                 ...variant,
-                AddToCart: null, // Set AddToCart to null for the matched variant
+                AddToCart: [], // Set AddToCart to null for the matched variant
                 // Other properties you want to update for this variant
               };
             }
@@ -111,49 +147,66 @@ export const AddButton = ({
   if (loading || updateLoader) {
     <h4>Loading.....</h4>;
   }
+  console.log("quantity", quantity);
   return (
     <CustomAddButton
       disabled={disable || updateLoader}
       $count={quantity}
       // onClick={}
-      onClick={() => {
+      onClick={(e) => {
+        e.stopPropagation();
         if (quantity === undefined) {
-          setQuantity((prev) => prev + 1);
+          setQuantityIng((prev) => prev + 1);
           onClick();
           // onClick();
         }
       }}
     >
-      {quantity == undefined ? (
+      {quantity == undefined || quantityIng === 0 ? (
         <span>ADD</span>
       ) : (
         <>
-          <span
-            onClick={() => {
-              updateCartProd(-1);
-              setQuantity((prev) => prev - 1);
-            }}
-          >
-            {quantity === 1 && (
-              <DeleteIcon
-                sx={{ fontSize: "14px", marginTop: "2px" }}
-                color="white"
-              />
-            )}
-            {quantity > 1 && <HiMinusSm color="white" />}
-          </span>
-          {quantity}
-          <span
-            onClick={() => {
-              // console.log("heyyyyyyyy");
-              updateCartProd(+1);
-              setQuantity((prev) => prev + 1);
-              // console.log("coutntinnfffff", count);
-              // updateCartProd(+1);
-            }}
-          >
-            <HiPlusSm color="white" />
-          </span>
+          {updateLoader ? (
+            <CircularProgress
+              size={"20px"}
+              sx={{
+                color: "#fff",
+              }}
+            />
+          ) : (
+            <>
+              <span
+                onMouseDown={handleClick}
+                onClick={() => {
+                  // updateCartProd(-1);
+                  setQuantityIng((prev) => prev - 1);
+                  setShowQuantity(true);
+                }}
+              >
+                {quantity === 1 && (
+                  <DeleteIcon
+                    sx={{ fontSize: "14px", marginTop: "2px" }}
+                    color="white"
+                  />
+                )}
+                {quantity > 1 && <HiMinusSm color="white" />}
+              </span>
+              {showQuantity ? quantityIng : quantity}
+              <span
+                onMouseDown={handleClick}
+                onClick={() => {
+                  // updateCartProd(+1);
+                  setQuantityIng((prev) => prev + 1);
+                  setShowQuantity(true);
+                  // console.log("coutntinnfffff", count);
+
+                  // updateCartProd(+1);
+                }}
+              >
+                <HiPlusSm color="white" />
+              </span>
+            </>
+          )}
         </>
       )}
     </CustomAddButton>

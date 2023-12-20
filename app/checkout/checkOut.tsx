@@ -240,12 +240,11 @@ export const centerstyle = {
   width: "400px",
 };
 function CheckOut({ clientSecrett }: any) {
-  console.log("checkoutPagecheckoutPage2", clientSecrett);
   const [carts, setCarts] = useState<any>([]);
   const selectPaymentMethod = useState("COD");
 
   const { cartProducts, getUserCartRefetch } = FetchCartItems(
-    "655379d96144626a275e8a14"
+    "65642fcb264c4f37a0b129be"
   );
   const router = useRouter();
 
@@ -274,8 +273,7 @@ function CheckOut({ clientSecrett }: any) {
 
   const [errorMessage, setErrorMessage] = useState<any>(null);
 
-  console.log("orderType", orderType);
-  console.log("paymentType", paymentType);
+
 
   const [placeOrder] = useMutation(PlaceOrderProducts);
 
@@ -319,7 +317,6 @@ function CheckOut({ clientSecrett }: any) {
     );
   }, 0);
 
-  console.log("Cartasdfdas", carts?.carts);
 
   const handleSubmit = async (event: any) => {
     // We don't want to let default form submission happen here,
@@ -342,7 +339,6 @@ function CheckOut({ clientSecrett }: any) {
           redirect: "if_required",
         })
         .then(async function (result: PaymentIntentResult) {
-          console.log("resultresultresult", result);
           if (result?.paymentIntent?.status === "succeeded") {
             setLoading(true);
             try {
@@ -360,7 +356,7 @@ function CheckOut({ clientSecrett }: any) {
                     addToCartId: carts?.carts?.map(
                       (cartItem: any) => cartItem.id
                     ), // Assuming you need to pass cart item IDs
-                    userId: "655379d96144626a275e8a14",
+                    userId: "65642fcb264c4f37a0b129be",
                     paymentType,
                     orderAmount: Math.round(
                       carts?.subTotal - disCountAmount + 25

@@ -23,7 +23,6 @@ export const updateReduxData = (updateId: string, updateQuantity: number, AllPro
 };
 
 export const addReduxData = (addSubscriptionData: any, AllProducts:any) => {
-    console.log("addSubscriptionData", addSubscriptionData)
   const updatedProductList = AllProducts.map((product: any) => {
     if (product.id === addSubscriptionData?.productId) {
       //   console.log("AdssData", addSubscriptionData.addCart);

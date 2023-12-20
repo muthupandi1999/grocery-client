@@ -39,7 +39,6 @@ function AllProduct() {
 
   useEffect(() => {
     if (updateSubscriptionData !== undefined) {
-      console.log("updateSubscriptionData", updateSubscriptionData);
       let { productId, quantity, selectedVariantId } =
         updateSubscriptionData?.updateCart;
 

@@ -3,10 +3,13 @@ import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { getUserAddress } from "@/app/service/query";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import { deleteAddress } from "@/app/service/query";
+import toast, { Toaster } from "react-hot-toast";
+
 export const AddressesWrappers = styled.div`
   h3.title {
     font-size: 24px;
@@ -43,12 +46,13 @@ export const AddressesWrappers = styled.div`
         }
         .operateBtn {
             padding-top:10px;
+            display:flex;
+            gap:20px;
             button{
                 border:0;
                 background:none;
                 color:green;
                 text-transform:uppercase;
-                margin-right:7%;
                 font-weight:600;
                 font-size:14px;
                 &:hover {
@@ -65,20 +69,42 @@ export const AddressesWrappers = styled.div`
 function Addresses() {
   const [userAddress, setUserAddresses] = useState<any>({});
 
-  const { loading: addressLoading, refetch: addressRefetch } = useQuery(
-    getUserAddress,
-    {
-      variables: {
-        userId: "655379d96144626a275e8a14",
-      },
-      onCompleted: (data: any) => {
-        setUserAddresses(data?.getUserById);
-      },
-    }
-  );
+  const {
+    data: userAddressData,
+    loading: addressLoading,
+    refetch: addressRefetch,
+  } = useQuery(getUserAddress, {
+    variables: {
+      userId: "65642fcb264c4f37a0b129be",
+    },
+  });
+
   useEffect(() => {
-    addressRefetch()
-  }, []);
+    setUserAddresses(userAddressData?.getUserById);
+  }, [userAddressData]);
+
+  const [deleteUserAddress] = useMutation(deleteAddress);
+
+  const handleDeleteUserAddress = async (addressId: string) => {
+    try {
+      await deleteUserAddress({
+        variables: {
+          deleteUserAddressId: addressId,
+        },
+        onCompleted: async () => {
+          toast.success("Deleted Successfully");
+          await addressRefetch();
+        },
+      });
+    } catch (error) {
+      console.error("Error deleting user address:", error);
+    }
+  };
+
+  // Remove this useEffect
+  useEffect(() => {
+    addressRefetch();
+  }, [userAddress]);
 
   return (
     <AddressesWrappers>
@@ -98,7 +124,12 @@ function Addresses() {
                 <p>{e?.pincode}</p>
                 <div className="operateBtn">
                   <button className="editBtn">Edit</button>
-                  <button className="deleteBtn">Delete</button>
+                  <button
+                    className="deleteBtn"
+                    onClick={() => handleDeleteUserAddress(e.id)}
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             </div>

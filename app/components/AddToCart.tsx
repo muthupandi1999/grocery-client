@@ -288,7 +288,6 @@ export const AddressWrapper = styled.section`
 
 export const CartDrawer = (props: any) => {
   const { open, anchor, onClose, showLoginCard } = props;
-  console.log("opeemeeeeeee", open);
   const [carts, setCarts] = useState<any>([]);
   const [selectAddress, setSelectAddress] = useState(false);
   const [tickAddress, setTickAddress] = useState<any>("");
@@ -297,7 +296,7 @@ export const CartDrawer = (props: any) => {
   const [imageTransform, setImageTransform] = useState(false);
 
   const { cartProducts, getUserCartRefetch, cartLoading } = FetchCartItems(
-    "655379d96144626a275e8a14"
+    "65642fcb264c4f37a0b129be"
   );
 
   const { data: UserAddress, refetch: AddressRefetch } = useQuery(
@@ -332,7 +331,6 @@ export const CartDrawer = (props: any) => {
     setAddress(UserAddress?.getUserById);
   }, [selectAddress, cartProducts, tickAddress]);
 
-  console.log("tickAddress", tickAddress);
 
   let disCountAmount = carts?.carts?.reduce((acc: any, index: any) => {
     return (
@@ -456,7 +454,6 @@ export const CartDrawer = (props: any) => {
 
                   <ProceedWrapper>
                     {tickAddress && (
-                      console.log("tickadfsdf", tickAddress),
                       <div className="AddressInfoWithChange">
                         <PlaceOutlinedIcon className="locationIcon" />
                         <div className="AddressTextWithChange">
@@ -535,8 +532,8 @@ export const CartDrawer = (props: any) => {
                 <>
                   {carts?.carts?.length > 0 ? (
                     <CircularProgress
-                      style={{ color: "green" }}
-                      sx={centerstyle}
+                      style={{ color: "green", position:"absolute", left:"45%", top:"50vh" }}
+                      // sx={centerstyle}
                     />
                   ) : (
                     <div

@@ -33,7 +33,6 @@ function SearchProduct({ params }: { params: any }) {
 
   useEffect(() => {
     if (updateSubscriptionData !== undefined) {
-      console.log("updateSubscriptionData", updateSubscriptionData);
       let { productId, quantity, selectedVariantId } =
         updateSubscriptionData?.updateCart;
 

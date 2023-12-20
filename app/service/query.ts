@@ -599,69 +599,93 @@ export const getUserOrders = gql`
     }
   }
 `;
+
 export const getOrder = gql`
-query GetOrder($orderId: String!) {
-  getOrder(orderId: $orderId) {
-    id
-    orderId
-    orderTime
-    orderType
-    orderStatus
-    address {
+  query GetOrder($orderId: String!) {
+    getOrder(orderId: $orderId) {
       id
-      address
-      apartment
-      label
+      orderId
+      orderTime
+      orderType
+      orderStatus
+      address {
+        id
+        address
+        apartment
+        label
+        userId
+        pincode
+      }
+      deliveryAddressId
+      addToCart {
+        id
+        product {
+          id
+          name
+          image {
+            id
+            image
+          }
+        }
+        quantity
+        totalPrice
+        userId
+        selectedVariantId
+        selectedVariant {
+          id
+          unit
+          values
+        }
+      }
+      cartId
+      user {
+        id
+        email
+        phoneNo
+        firstName
+        lastName
+      }
       userId
-      pincode
-    }
-    deliveryAddressId
-    addToCart {
-      id
-      product {
+      branch {
         id
         name
       }
-      quantity
-      totalPrice
-      userId
-      selectedVariantId
-      selectedVariant {
+      branchId
+      coupon {
         id
-        unit
-        values
+        name
+        code
+        discount
+        discountType
+      }
+      couponId
+      paymentStatus
+      paymentType
+      orderAmount
+      orderDiscountPrice
+      totalOrderPrice
+    }
+  }
+`;
+
+export const deleteAddress = gql`
+  mutation Mutation($deleteUserAddressId: ID!) {
+    deleteUserAddress(id: $deleteUserAddressId) {
+      message
+      data {
+        id
+        address
+        apartment
+        label
+        user {
+          id
+        }
+        userId
+        pincode
       }
     }
-    cartId
-    user {
-      id
-      email
-      phoneNo
-      firstName
-      lastName
-    }
-    userId
-    branch {
-      id
-      name
-    }
-    branchId
-    coupon {
-      id
-      name
-      code
-      discount
-      discountType
-    }
-    couponId
-    paymentStatus
-    paymentType
-    orderAmount
-    orderDiscountPrice
-    totalOrderPrice
   }
-}
-`
+`;
 
 //subsc
 
@@ -944,6 +968,134 @@ export const ClientSecret = gql`
   mutation Mutation($input: cardPaymentInput) {
     cardPayment(input: $input) {
       clientSecret
+    }
+  }
+`;
+
+export const deleteCart = gql`
+  mutation Mutation($cartId: ID!) {
+    deleteCart(cartId: $cartId) {
+      message
+      data {
+        id
+        product {
+          id
+          name
+          productCode
+          shortDescription
+          description {
+            key
+            value
+          }
+          variant {
+            id
+            size
+            unit
+            values
+            price
+            stock
+          }
+          tag
+          image {
+            id
+            image
+            imageList
+          }
+          rating
+          dicountType
+          dicountPercentage
+          ratingCount
+          isActive
+          ProductType {
+            id
+            name
+            image
+            isActive
+            defaultRoute
+            productCategory {
+              id
+              name
+              image
+              isActive
+              productTypes {
+                id
+                name
+                image
+                isActive
+                defaultRoute
+                productCategoryId
+              }
+              defaultRoute
+            }
+            productCategoryId
+            products {
+              id
+              name
+              productCode
+              shortDescription
+              tag
+              rating
+              dicountType
+              dicountPercentage
+              ratingCount
+              isActive
+              productTypeId
+            }
+          }
+          productTypeId
+        }
+        productId
+        quantity
+        totalPrice
+        user {
+          id
+          email
+          phoneNo
+          firstName
+          lastName
+          role
+          profileImage
+          isActive
+          Address {
+            id
+            address
+            apartment
+            label
+            userId
+            pincode
+          }
+        }
+        userId
+        deviceToken
+        isOrder
+        selectedVariantId
+        selectedVariant {
+          id
+          size
+          unit
+          values
+          price
+          stock
+          ProductInventory {
+            id
+            productId
+            branchId
+            variantId
+            availableStock
+            minimumAvailableStock
+          }
+          AddToCart {
+            id
+            productId
+            quantity
+            totalPrice
+            userId
+            deviceToken
+            isOrder
+            selectedVariantId
+          }
+        }
+      }
     }
   }
 `;
