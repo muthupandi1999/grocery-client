@@ -789,7 +789,6 @@ export const ProductLeftSection = styled.div`
       box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 5px -1px,
         rgba(0, 0, 0, 0.14) 0px 6px 10px 0px,
         rgba(0, 0, 0, 0.12) 0px 1px 18px 0px;
-      border-radius: 50%;
       width: 34px;
       height: 34px;
     }
@@ -1106,7 +1105,6 @@ export const CategoryProductSliderWrapper = styled.div`
     background-position: center;
     box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
       rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-    border-radius: 50%;
     width: 34px;
     height: 34px;
     background-color: white;
@@ -1146,36 +1144,42 @@ export const CategoryProductSliderWrapper = styled.div`
 `;
 
 export const CategoryImageContainer = styled.div`
-  margin: 20px 5px;
   .categoryCartBox {
-    background: #fff;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    margin:10px 0;
     align-items: center;
-    padding: 10px;
+    justify-content: start;
+    gap: 10px;
     cursor: pointer;
     border-radius: 20px;
-    box-shadow: rgba(149, 157, 165, 0.2) 0px 1px 10px;
-    transition: transform 0.5s, box-shadow 0.1s;
     width: 90%;
     margin: 10px 0;
-    &:hover {
-      transform: translateY(-5px);
-      box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    &:hover .img-container img {
+      transform: scale(1.1);
+    }
+
+    .productName {
+      padding-left: 10px;
+      min-width: 54%;
     }
   }
   .img-container {
-    width: 50px;
-    height: 50px;
+    width: 70px;
+    height: 70px;
+    background: #e8f2ee;
+    border-radius: 50%;
+    padding: 10px;
     overflow: hidden;
     object-fit: fill;
     position: relative;
     margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     img {
-      width: 100%;
-      height: 100%;
+      width: 80%;
+      height: 80%;
     }
   }
   p {

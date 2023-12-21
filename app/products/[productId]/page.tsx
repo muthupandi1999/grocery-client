@@ -1,10 +1,11 @@
 import React from "react";
 import ProductPage from "./productPage";
 
-function page() {
+function page({params}:{params:any}) {
+  console.log("productId", params?.productId)
   return (
     <div>
-      <ProductPage />
+      <ProductPage productId = {params?.productId} />
     </div>
   );
 }

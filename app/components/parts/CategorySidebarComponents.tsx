@@ -25,7 +25,7 @@ function CategorySidebarComponents() {
   let productTypesData = categoryProductTypes?.getCategory;
   return (
     <CategorySidebarContainer>
-      {productTypesData?.productTypes.length > 0 && productTypesData?.productTypes.map((data: ProductTypesI) => (
+      {productTypesData?.productTypes?.length > 0 && productTypesData?.productTypes?.map((data: ProductTypesI) => (
         <>
           <a
             onClick={() =>

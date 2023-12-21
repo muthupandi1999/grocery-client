@@ -2344,7 +2344,7 @@ export const CategoryProductSliderSettings = {
   dots: false,
   infinite: false,
   speed: 1000,
-  slidesToShow: 6,
+  slidesToShow: 5,
   slidesToScroll: 1,
   swipe: false,
   responsive: [

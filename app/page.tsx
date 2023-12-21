@@ -12,6 +12,8 @@ import {
   JSONServerData,
 } from "./utils/data";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
+import { Text } from "./assets/style/dynamicButton";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 import {
   Wrapper,
@@ -40,6 +42,7 @@ import { AllProducts } from "./service/query";
 import { useDispatch, useSelector } from "react-redux";
 import { updateProductData } from "./redux/slices/AllProductSlice";
 import { SliderHeader } from "./assets/style/commonStyles";
+import PopularProducts from "./components/popularProducts";
 export default function Home() {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -127,15 +130,25 @@ export default function Home() {
                 <div className="img-container">
                   <img src={data?.image} />
                 </div>
-                <p
+                <div className="productName">
+                  <Text fontSize="12px" fontWeight="600" padding="0 0 5px 0">
+                    {data?.name}
+                  </Text>
+                  <Text fontSize="12px" fontWeight="600" padding="5px 0 0 0">
+                    {data?.productsCount} Products
+                  </Text>
+                </div>
+                <MoreVertIcon sx={{ fontSize: "29px", opacity: 0.5 }} />
+
+                {/* <p
                   style={{
                     padding: "25px 0 10px 0",
                     fontSize: "13px",
                     fontWeight: "600",
                   }}
                 >
-                  {data?.name}
-                </p>
+                   
+                </p> */}
               </div>
             </CategoryImageContainer>
           ))}
@@ -166,6 +179,8 @@ export default function Home() {
       </CategoryImageContainer> */}
       <TodayLowPriceProducts id={"65549be6b8cc555881cb43f3"} />
       <TodayLowPriceProducts id={"6555c9459ad354780c2e6c4c"} />
+      <TitleTag variant="productTitle">Trending Products</TitleTag>
+      <PopularProducts/>
       <FooterAbout>
         <div className="col">
           <div className="card mb-3 border-0">

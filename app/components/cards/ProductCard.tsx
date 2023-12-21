@@ -70,7 +70,10 @@ function ProductCard({
   const [addToCartProduct, { data: AddToCartData, loading: addLoader, error }] =
     useMutation(AddToCart);
 
-  const handleOpen = () => setOpen(true);
+  const handleOpen = (e:any) => {
+    e.stopPropagation();
+    setOpen(true);
+  };
   const handleClose = () => setOpen(false);
 
   console.log("allProducts?.AllProducts", allProducts?.AllProducts);

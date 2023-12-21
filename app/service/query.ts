@@ -8,6 +8,7 @@ export const getAllCategories = gql`
       image
       isActive
       defaultRoute
+      productsCount
       productTypes {
         id
         name
@@ -1096,6 +1097,134 @@ export const deleteCart = gql`
           }
         }
       }
+    }
+  }
+`;
+
+export const getProduct = gql`
+  query GetProduct($getProductId: ID!) {
+    getProduct(id: $getProductId) {
+      id
+      name
+      productCode
+      shortDescription
+      description {
+        key
+        value
+      }
+      variant {
+        id
+        size
+        unit
+        values
+        price
+        stock
+        ProductInventory {
+          id
+          productId
+          branchId
+          variantId
+          availableStock
+          minimumAvailableStock
+        }
+        AddToCart {
+          id
+          productId
+          quantity
+          totalPrice
+          user {
+            id
+            email
+            phoneNo
+            firstName
+            lastName
+            role
+            profileImage
+            isActive
+            Address {
+              id
+              address
+              apartment
+              label
+              userId
+              pincode
+            }
+          }
+          userId
+          deviceToken
+          isOrder
+          selectedVariantId
+          selectedVariant {
+            id
+            size
+            unit
+            values
+            price
+            stock
+          }
+        }
+        product {
+          id
+          name
+          productCode
+          shortDescription
+          tag
+          rating
+          dicountType
+          dicountPercentage
+          ratingCount
+          isActive
+          productTypeId
+        }
+      }
+      tag
+      image {
+        id
+        image
+        imageList
+      }
+      rating
+      dicountType
+      dicountPercentage
+      ratingCount
+      isActive
+      ProductType {
+        id
+        name
+        image
+        isActive
+        defaultRoute
+        productCategory {
+          id
+          name
+          image
+          isActive
+          productTypes {
+            id
+            name
+            image
+            isActive
+            defaultRoute
+            productCategoryId
+          }
+          defaultRoute
+        }
+        productCategoryId
+        products {
+          id
+          name
+          productCode
+          shortDescription
+          tag
+          rating
+          dicountType
+          dicountPercentage
+          ratingCount
+          isActive
+          productTypeId
+        }
+      }
+      productTypeId
     }
   }
 `;
