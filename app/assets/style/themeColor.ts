@@ -1,17 +1,16 @@
 export const primary = "#21A783";
 export const secondary = "#C0DF7D";
-export const black = "rgb(0 0 0)";
+export const black = "#1f1f1f";
 export const white = "rgb(255 255 255)";
 export const txtPrimary = "rgb(31, 31, 31)";
 export const txtSecondary = "rgb(102 102 102)";
 export const txtTertiary = "rgb(143 143 143)";
 export const greyPrimary = "rgb(248, 248, 248)";
-export const greyTertiary ="rgb(102, 102, 102)";
-export const lightGrey = "#444d7d"
+export const greyTertiary ="rgb(102, 102, 102)"
 export const greenPrimary = "#0c831f";
 export const greenSecondary = "#318614";
 export const lightGreen="rgb(235, 255, 239)"
-export const light = {
+export const light= {
   color: {
     primary,
     secondary,
@@ -23,6 +22,7 @@ export const light = {
     greyTertiary,
     greenPrimary,
     greenSecondary,
+    greyPrimary
   },
   shadow: {
     primary: "rgba(0, 0, 0, 0.04)",

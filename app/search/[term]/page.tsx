@@ -1,62 +1,64 @@
 "use client";
-// import React, { useEffect, useState } from "react";
-// import { AllProductsWithSearch } from "@/app/service/query";
-// import {
-//   CategoryContentContainer,
-//   CategoryGridContainer,
-// } from "@/app/assets/style";
-// import ProductCard from "@/app/components/cards/ProductCard";
-// import { NofoundText } from "../page";
-// import { useQuery } from "@apollo/experimental-nextjs-app-support/ssr";
+import { CategoryGridContainer, Showresults } from "@/app/assets/style";
+import ProductCard from "@/app/components/cards/ProductCard";
+import { filterProducts } from "@/app/service/query";
+import { useQuery } from "@apollo/client";
+import React, { useContext, useEffect } from "react";
+import Noproducts from "../Noproducts";
+import { globalContext } from "@/app/utils/states";
+import {
+  GetAllProductsProps,
+  GlobalContext,
+} from "@/app/assets/style/interface";
+import ProductCardLoader from "@/app/Loading UI/productCardLoader";
+import { searchProducts } from "@/app/service/api/data";
+import { MyContext } from "@/app/myContext";
+import { setProducts } from "@/app/myContext/action";
 
-// function page({params}:{params:any}) {
+function page({ params }: { params: { term: string } }) {
+  const { setSearch,search } = useContext(globalContext);
+ const{searchedResults,searchLoader} =searchProducts(params?.term);
+ const { dispatch, cartItems } = useContext(MyContext);
 
-//   const [products, setProducts] = useState<any>([]);
-//   const { data: AllProducts }: any = useQuery(AllProductsWithSearch, {
-//     variables: {
-//       filter: params?.term,
-//     },
-//   });
-
-//   console.log("CategoryProductsList", AllProducts)
-
-//   useEffect(() => {
-//     setProducts(AllProducts?.getAllProducts
-//       );
-//   }, [AllProducts]);
-
-//   return (
-//     <div>
-//       {products?.length > 0 ? (
-//         <CategoryContentContainer>
-//           <div className="content-header">
-//             <h1> Search results for "{params?.term}" </h1>
-//           </div>
-
-//           <CategoryGridContainer>
-//             {products?.map((data: any) => (
-//               <ProductCard width="100%" key={data.id} data={data} />
-//             ))}
-//           </CategoryGridContainer>
-//         </CategoryContentContainer>
-//       ) : (
-//         <NofoundText> No data found</NofoundText>
-//       )}
-//     </div>
-//   );
-// }
-
-// export default page;
-
-import React from "react";
-import SearchProduct from "./searchProduct";
-
-
-function page({params}:any) {
+  useEffect(() => {
+    setSearch(params.term);
+  }, []);
+  useEffect(() => {
+    setProducts(dispatch);
+  }, [cartItems]);
   return (
-    <div>
-      <SearchProduct params={params} />
-    </div>
+    <>
+      {searchedResults?.getAllProducts?.length !== 0 ? (
+        <>
+          <Showresults>showing results for "{params.term}"</Showresults>
+
+          <CategoryGridContainer $showBackground={false}>
+            {searchedResults?.getAllProducts?.map((data: GetAllProductsProps) => (
+              <ProductCard
+                key={data?.id}
+                data={data}
+                slider={false}
+                categId={undefined}
+                subListId={undefined}
+                searchTerm ={search}
+              />
+            ))}
+          </CategoryGridContainer>
+        </>
+      ) : (
+        <Noproducts />
+      )}
+
+      {searchLoader && (
+        <CategoryGridContainer $showBackground={false}>
+          {Array(15)
+            .fill(0)
+            .map((_, i) => (
+              <ProductCardLoader key={i} />
+            ))}
+        </CategoryGridContainer>
+      )}
+    </>
   );
 }
 

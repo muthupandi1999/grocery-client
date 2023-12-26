@@ -1,35 +1,26 @@
 "use client";
 import {
-  CategoryHiddenListPopper,
   CategoryNavContainer,
-  DropDownListItem,
-  HiddlenNavList,
-  NavListItem,
+  SCTitle,
 } from "@/app/assets/style";
-import outFocus from "@/app/hooks/useOutFocus";
-import { getAllCategories } from "../../service/query";
-import { JSONServerData } from "@/app/utils/data";
-import { globalContext } from "@/app/utils/states";
-import { useQuery } from "@apollo/client";
-import { Button, Divider, Popover, Popper, Typography } from "@mui/material";
+import { AllCategory } from "@/app/assets/style/interface";
+import { getAllCategoryWithTypes } from "@/app/service/api/data";
+import { Divider, Skeleton } from "@mui/material";
 import { useRouter } from "next/navigation";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect,  useState } from "react";
 import { IoChevronDownSharp } from "react-icons/io5";
-import { CategoryI } from "@/app/assets/style/interface";
-
+import CustomPopper from "../elements/Popper";
 function CategoryNavComponent() {
   const Router = useRouter();
-  const { loading, error, data: allCategories } = useQuery(getAllCategories);
-  const [hiddenNav, setHiddenNav] = useState(false);
-  const [anchorEL, setAnchorEL] = useState<HTMLAnchorElement | null>(null);
-  const hiddenRef = useRef(null);
+  const { allCategories, allCategoryLoader } = getAllCategoryWithTypes();
+  const allCategoryArr = allCategories?.getAllCategories;
+  const [anchorEL, setAnchorEL] = useState<EventTarget & HTMLHeadingElement|null>(null);
   const [sliceCount, setSliceCount] = useState(7);
-  const showonList = allCategories?.getAllCategories?.slice(0, sliceCount);
-  const hiddenList = allCategories?.getAllCategories?.slice(
+  const showonList: AllCategory = allCategoryArr?.slice(0, sliceCount);
+  const hiddenList: AllCategory = allCategoryArr?.slice(
     sliceCount,
-    allCategories?.getAllCategories?.length
+    allCategoryArr?.length
   );
-
 
   useEffect(() => {
     window.addEventListener("resize", () => {
@@ -48,88 +39,61 @@ function CategoryNavComponent() {
         }
       });
   }, []);
+console.log("types",allCategoryArr);
 
-  useEffect(() => {
-    outFocus(hiddenRef, setHiddenNav);
-  }, []);
-
-  const open = Boolean(anchorEL);
-
-  const id = open ? "simple-popover" : undefined;
   return (
     <CategoryNavContainer>
       <nav className="navList">
-        {showonList?.map((data: CategoryI) => (
-          <NavListItem
-            onClick={() => {
-              Router.push(data?.defaultRoute);
-            }}
-            key={data?.id}
-          >
-            {data.name}
-          </NavListItem>
-        ))}
-
-        <NavListItem
-          style={{ position: "relative" }}
-          aria-describedby={id}
-          ref={hiddenRef}
-          // onClick={(event) => {
-          //   setAnchorEL(event.currentTarget);
-          // }}
-          onClick={() => setHiddenNav(!hiddenNav)}
-        >
-          more{" "}
-          <span>
-            <IoChevronDownSharp />
-          </span>
-          {hiddenNav && (
-            <HiddlenNavList id={id}>
+        {allCategoryLoader
+          ? Array(sliceCount)
+              .fill(0)
+              .map((_, i) => (
+                <SCTitle $variant="H14UNITNAV" key={i}>
+                  <Skeleton variant="text" width={120} height={25} />
+                </SCTitle >
+              ))
+          : showonList?.map((data) => (
+              <SCTitle $variant="H14UNITNAV"
+                onClick={() => {
+                  Router.push(`/productType/${data?.id}/${ data?.productTypes?.[0]?.id}`);
+                }}
+                key={data?.id}
+              >
+                {data?.name}
+              </SCTitle >
+            ))}
+        {!allCategoryLoader && (
+          <>
+            <SCTitle $variant="H14UNITNAV"
+              style={{ position: "relative" }}
+             
+              onClick={(event: React.MouseEvent<HTMLHeadingElement, MouseEvent>) => {
+                setAnchorEL(event.currentTarget);
+              }}
+            >
+              more{" "}
+              <span>
+                <IoChevronDownSharp />
+              </span>
+            </SCTitle >
+            <CustomPopper anchorEL={anchorEL} closeFunc={() => setAnchorEL(null)}  variant={undefined}>
               <div className="hiddenList">
-                {hiddenList?.map((data: any) => (
-                  <>
-                    <NavListItem
+                {hiddenList?.map((data) => (
+                  <Fragment key={data?.id}>
+                    <SCTitle $variant="H14UNITNAV"
                       onClick={() => {
-                        Router.push(data?.defaultRoute);
+                        Router.push(`/productType/${data?.id}/${ data?.productTypes?.[0]?.id}`);
                       }}
-                      key={data?.id}
                     >
-                      {data.name}
-                    </NavListItem>
+                      {data?.name}
+                    </SCTitle >
                     <Divider light />
-                  </>
+                  </Fragment>
                 ))}
               </div>
-            </HiddlenNavList>
-          )}
-        </NavListItem>
-
-        {/* <CategoryHiddenListPopper
-          id={id}
-          open={open}
-          anchorEl={anchorEL}
-          onClose={() => setAnchorEL(null)}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
-          }}
-        >
-          <div className="hiddenList">
-            {hiddenList?.map((data: any) => (
-              <>
-                <NavListItem
-                  onClick={() => {
-                    Router.push(data?.defaultRoute);
-                  }}
-                  key={data?.id}
-                >
-                  {data.name}
-                </NavListItem>
-                <Divider light />
-              </>
-            ))}
-          </div>
-        </CategoryHiddenListPopper> */}
+            </CustomPopper>
+          </>
+        )}
       </nav>
     </CategoryNavContainer>
   );

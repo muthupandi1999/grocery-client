@@ -1,10 +1,21 @@
-import { DetailedHTMLProps, HTMLAttributes } from "react";
+import { Url } from "next/dist/shared/lib/router/router";
+import {
+  DetailedHTMLProps,
+  Dispatch,
+  HTMLAttributes,
+  ReactNode,
+  SetStateAction,
+} from "react";
 import { Interpolation } from "styled-components";
 
 declare module "styled-components" {
   export interface DefaultTheme {
     color: {
-    
+      greyTertiary: string;
+      greyPrimary: string;
+      greyprimary: string;
+      greenSecondary: string;
+      greenPrimary: string;
       primary: string;
       secondary: string;
       black: string;
@@ -18,11 +29,13 @@ declare module "styled-components" {
       secondary: string;
     };
     border: {
-     
+      black: string;
+      white: string;
       primary: string;
     };
     background: {
-      
+      lightGreen: string;
+      greenPrimary: string;
       greyPrimary: string;
     };
     gradient: {
@@ -30,6 +43,11 @@ declare module "styled-components" {
     };
   }
 }
+export type DYNIProps = {
+  params: {
+    DYN: string[];
+  };
+};
 export interface IImgTag {
   $imgfit: "contain" | "cover";
 }
@@ -37,68 +55,98 @@ export interface IButton {
   $icon?: "left" | "right";
 }
 export interface sidebarListContainer {
-  routeId: boolean;
+  $routeId: boolean;
 }
 export interface dropdownListItem {
   $id: boolean;
   $colorState: boolean;
-  $dropdownState: boolean;
 }
-export interface CardContainer {
-  slider: boolean;
-  offerState: boolean;
+export interface GlobalContext {
+  categoryListArr?: never[];
+  setCategoryListArr?: React.Dispatch<React.SetStateAction<never[]>>;
+  allCategoryProducts?: never[];
+  setAllCategoryProducts?: React.Dispatch<React.SetStateAction<never[]>>;
+  defaultRoutes?: string;
+  search?: string;
+  setSearch: React.Dispatch<React.SetStateAction<string>>;
 }
-
-export interface ProductTypes {
-  id: string;
-  name: string;
-  products: any[];
+export interface ChildrenProps {
+  children: ReactNode;
 }
-
-export interface ListTitleText {
-  fontSize?: string;
-  marginBottom?: string;
-}
-
-export interface CategoryProducts {
+export interface AllCategory {
+  length(sliceCount: number, length: any): unknown;
+  slice(sliceCount: number, length: any): unknown;
+  map(arg0: (data: any) => import("react").JSX.Element): ReactNode;
   id?: string;
   name?: string;
-  products: any[];
+  image?: string;
+  defaultRoute: string;
+}
+export interface GetAllProductsProps {
+  id?: string;
+  name?: string;
+  products?: [{ id: string }];
+}
+export interface CategoryGridContainerProps {
+  $showBackground?: boolean;
+}
+export interface SliderImageContainerProps {
+  $imageUrl: URL;
+  $url: URL;
+}
+export interface VariantProps {
+  $variant: string;
+}
+export interface CustomAddButtonProps {
+  $count: number;
+  $disable: boolean;
+  $variant?: string;
+  hideBackground?: boolean;
+}
+export interface CardContainerProps {
+  $slider: boolean;
+  $offerState?: boolean;
+  $available?: boolean;
+  $variant: string;
+
+}
+export interface BannerArrProps {
+  id: string;
+  image: string;
+  description: string;
+}
+export interface ProductCardButtonProps {
+  count: number;
+  setCount: React.Dispatch<React.SetStateAction<number>>;
+  data: any;
+  updateCartVariables: {
+    productId: string;
+    quantity: number;
+    userId: string;
+    variantId: string;
+  };
 }
 
-export interface StyleLink {
-  variant?: string;
+//products
+export interface IImageSliderProps {
+  setImage: Dispatch<SetStateAction<string>>;
+  image: URL | string;
+  imagesArr: URL[] | string[];
 }
-
-export interface CardContainerI {
-  slider?: string;
-  available?: number;
-}
-
-export interface TitleProps {
-  fontSize?: string;
-  color?: string;
-  padding?: string;
-  fontWeight?: number | string;
-}
-
-export interface FlexBoxProps {
-  width?: string;
-  height?: string;
-}
-
-export interface ProductTypesI {
+//productTypes
+export interface ICategory {
   id: string;
   name: string;
   image: string;
   isActive: boolean;
+  defaultRoute: string;
+  productTypes: {
+    id: string;
+    name: string;
+    defaultRoute: string;
+  }[];
 }
 
-export interface CategoryI {
-  id:string;
-  image:string;
-  isActive:boolean;
-  name:string;
-  defaultRoute:string;
-  productTypes:[{id:string}]
+export interface StyleLink {
+  variant?: string;
 }

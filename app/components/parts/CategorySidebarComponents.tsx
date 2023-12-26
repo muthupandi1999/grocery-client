@@ -1,43 +1,39 @@
 "use client";
+import React from "react";
+import CategorySidebarLoader from "@/app/Loading UI/categorySidebarLoader";
 import {
   CategorySidebarContainer,
   SideBarListContainer,
 } from "@/app/assets/style";
-import { useQuery } from "@apollo/client";
+import { AllCategory } from "@/app/assets/style/interface";
+import { fetchProductTypesByCategoryId } from "@/app/service/api/data";
 import { Divider } from "@mui/material";
 import { usePathname, useRouter } from "next/navigation";
-import React from "react";
-import { CategoryProductTypeList } from "../../service/query";
-import { ProductTypesI } from "@/app/assets/style/interface";
-
 
 function CategorySidebarComponents() {
   const path = usePathname();
   const pathArr = path.split("/");
   const Router = useRouter();
+const {  sideBarList,sideBarLoader } =  fetchProductTypesByCategoryId(pathArr[pathArr.length - 2]);
+  const productTypes = sideBarList?.getCategory?.productTypes;
 
-
-  const { data: categoryProductTypes } = useQuery(CategoryProductTypeList, {
-    variables: {
-      getCategoryId: pathArr[3],
-    },
-  });
-  let productTypesData = categoryProductTypes?.getCategory;
   return (
+    <>
+    {productTypes?.length>0 && 
     <CategorySidebarContainer>
-      {productTypesData?.productTypes?.length > 0 && productTypesData?.productTypes?.map((data: ProductTypesI) => (
-        <>
+      {sideBarLoader?<CategorySidebarLoader/>:productTypes?.map((data: AllCategory) => (
+        <React.Fragment key={data?.id}>
           <a
             onClick={() =>
               Router.push(
-                `/category/${pathArr[pathArr.length - 3]
-                  .split(" ")
-                  .join("-")}/${pathArr[pathArr.length - 2]}/${data.id}`
+                `/productType/${
+                  pathArr[pathArr.length - 2]
+                }/${data.id}`
               )
             }
           >
             <SideBarListContainer
-              routeId={data.id === pathArr[pathArr.length - 1]}
+              $routeId={data.id === pathArr[pathArr.length - 1]}
             >
               <div className="img-container">
                 <img
@@ -50,9 +46,11 @@ function CategorySidebarComponents() {
             </SideBarListContainer>
           </a>
           <Divider light />
-        </>
+        </React.Fragment>
       ))}
-    </CategorySidebarContainer>
+      
+    </CategorySidebarContainer>}
+    </>
   );
 }
 

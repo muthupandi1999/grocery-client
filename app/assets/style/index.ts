@@ -2,11 +2,14 @@
 import { createGlobalStyle, styled } from "styled-components";
 //Interface
 import {
-  CardContainerI,
+  CardContainerProps,
+  CategoryGridContainerProps,
+  CustomAddButtonProps,
   IButton,
   IImgTag,
-  ListTitleText,
+  SliderImageContainerProps,
   StyleLink,
+  VariantProps,
   dropdownListItem,
   sidebarListContainer,
 } from "./interface";
@@ -15,21 +18,12 @@ import Image from "next/image";
 //Colors
 import { white } from "./themeColor";
 import { Grid, Popover } from "@mui/material";
-// font-family: 'Open Sans', sans-serif;
-// font-family: 'Radio Canada', sans-serif;
+import Link from "next/link";
+import { Link as MuiLink } from "@mui/material";
 export const GlobalStyle = createGlobalStyle`
     body{
-      font-family: 'Montserrat', sans-serif;
-      font-size:14px;
-      height: 100%;
-      overflow-x: hidden;
-      overflow-y: auto;
-      width: 100%;
-    }
-    html {
-      height: 100%;
-      overflow: hidden;
-      width: 100%;
+        font-family: 'Open Sans', sans-serif;
+        font-size:14px;
     }
     *{
         margin:0;
@@ -51,6 +45,19 @@ export const GlobalStyle = createGlobalStyle`
     button{
       cursor:pointer;
     }
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+    .p-Input input {
+      border-radius: 25px;
+  }
+input {
+  -moz-appearance: textfield;
+  &:-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
     input, button{
         &:focus{
             outline:none;
@@ -60,163 +67,18 @@ export const GlobalStyle = createGlobalStyle`
   .hiddenList{
     display:flex;
     flex-direction:column;
-
   }
 
 
-:root {
-	--hue: 223;
-	--bg: hsl(var(--hue),10%,90%);
-	--fg: hsl(var(--hue),10%,10%);
-	--primary: hsl(var(--hue),90%,55%);
-	--trans-dur: 0.3s;
-	font-size: calc(16px + (20 - 16) * (100vw - 320px) / (1280 - 320));
-}
+  input[type=number]::-webkit-inner-spin-button, 
+  input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      margin: 0; 
+  }
 
-.preloader {
-	text-align: center;
-	max-width: 20em;
-	width: 100%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-}
-.preloader__text {
-	position: relative;
-	height: 1.5em;
-}
-.preloader__msg {
-	animation: msg 0.3s 13.7s linear forwards;
-	position: absolute;
-	width: 100%;
-}
-.preloader__msg--last {
-	animation-direction: reverse;
-	animation-delay: 14s;
-	visibility: hidden;
-}
-.cartLoader {
-	display: block;
-	margin: 0 auto 1.5em auto;
-	width: 8em;
-	height: 8em;
-}
-.cart__lines,
-.cart__top,
-.cart__wheel1,
-.cart__wheel2,
-.cart__wheel-stroke {
-	animation: cartLines 2s ease-in-out infinite;
-}
-.cart__lines {
-	stroke: var(--primary);
-}
-.cart__top {
-	animation-name: cartTop;
-}
-.cart__wheel1 {
-	animation-name: cartWheel1;
-	transform: rotate(-0.25turn);
-	transform-origin: 43px 111px;
-}
-.cart__wheel2 {
-	animation-name: cartWheel2;
-	transform: rotate(0.25turn);
-	transform-origin: 102px 111px;
-}
-.cart__wheel-stroke {
-	animation-name: cartWheelStroke
-}
-.cart__track {
-	stroke: hsla(var(--hue),10%,10%,0.1);
-	transition: stroke var(--trans-dur);
-}
-
-@media (prefers-color-scheme: dark) {
-	:root {
-		--bg: hsl(var(--hue),10%,10%);
-		--fg: hsl(var(--hue),10%,90%);
-	}
-	.cart__track {
-		stroke: hsla(var(--hue),10%,90%,0.1);
-	}
-}
-
-@keyframes msg {
-	from {
-		opacity: 1;
-		visibility: visible;
-	}
-	99.9% {
-		opacity: 0;
-		visibility: visible;
-	}
-	to {
-		opacity: 0;
-		visibility: hidden;
-	}
-}
-@keyframes cartLines {
-	from,
-	to {
-		opacity: 0;
-	}
-	8%,
-	92% {
-		opacity: 1;
-	}
-}
-@keyframes cartTop {
-	from {
-		stroke-dashoffset: -338;
-	}
-	50% {
-		stroke-dashoffset: 0;
-	}
-	to {
-		stroke-dashoffset: 338;
-	}
-}
-@keyframes cartWheel1 {
-	from {
-		transform: rotate(-0.25turn);
-	}
-	to {
-		transform: rotate(2.75turn);
-	}
-}
-@keyframes cartWheel2 {
-	from {
-		transform: rotate(0.25turn);
-	}
-	to {
-		transform: rotate(3.25turn);
-	}
-}
-@keyframes cartWheelStroke {
-	from,
-	to {
-		stroke-dashoffset: 81.68;
-	}
-	50% {
-		stroke-dashoffset: 40.84;
-	}
-}
-div::-webkit-scrollbar {
-  background: #fff;
-  width: 3px;
-  height: 3px; 
-}
-
-div::-webkit-scrollbar-thumb {
-  background: green;
-}
-
-
-
-
+  
 `;
 export const ImgTag = styled(Image)<IImgTag>`
   object-position: center;
@@ -232,6 +94,35 @@ export const ImgTag = styled(Image)<IImgTag>`
     object-fit: contain;
 `}
 `;
+export const HTMLImgtag = styled.img`
+  width: 100%;
+  height: 100%;
+`;
+export const CustomPTag = styled.p`
+  font-size: 16px;
+  color: ${(props) => props.theme.color.black};
+  font-weight: 500;
+`;
+export const CustomH3 = styled.h3`
+  margin-bottom: 8px;
+  font-size: 18px;
+  color: ${(props) => props.theme.color.black};
+`;
+export const CustomSpan = styled.span`
+  color: ${(props) => props.theme.color.greyprimary};
+  padding-bottom: 20px;
+`;
+export const BreadCrumbsLink = styled(MuiLink)`
+  font-size: 12px !important;
+`;
+export const CustomLinkTag = styled.div<{ variant: string }>`
+  text-decoration: underline dotted;
+  padding: 5px 0;
+  ${(props) =>
+    props.variant === "link" &&
+    `text-decoration:none; padding:10px 0 ; &:hover{background:${props.theme.background.greyPrimary}};padding:5px 10px;
+    cursor:pointer; `}
+`;
 export const Button = styled.button<IButton>`
   background: ${(props) => props.theme.gradient.primary};
   color: ${white};
@@ -244,6 +135,26 @@ export const Button = styled.button<IButton>`
   padding: 10px 15px;
   box-shadow: 0px 5px 10px rgb(33 167 131 / 28%);
   transition-duration: 0.3s;
+
+  .cart-icon {
+    &:hover: {
+      animation: shake 0.5s;
+      animation-iteration-count: 2;
+      @keyframes shake {
+        0% {
+          transform: rotate(0);
+        }
+
+        50% {
+          transform: rotate(10deg);
+        }
+
+        100% {
+          transform: rotate(-10deg);
+        }
+      }
+    }
+  }
   &:hover {
     opacity: 0.8;
   }
@@ -288,6 +199,9 @@ export const LocationSec = styled.div`
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 3px;
+    @media only screen and (max-width: 350px) {
+      font-size: 15px;
+    }
   }
   .contentSec {
     display: flex;
@@ -382,22 +296,12 @@ export const HeaderRightSec = styled.div`
       margin-right: 5px;
     }
   }
-  .Accounts {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 15px;
-    position: relative;
-  }
-  .AddressBox {
-    position: relative;
-  }
 `;
 export const HeaderRow = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 10px 20px;
+  padding: 0 20px;
   @media only screen and (max-width: 1000px) {
     flex-direction: column;
     align-items: flex-start;
@@ -440,18 +344,15 @@ export const HeaderContainer = styled.div`
   border-bottom: 1px solid ${(props) => props.theme.border.primary};
   position: fixed;
   top: 0;
-  right: 0;
   left: 0;
-  z-index: 1;
+  right: 0;
+  z-index: 2;
   background-color: white;
 `;
-interface CHILDCONTAINERI {
-  paddingTop: string;
-}
-export const ChildContainer = styled.div<CHILDCONTAINERI>`
-  max-width: 1440px;
-  margin: auto;
-  margin-top: 158px;
+export const ChildContainer = styled.div`
+  max-width: 1300px;
+  margin: 129px auto 0;
+
   @media only screen and (max-width: 1300px) {
     padding-right: 0;
     margin: 120px 20px 0 20px;
@@ -461,47 +362,56 @@ export const ChildContainer = styled.div<CHILDCONTAINERI>`
     margin: 185px 20px 0 20px;
   }
 `;
+export const AccountPopupWrapper = styled.div`
+  width: 250px;
+  padding: 20px 0;
+`;
+export const AccountHeader = styled.div`
+  margin: 10px;
+`;
+export const AccountMenuWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  row-gap: 10px;
+`;
 //category
 export const CategoryNavContainer = styled.div`
-  background-color: #fff;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
-    rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
-  border-top: 0.5px solid #8080801f;
+  background-color: ${(props) => props.theme.color.white};
+  box-shadow: 0 2px 3px 0 ${(props) => props.theme.shadow.secondary};
   position: fixed;
-  top: 110px;
+  top: 82px;
   left: 0;
   right: 0;
-  z-index: 1;
+  z-index: 2;
   .navList {
-    max-width: 1440px;
+    max-width: 1300px;
     margin: 0 auto;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-between;
   }
 `;
 export const NavListItem = styled.a`
   padding: 14px 13px;
   text-decoration: none;
-  color: ${(props: any) => props.theme.color.greyTertiary};
+  color: ${(props) => props.theme.color.greyTertiary};
   text-transform: capitalize;
-  cursor: pointer;
+
   &:hover {
     background: ${(props) => props.theme.background.greyPrimary};
   }
 `;
 export const CategoryHiddenListPopper = styled(Popover)`
   top: 1px;
-  position: absolute;
-  top: 10%;
-  right: 10%;
   overflow: auto;
   .hiddenList {
     width: 200px;
-    height: 690px;
+    max-height: 690px;
     overflow: auto;
   }
 `;
 export const CategoryContainer = styled.div`
+  margin-top: 131px;
   display: flex;
   height: 100%;
   position: relative;
@@ -509,17 +419,22 @@ export const CategoryContainer = styled.div`
   overflow: auto;
   border-bottom: 1px solid ${(props) => props.theme.border.primary};
   border-right: 1px solid ${(props) => props.theme.border.primary};
+
   &::-webkit-scrollbar {
     display: none;
   }
 `;
 export const CategorySidebarContainer = styled.div`
-  width: 20%;
+  width: 350px;
   position: sticky;
   top: 0;
+
   border-left: 1px solid ${(props) => props.theme.border.primary};
   border-right: 1px solid ${(props) => props.theme.border.primary};
   overflow: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 export const SideBarListContainer = styled.div<sidebarListContainer>`
   display: flex;
@@ -527,11 +442,11 @@ export const SideBarListContainer = styled.div<sidebarListContainer>`
   gap: 10px;
   padding: 10px;
   cursor: pointer;
-  background-color: ${(props: any) =>
-    props.routeId ? props.theme.background.lightGreen : ""};
+  background-color: ${(props) =>
+    props.$routeId ? props.theme.background.lightGreen : ""};
   border-left: 4px solid
-    ${(props: any) =>
-      props.routeId ? props.theme.background.greenPrimary : "transparent"};
+    ${(props) =>
+      props.$routeId ? props.theme.background.greenPrimary : "transparent"};
   .img-container {
     width: 48px;
     height: 48px;
@@ -545,19 +460,8 @@ export const SideBarListContainer = styled.div<sidebarListContainer>`
     text-transform: capitalize;
   }
 `;
-
-interface CATEGORYCONTAINERI {
-  $variant?: string;
-  paddingTop?: string;
-}
-
-export const CategoryContentContainer = styled.div<CATEGORYCONTAINERI>`
-  width: ${(props: any) => (props.$variant === "productType" ? "80%" : "100%")};
-  .NodataFoundText {
-    position: absolute;
-    top: 50%;
-    left: 55%;
-  }
+export const CategoryContentContainer = styled.div`
+  width: 100%;
 
   .content-header {
     background: white;
@@ -582,18 +486,18 @@ export const CategoryContentContainer = styled.div<CATEGORYCONTAINERI>`
         position: relative;
 
         .select-options {
-          z-index: 5;
-          background-color: ${(props: any) => props.theme.color.white};
+          background-color: ${(props) => props.theme.color.white};
           position: absolute;
-          border: 1px solid ${(props: any) => props.theme.border.primary};
+          border: 1px solid ${(props) => props.theme.border.primary};
           width: 100%;
           transition: all 0.5s ease-in-out;
+          z-index: 1;
         }
       }
     }
   }
 `;
-export const DropDownListItem: any = styled.li<dropdownListItem>`
+export const DropDownListItem = styled.li<dropdownListItem>`
   list-style: none;
   display: flex;
   align-items: center;
@@ -620,37 +524,77 @@ export const CustomSelectField = styled.div`
   height: 32px;
   border: 1px solid ${(props) => props.theme.border.primary};
   border-radius: 4px;
-  color: ${(props: any) => props.theme.color.greenPrimary};
+  color: ${(props) => props.theme.color.greenPrimary};
   font-weight: 600;
 `;
-export const CategoryGridContainer = styled.div`
+export const CategoryGridContainer = styled.div<CategoryGridContainerProps>`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   // flex-wrap: wrap;
   padding: 10px;
   gap: 10px;
-  background-color: ${(props) => props.theme.background.greyPrimary};
+  background-color: ${(props) =>
+    props.$showBackground ? props.theme.background.greyPrimary : ""};
   @media only screen and (max-width: 1020px) {
     grid-template-columns: repeat(2, 1fr);
   }
 `;
+export const SCIMGBOX = styled.div<{ $variant: string }>`
+  width: 100%
+  height: 100%;
+  margin:auto;
+  overflow: hidden;
+  transition:all .7s ease-in-out;
 
-export const CardContainer = styled.div<CardContainerI>`
-  width: ${(props) => (props.slider ? "95%" : "100%")};
+`;
+export const SCIMGTAG = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.7s ease-in-out;
+`;
+export const CardContainer = styled.div<CardContainerProps>`
+  width: ${(props) => (props.$slider ? "95%" : "100%")};
   position: relative;
-  padding: 0 10px 10px;
+
   border: 1px solid #e8e8e8;
   background: white;
+
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.04) 2px 2px 8px;
   gap: 6px;
   display: flex;
-  flex-direction: column;
-  opacity: ${(props: any) => (props.available ? 0.5 : 1)};
+  flex-direction: ${(props) =>
+    props.$variant?.includes("productCard") ||
+    props.$variant?.includes("cartEmptyCard")
+      ? "column"
+      : "row"};
+  opacity: ${(props) => (props.$available ? 0.5 : 1)};
+  align-items: ${(props) =>
+    props.$variant?.includes("cartEmptyCard") && "center"};
+  justify-content: ${(props) =>
+    props.$variant?.includes("productCard" || "cartEmptyCard")
+      ? "center"
+      : "space-between"};
+  margin: ${(props) =>
+    props.$variant?.includes("productCard")
+      ? 0
+      : props.$variant?.includes("cartEmptyCard")
+      ? "10px"
+      : "10px 0"};
+  &:hover {
+    ${SCIMGTAG} {
+      scale: 1.2;
+    }
+  }
   .img-container {
     display: flex;
     justify-content: center;
     position: relative;
+    width: ${(props) =>
+      props.$variant?.includes("productCard") ? "100%" : "80px"};
+    height: ${(props) =>
+      props.$variant?.includes("productCard") ? "100%" : "65px"};
     .img-wrapper {
       width: 100%;
 
@@ -662,81 +606,61 @@ export const CardContainer = styled.div<CardContainerI>`
       }
     }
   }
-
-  .unitDiv {
-    display: flex;
-    align-items: center;
-    height: 26px;
-    color: #666666;
-    font-size: 12px;
-    margin-bottom: 24px;
-    
+  .content-Wrapper {
+    padding: 10px;
   }
-  
-  .StockOutBtn {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #000;
-    color: #fff;
-    width: 80px;
-    height: 20px;
-    font-size: 10px;
-    border: none;
-    border-radius: 10px;
-  }
-
-  .productUnit {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #eee;
-    padding: 7px;
-    margin-bottom: 14px;
-    border-radius: 4px;
-    .unit {
-      font-size: 12px;
-    }
-    .unitIcon {
-      color: #785e5e;
-      position:relative;
-      bottom:11px;
-    }
-  }
-  
-
-  }
-
-  .modelBox {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 500px;
-    border: none;
-    border-radius: 10px;
-    padding: 16px;
-    background-color: #f4f6fb;
-    @media only screen and (max-width: 560px) {
-      width: 300px;
-    }
-
   .title {
     height: 36px;
+    margin: 5px 0;
   }
+  .quantity {
+    padding: 6px 0;
+    margin-bottom: 10px;
+  }
+  .cardFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+`;
+export const PriceContainer = styled.div<{
+  $offerState: Boolean;
+  $variant: string;
+}>`
+  display: flex;
+  align-items: center;
 
-` as any;
-
-export const CardFooder = styled.section`
+  font-weight: ${(props) => (props.$offerState ? 500 : 600)};
+  flex-direction: ${(props) =>
+    props.$variant === "variantCard" || props.$variant === "productPage"
+      ? "row"
+      : "column"};
+  column-gap: 10px;
+  color: ${(props) =>
+    props.$offerState
+      ? props.theme.color.greyTertiary
+      : props.theme.color.black};
+  .price {
+    text-decoration: ${(props) =>
+      props.$offerState ? "line-through" : "none"};
+  }
+  .offerPrice {
+    color: ${(props) => props.theme.color.black};
+    font-weight: 600;
+  }
+`;
+export const VariantContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  .priceBox {
-    display: flex;
-    flex-direction: column;
-  }
+  gap: 10px;
 `;
+export const VariantCardWrapper = styled.div`
+  width: 500px;
+  padding: 10px;
+`;
+
+// expo
 export const OutOfStock = styled.div`
   position: absolute;
   top: 50%;
@@ -754,12 +678,14 @@ export const OutOfStock = styled.div`
 
 export const ProductContainer = styled.div`
   display: flex;
-
   justify-content: center;
   position: relative;
   height: 100vh;
   overflow: auto;
   overflow-x: visible;
+  &::-webkit-scrollbar {
+    width: 0.5em;
+  }
 
   @media only screen and (max-width: 1000px) {
     display: block;
@@ -789,6 +715,7 @@ export const ProductLeftSection = styled.div`
       box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 5px -1px,
         rgba(0, 0, 0, 0.14) 0px 6px 10px 0px,
         rgba(0, 0, 0, 0.12) 0px 1px 18px 0px;
+      border-radius: 50%;
       width: 34px;
       height: 34px;
     }
@@ -830,11 +757,38 @@ export const ProductLeftSection = styled.div`
     width: 100%;
   }
 `;
+export const ProductPriceWrapper = styled.div<{ $discount: boolean }>`
+  display: flex;
+  align-items: center;
+  column-gap: 5px;
+  .offerPrice {
+    font-weight: 700;
+    color: black;
+  }
+  .price {
+    color: ${(props) =>
+      props.$discount
+        ? props.theme.color.greyPrimary
+        : props.theme.color.black};
+    span {
+      text-decoration: ${(props) =>
+        props.$discount ? "line-through" : "none"};
+      font-weight: ${(props) => (props.$discount ? 500 : 700)} !important;
+    }
+  }
+  .offerCard {
+    font-size: 8px;
+    padding: 5px;
+    background: #538cee;
+    color: white;
+    border-radius: 4px;
+  }
+`;
 export const SliderWrapper = styled.div`
   width: 80%;
   height: 100%;
 `;
-export const SliderImageContainer = styled.div<{ $imageUrl: URL; $url: URL }>`
+export const SliderImageContainer = styled.div<SliderImageContainerProps>`
   width: 64px !important;
   height: 64px;
   object-fit: fill;
@@ -859,6 +813,96 @@ export const DetailsContainer = styled.div`
     margin: 12px 0;
   }
 `;
+//login
+export const LoginWrapper = styled.div`
+  padding-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 500px;
+  row-gap: 20px;
+  position: relative;
+  .back-icon {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+  }
+  .otp-box {
+    margin: 5px;
+    width: 50px !important;
+    height: 50px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    &:focus {
+      border: 1px solid #999;
+    }
+  }
+  .number_Details {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+`;
+export const LogoImageContainer = styled.div`
+  width: 75px;
+  height: 75px;
+  overflow: hidden;
+  border-radius: 12px;
+  margin-top: 20px;
+`;
+export const InputWrapper = styled.div`
+  width: 50%;
+  border: 1px solid #ccc;
+  &:focus {
+    border: 1px solid #999;
+  }
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+`;
+export const CustomInput = styled.input`
+  outline: none;
+  border: none;
+  background: transparent;
+  width: 85%;
+  padding: 20px 0;
+  font-weight: 500;
+  letter-spacing: 1px;
+  font-size: 16px;
+  .no-spin::-webkit-inner-spin-button,
+  .no-spin::-webkit-outer-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+  }
+
+  .no-spin {
+    -moz-appearance: textfield !important;
+  }
+`;
+export const LoginButton = styled.button`
+  width: 50%;
+  padding: 20px;
+  border-radius: 12px;
+  border: none;
+  background: ${(props) =>
+    props.disabled ? "gray" : props.theme.color.greenPrimary};
+  color: ${(props) => props.theme.color.white};
+  font-size: 14px;
+  font-weight: 600;
+`;
+export const OTPPageHeader = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-shadow: 0px 0px 8px 0px ${(props) => props.theme.shadow.secondary};
+  font-size: 18px;
+`;
 export const ProductRightSection = styled.div`
   width: 50%;
   position: sticky;
@@ -866,6 +910,7 @@ export const ProductRightSection = styled.div`
   padding: 70px 0 0 48px;
   border-bottom: 1px solid ${(props) => props.theme.border.primary};
   height: 100%;
+
   .productInfo {
     display: flex;
     flex-direction: column;
@@ -874,14 +919,14 @@ export const ProductRightSection = styled.div`
       border-bottom: 1px solid ${(props) => props.theme.border.primary};
       padding: 10px 0 15px 0;
       a {
-        color: ${(props: any) => props.theme.color.greenPrimary};
+        color: ${(props) => props.theme.color.greenPrimary};
         font-size: 18px;
         text-decoration: none;
         display: flex;
         align-items: center;
       }
       .right-arrow {
-        color: ${(props: any) => props.theme.color.greenPrimary};
+        color: ${(props) => props.theme.color.greenPrimary};
         font-size: 12px;
       }
     }
@@ -942,7 +987,7 @@ export const ProductRightSection = styled.div`
           }
           span {
             font-size: 12px;
-            color: ${(props: any) => props.theme.color.greyTertiary};
+            color: ${(props) => props.theme.color.greyTertiary};
           }
         }
       }
@@ -953,20 +998,24 @@ export const ProductRightSection = styled.div`
   }
 `;
 
-export const TitleTag = styled.h3<{ variant: string }>`
-  color: ${(props: any) => props.theme.color.black};
-  font-weight: ${(props: any) =>
-    props.variant === "productTitle" ? 600 : 500};
-  font-size: 24px;
+export const TitleTag = styled.h3<VariantProps>`
+  color: ${(props) => props.theme.color.black};
+  font-weight: ${(props) => (props.$variant === "productTitle" ? 700 : 600)};
+  font-size: ${(props) =>
+    props.$variant === "productTitle"
+      ? "24px"
+      : props.$variant === "number"
+      ? "14px"
+      : "18px"};
   text-transform: capitalize;
   padding: ${(props) =>
-    props.variant === "detailsTitle"
+    props.$variant === "detailsTitle"
       ? " 32px 0 16px"
-      : props.variant === "cardTitle"
+      : props.$variant === "cardTitle"
       ? "16px 0"
       : 0};
 `;
-export const ProductTimerCard = styled.div<{ variant: string }>`
+export const ProductTimerCard = styled.div<VariantProps>`
   display: inline-flex;
   align-items: center;
   gap: 2px;
@@ -975,54 +1024,52 @@ export const ProductTimerCard = styled.div<{ variant: string }>`
   font-weight: 700;
   color: ${(props) => props.theme.color.black};
   background-color: ${(props) => props.theme.background.greyPrimary};
-  font-size: ${(props) => (props.variant === "forCard" ? "9px" : "12px")};
+  font-size: ${(props) => (props.$variant === "forCard" ? "9px" : "12px")};
   width: 70px;
   img {
     width: 11px;
     height: 11px;
   }
-` as any;
-export const CustomAddButton = styled.button<{ $count: any }>`
+`;
+export const CustomAddButton = styled.button<CustomAddButtonProps>`
+  position: relative;
   font-size: 13px;
+  padding: 10px 15px;
+  ${(props) => props.$variant === "productCard" && "width:60px;height:33px;"}
 
-  width: 66px;
-  height: 31px;
-  border: 2px solid #bf4f74;
+  border:1px solid ${(props) =>
+    props.hideBackground ? "transparent" : " #318616"};
   border-radius: 6px;
-  background-color: ${(props: any) =>
-    props.$count !== undefined ? "green" : "transparent"};
+  background-color: ${(props) =>
+    !props.hideBackground && props.$count !== 0
+      ? props.$disable
+        ? "gray"
+        : "green"
+      : props.$disable
+      ? "gray"
+      : "transparent"};
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${(props: any) => (props.$count !== undefined ? "white" : "#318616")};
-  border: 1px solid #318616;
+  color: ${(props) =>
+    props.hideBackground ? "black" : props.$count !== 0 ? "white" : "#318616"};
   font-weight: 600;
   gap: 5px;
+  transition: all 0.7s;
+  &:hover {
+    background-color: ${(props) =>
+      props.$count === 0 && props.theme.color.greenPrimary};
+    color: ${(props) => props.$count === 0 && "white"};
+  }
 `;
-
-export const ListTitle = styled.p<ListTitleText>`
-  margin-bottom: ${(props: any) => props.marginBottom || "8px"};
-  font-size: ${(props: any) => props.fontSize || "14px"};
+export const ListTitle = styled.p`
+  margin-bottom: 8px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 18px;
-  color: ${(props: any) => props.theme.color.black};
+  color: ${(props) => props.theme.color.black};
   text-transform: capitalize;
   min-height: 36px;
-  white-space: wrap;
-  width: 80%;
-  overflow: hidden;
-  max-height: 36px;
-  text-overflow: ellipsis;
-`;
-
-export const Text1 = styled.h1<ListTitleText>`
-  margin-bottom: ${(props: any) => props.marginBottom || "8px"};
-  font-size: ${(props: any) => props.fontSize || "14px"};
-  font-weight: 600;
-  line-height: 25px;
-  color: ${(props: any) => props.theme.color.black};
-  text-transform: capitalize;
-  min-height: 45px;
   white-space: wrap;
   width: 80%;
   overflow: hidden;
@@ -1033,15 +1080,9 @@ export const Text1 = styled.h1<ListTitleText>`
 //home page
 export const Wrapper = styled.section`
   margin: auto;
-  .bannerCards {
-    display: grid;
-    grid-template-columns: repeat(
-      auto-fill,
-      minmax(var(--auto-grid-min-size), 1fr)
-    );
-    --auto-grid-min-size: 15rem;
-    grid-gap: 1rem;
-  }
+  display: flex;
+  flex-direction: column;
+  row-gap: 40px;
 `;
 
 export const CategoryFlexBox = styled.section`
@@ -1053,10 +1094,8 @@ export const Banner = styled.section`
   background-repeat: no-repeat;
   background-size: cover;
   height: 15rem;
-  margin-top: 48px;
   background-size: cover;
   background-position: 40% 60%;
-  margin-bottom: 30px;
   border-radius: 20px;
   display: flex;
   justify-content: flex-end;
@@ -1089,6 +1128,10 @@ export const BannerSubText = styled.section`
   font-size: 30px;
   color: #64a125;
   padding-bottom: 30px;
+  @media only screen and (max-width: 960px) {
+    font-size: 20px;
+    padding-bottom: 10px;
+  }
   @media only screen and (max-width: 480px) {
     font-size: 15px;
     padding-bottom: 15px;
@@ -1103,8 +1146,9 @@ export const CategoryProductSliderWrapper = styled.div`
     background-size: 15px 15px;
     background-repeat: no-repeat;
     background-position: center;
-    box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
-      rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 5px -1px,
+      rgba(0, 0, 0, 0.14) 0px 6px 10px 0px, rgba(0, 0, 0, 0.12) 0px 1px 18px 0px;
+    border-radius: 50%;
     width: 34px;
     height: 34px;
     background-color: white;
@@ -1113,70 +1157,70 @@ export const CategoryProductSliderWrapper = styled.div`
   .slick-next:before {
     content: "";
   }
-
   .slick-prev {
-    background-image: url(https://cdn-icons-png.flaticon.com/128/2722/2722991.png);
-    background-position: center;
-    background-size: 60%;
-    left: unset;
+    background-image: url(https://cdn-icons-png.flaticon.com/512/271/271220.png);
+    left: -8px;
     z-index: 1;
-    right: 50px !important;
-    top: -30px;
   }
 
   .slick-arrow.slick-prev.slick-disabled {
-    display: block !important;
-    opacity: 0.3;
-    z-index: -1;
+    display: none !important;
   }
   .slick-arrow.slick-next.slick-disabled {
-    display: block !important;
-    opacity: 0.3;
-    z-index: -1;
+    display: none !important;
   }
   .slick-next {
-    background-image: url(https://cdn-icons-png.flaticon.com/128/2989/2989988.png) !important;
-    background-position: center;
-    background-size: 60%;
-    right: 5px;
-    top: -30px;
+    background-image: url(https://cdn-icons-png.flaticon.com/512/32/32213.png) !important;
+    right: -11px;
+  }
+`;
+export const LoaderFlexContainer = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+export const CategoryListContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  margin-top: 15px;
+  gap: 10px;
+  @media screen and (max-width: 1020px) {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  @media screen and (max-width: 720px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  @media screen and (max-width: 480px) {
+    grid-template-columns: repeat(3, 1fr);
   }
 `;
 
-export const CategoryImageContainer = styled.div`
-  .categoryCartBox {
-    display: flex;
-    margin:10px 0;
-    align-items: center;
-    justify-content: start;
-    gap: 10px;
-    cursor: pointer;
-    border-radius: 20px;
-    width: 90%;
-    margin: 10px 0;
-    &:hover .img-container img {
-      transform: scale(1.1);
-    }
+export const SCCategoryImgBox = styled(SCIMGBOX)`
+  width: 50px;
+  height: 50px;
+`;
+export const CategoryListWrapper = styled.div<{ $Loader: Boolean }>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 20px;
+  margin: 10px 0;
 
-    .productName {
-      padding-left: 10px;
-      min-width: 54%;
+  &:hover {
+    ${SCCategoryImgBox} {
+      transform: translateY(-20px);
     }
   }
   .img-container {
-    width: 70px;
-    height: 70px;
-    background: #e8f2ee;
-    border-radius: 50%;
-    padding: 10px;
+    border-radius: 16px;
+    width: 100%;
+    height: 120px;
     overflow: hidden;
+    background-color: ${(props) =>
+      props.$Loader ? "transparent" : props.theme.background.lightGreen};
     object-fit: fill;
-    position: relative;
-    margin: 20px 0;
     display: flex;
     justify-content: center;
     align-items: center;
-
     img {
       width: 80%;
       height: 80%;
@@ -1186,81 +1230,27 @@ export const CategoryImageContainer = styled.div`
     text-align: center;
   }
 `;
-// export const CategoryImageContainer = styled.div`
-//   display: grid;
-//   grid-template-columns: repeat(
-//     auto-fill,
-//     minmax(var(--auto-grid-min-size), 1fr)
-//   );
-//   --auto-grid-min-size: 7rem;
-//   grid-gap: 1rem;
-//   @media screen and (max-width: 1020px) {
-//     grid-template-columns: repeat(6, 1fr);
-//   }
-//   @media screen and (max-width: 720px) {
-//     grid-template-columns: repeat(4, 1fr);
-//   }
-//   @media screen and (max-width: 480px) {
-//     grid-template-columns: repeat(3, 1fr);
-//   }
-//   .categoryCartBox {
-//     background: #fff;
-//     display: flex;
-//     flex-direction: column;
-//     justify-content: center;
-//     align-items: center;
-//     padding: 10px;
-//     cursor: pointer;
-//     border-radius: 20px;
-//     box-shadow: rgba(149, 157, 165, 0.2) 0px 4px 10px;
-//     transition: transform 0.5s, box-shadow 0.1s;
-//     &:hover {
-//       transform: translateY(-5px);
-//       box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-//     }
-//   }
-//   .img-container {
-//     width: 50px;
-//     height: 50px;
-//     overflow: hidden;
-//     object-fit: fill;
-//     position: relative;
-
-//     img {
-//       width: 100%;
-//       height: 100%;
-//     }
-//   }
-//   p {
-//     text-align: center;
-//   }
-// `;
 //cards
-export const CampaignCardWrapper = styled.section`
+export const CampaignCardWrapper = styled.section<{ $background: string }>`
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
   width: 95%;
+  height:20vh;
+  overflow:hidden;
   border-radius: 20px;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: 100% 100% ;
   background-position: center;
-  margin-bottom: 30px;
-  cursor: pointer;
-
-  h4 {
-    font-size: 20px;
-    width: 80%;
-    padding: 30px 0 10px 30px;
-    color: #fff;
-    font-weight: 500;
-  }
-  h5 {
-    font-size: 16px;
-    width: 80%;
-    padding: 0 0 10px 30px;
-    color: #fff;
-    font-weight: 500;
-  }
+  padding: 20px;
+  background-image: ${(props) =>
+    props.$background.trim() !== "" ? `url(${props.$background})` : ""};\
+    transition:all .7s;
+&:hover{
+  background-size:130% 130% ;
+}
   .orderButton {
-    padding: 20px 0 20px 30px;
+    padding: 10px 0;
   }
 `;
 
@@ -1330,16 +1320,253 @@ export const CaregoryCardWrapper = styled.section`
     object-fit: none;
   }
 `;
+//offer
+export const OfferTagWrapper = styled.section`
+  position: absolute;
+  left: 10%;
+  top: 0;
+`;
 
+export const OfferText = styled.text`
+  color: #fff;
+  font-size: 8px;
+  position: absolute;
+  left: 0%;
+  top: 13%;
+  text-align: center;
+  width: 100%;
+`;
 //footer
 export const FooterContainer = styled(Grid)`
-  max-width: 1440px;
-  margin: auto;
+  span {
+    background-repeat: repeat-x;
+    width: calc(100% + 800px);
+    margin: auto;
+    background-image: url(https://grostore.themetags.com/public/frontend/default/assets/img/shapes/section-curve.png?v=v3.0.0);
+    -webkit-animation: 25s curve_wave infinite linear alternate;
+    animation: 25s curve_wave infinite linear alternate;
+    border-bottom: 1px solid #666666;
+
+    @keyframes curve_wave {
+      0% {
+        background-position: 100% 0;
+      }
+      100% {
+        background-position: 0 0;
+      }
+    }
+    height: 140px;
+  }
+
+  .footerSecContainer {
+    background-color: #191d28;
+    width: 100%;
+    position: relative;
+    .tomatoAnimation {
+      position: absolute;
+      left: 60px;
+      top: 50px;
+      -webkit-animation: 6s upsdown_animation infinite;
+      animation: 6s upsdown_animation infinite;
+      overflow-clip-margin: content-box;
+      overflow: clip;
+    }
+
+    @keyframes upsdown_animation {
+      0% {
+        top: 25px;
+      }
+      25% {
+        top: 50px;
+      }
+      50% {
+        top: 75px;
+      }
+
+      100% {
+        top: 50px;
+      }
+    }
+
+    .animation2 {
+      position: absolute;
+      left: 150px;
+      top: 180px;
+      -webkit-animation: 6s moving-x-animation infinite;
+      animation: 6s moving-x-animation infinite;
+      overflow-clip-margin: content-box;
+      overflow: clip;
+    }
+
+    @keyframes moving-x-animation {
+      0% {
+        left: 100px;
+      }
+      25% {
+        left: 150px;
+      }
+      50% {
+        left: 200px;
+      }
+
+      100% {
+        left: 150px;
+      }
+    }
+
+    .animation3 {
+      position: absolute;
+      left: 50px;
+      top: 300px;
+      -webkit-animation: 5s upsdown_animation1 linear infinite;
+      animation: 5s upsdown_animation1 linear infinite;
+      overflow-clip-margin: content-box;
+      overflow: clip;
+    }
+
+    @keyframes upsdown_animation1 {
+      0% {
+        top: 250px;
+      }
+      25% {
+        top: 300px;
+      }
+      50% {
+        top: 350px;
+      }
+
+      100% {
+        top: 300px;
+      }
+    }
+
+    .animation4 {
+      position: absolute;
+      left: 130px;
+      top: 50%;
+      -webkit-animation: 6s upsdown_animation2 infinite;
+      animation: 6s upsdown_animation2 infinite;
+      overflow-clip-margin: content-box;
+      overflow: clip;
+    }
+
+    @keyframes upsdown_animation2 {
+      0% {
+        top: 40%;
+      }
+      25% {
+        top: 50%;
+      }
+      50% {
+        top: 60%;
+      }
+
+      100% {
+        top: 50%;
+      }
+    }
+
+    .animation5 {
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      -webkit-animation: 8s rotate_animation infinite linear;
+      animation: 8s rotate_animation infinite linear;
+      overflow-clip-margin: content-box;
+      overflow: clip;
+    }
+
+    @keyframes rotate_animation {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .animation6 {
+      position: absolute;
+      right: 100px;
+      top: 130px;
+      -webkit-animation: 12s rotate_animation infinite linear;
+      animation: 12s rotate_animation infinite linear;
+      overflow-clip-margin: content-box;
+      overflow: clip;
+    }
+
+    @keyframes rotate_animation {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .animation7 {
+      position: absolute;
+      right: 50px;
+      top: 300px;
+      -webkit-animation: 5s upsdown_animation1 linear infinite;
+      animation: 5s upsdown_animation1 linear infinite;
+      overflow-clip-margin: content-box;
+      overflow: clip;
+    }
+
+    .animation8 {
+      position: absolute;
+      right: 200px;
+      top: 50%;
+      -webkit-animation: 6s upsdown_animation2 linear infinite;
+      animation: 6s upsdown_animation2 linear infinite;
+      overflow-clip-margin: content-box;
+      overflow: clip;
+    }
+
+    .animation9 {
+      position: absolute;
+      bottom: 80px;
+      right: 110px;
+      -webkit-animation: 6s moving-x-animation linear infinite;
+      animation: 6s moving-x-animation linear infinite;
+      overflow-clip-margin: content-box;
+      overflow: clip;
+    }
+
+
+    
+    @keyframes moving-x-animation {
+      0% {
+        right: 100px;
+      }
+      25% {
+        right: 150px;
+      }
+      50% {
+        right: 200px;
+      }
+
+      100% {
+        right: 150px;
+      }
+    }
+
+   
+
+    .footerSection {
+      max-width: 1300px;
+      margin: auto;
+      color: #fff !important;
+    }
+  }
+
   .subscripe {
     text-transform: uppercase;
     font-size: 16px;
     font-weight: 600;
     padding-bottom: 20px;
+    color: #fff;
   }
   .subscripeInput {
     position: relative;
@@ -1365,37 +1592,22 @@ export const FooterContainer = styled(Grid)`
     font-weight: 600;
     text-transform: uppercase;
     text-align: center;
+    color: #fff;
   }
   .followIcons {
     text-align: center;
     padding-top: 20px;
     .Icon {
       margin: 0 10px;
+      color: #fff;
     }
   }
 `;
-
-export const Rights = styled.section`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  background: #fff;
-  max-width: 1440px;
-  margin: auto;
-  padding: 10px 0px;
-  border-top: 1px solid #d8d8d8 .Icon {
-    margin: 0 4px;
-    cursor: pointer;
-  }
-`;
-
 export const StyledLink = styled.li<StyleLink>`
   font-size: ${(props) => (props.variant === "categoryLink" ? "16px" : "14px")};
   text-transform: capitalize;
   margin: 5px 0;
-  color: ${(props: any) => props.theme.color.greyTertiary};
+  color: ${(props: any) => props.theme.color.white};
   padding: 3px 0;
   width: 80%;
   line-height: 26px;
@@ -1413,226 +1625,330 @@ export const LinksTitleTag = styled.h3`
     text-transform: lowercase;
   }
 `;
-export const ProductCategoryName = styled.text`
-  color: rgb(28, 28, 28);
-  font-size: 24px;
-  font-weight: 600;
-  line-height: 32px;
-  padding: 16px 0;
+export const DisableText = styled.p`
+  color: ${(props) => props.theme.color.greyTertiary};
+  font-size: 14px;
+  padding: 20px 0;
 `;
 
-export const SeeAllText = styled.text`
+export const SeeAllText = styled.div`
   line-height: 32px;
   font-size: 20px;
   color: rgb(12, 131, 31);
   padding: 16px 0;
   cursor: pointer;
 `;
-
-export const HiddlenNavList = styled.section`
-  position: absolute;
-  z-index: 50;
-  top: 48px;
-  right: 0px;
-  background-color: #fff;
-  border: 1px solid #eee;
-  .hiddenList {
-    width: 160px;
-    height: 300px;
-    overflow: auto;
-    "::-webkit-scrollbar": {
-      width: "0.5rem";
-    }
-  }
+//search
+export const Showresults = styled.div`
+  font-size: 15px;
+  font-weight: 700;
+  color: ${(props) => props.theme.color.black};
+  padding: 0 10px;
 `;
-
-//Login card
-
-export const LoginModelContainer = styled.section`
+export let Container = styled.section`
+  max-width: 1280px;
+  margin: 20px auto;
+`;
+export const FlexBox = styled.section<{ $variant: string; $disable?: boolean }>`
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  .imageBox {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    img {
-      width: 100%;
-      height: 100%;
-    }
-  }
-  h3 {
-    font-size: 15px;
-    color: #000;
-    padding: 10px 0 5px 0;
-    font-weight: 700;
-  }
-  h4 {
-    color: #333333;
-    padding-bottom: 10px;
-    a {
-      font-size: 12px;
-      color: #333333;
-      padding: 0;
-      font-weight: 700;
-    }
-  }
-  .PhoneNoBox {
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 13px;
-    color: #333;
-    position: relative;
-    width: 80%;
-    padding: 15px 20px 15px 50px;
-    input.PhoneNoInput::-webkit-outer-spin-button,
-    input.PhoneNoInput::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-    .PhoneNoInput {
-      border: 0;
-    }
-    .phoneNoPrefix {
-      position: absolute;
-      left: 5%;
-      top: 31%;
-    }
-  }
-  .loginButton {
-    margin-top: 18px;
-    color: rgb(255, 255, 255);
-    border-radius: 12px;
-    border: none;
-    outline: none;
-    font-size: 14px;
-    text-align: center;
-    padding: 16px;
-    font-weight: 500;
-    width: 80%;
-    background-color: rgb(156, 156, 156);
-    cursor: pointer;
-    min-height: 50px;
-  }
-
-  .loginButton.phoneNoColorChange {
-    color: #fff;
-    background-color: green;
-  }
-  .policy {
-    text-align: center;
-    padding: 12px 0px 0 0;
-    font-size: 10px;
-  }
-  .backicon {
-    position: absolute;
-    left: 0%;
-    top: 0%;
-  }
-  .backiconVerify {
-    position: absolute;
-    left: 0%;
-    top: 4.5%;
-  }
-
-  .successpage {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 40px 0;
-    border: none;
-    .successIcon {
-      font-size: 30px;
-      color: #0c831f;
-      margin: 20px 0;
-    }
-    h3 {
-      font-size: 20px;
-      color: #0c831f;
-    }
-  }
-`;
-export const VerifyBox = styled.section`
+  justify-content: ${(props) =>
+    props?.$variant?.includes("between")
+      ? "space-between"
+      : props?.$variant?.includes("center")
+      ? "center"
+      : props?.$variant?.includes("end")
+      ? "flex-end"
+      : "flex-start"};
+  align-items: ${(props) =>
+    props.$variant.includes("align-c") ? "center" : "start"};
   width: 100%;
-  .title {
-    padding: 14px 0px 12px 0;
-    text-align: center;
-    font-size: 16px;
-    line-height: 1.6;
-    color: #333;
-    border-bottom: 1px solid #eee;
-  }
-  .verifyDetails {
-    padding: 20px 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
-  .resentText {
-    color: #0c831f;
-    padding: 24px 0;
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-  .otpBox {
-    width: 70%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 30px 0 0 0;
-    .otpInputBox {
-      width: 12%;
-      height: 40px;
-      border-radius: 6px;
-      border: 1px solid #eee;
-      text-align: center;
-    }
-    div {
-      display: flex;
-      justify-content: space-between;
-    }
-    div input {
-      width: 12% !important;
-      height: 40px;
-      border-radius: 6px;
-      border: 1px solid #eee;
-      text-align: center !important;
-    }
-  }
+  margin: ${(props) => (props.$variant.includes("PAD") ? "15px 0" : 0)};
+  background-color: ${(props) =>
+    props.$variant?.includes("white")
+      ? props.theme.color.white
+      : props.$variant?.includes("gray")
+      ? props.theme.color.greyPrimary
+      : props.$variant?.includes("light-green")
+      ? props.theme.background.lightGreen
+      : "transparent"};
+  padding: ${(props) =>
+    props.$variant.includes("P20")
+      ? "20px"
+      : props.$variant.includes("P-10-0")
+      ? " 10px 0"
+      : 0};
+  column-gap: ${(props) => (props.$variant.includes("start") ? "10px" : 0)};
+  position: ${(props) =>
+    props.$variant.includes("sticky") ? "sticky" : "relative"};
+  top: ${(props) =>
+    props.$variant.includes("sticky0")
+      ? 0
+      : props.$variant.includes("sticky90")
+      ? "94vh"
+      : 0};
+  bottom: ${(props) => props.$variant.includes("sticky") && 0};
+  z-index: ${(props) => props.$variant.includes("sticky") && 1};
 `;
-
-export const NofoundText = styled.text`
+//cartLoader
+export const FlexButton = styled(FlexBox)`
+  background: ${(props) =>
+    !props?.$disable
+      ? props.theme.color.greenPrimary
+      : props.theme.color.greyTertiary};
+`;
+export const CartLoaderContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  z-index: 10;
+`;
+export const CartLoaderWrapper = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 20px;
+  z-index: 10;
+  border: 2px solid #f3f3f3;
+  border-radius: 50%;
+
+  border-right: 2px solid green;
+  border-bottom: 2px solid green;
+  border-left: 2px solid green;
+  width: 50px;
+  height: 50px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
+export const VariantWrapper = styled.div`
+width:100%;
+padding: 5px 10px ;
+border:1px solid  #eee ;
+border-radius:4px;
+display:flex;
+align-items-center;
+justify-content:space-between;
+margin-bottom:10px;
+`;
+
+//new
+export const SCTitle = styled.h3<{ $variant: string }>`
+  cursor: pointer;
+  font-weight: ${(props) =>
+    props.$variant.includes("700")
+      ? 700
+      : props.$variant.includes("600")
+      ? 600
+      : props.$variant.includes("500")
+      ? 500
+      : 400};
+  font-size: ${(props) =>
+    props.$variant.includes("H24")
+      ? "24px"
+      : props.$variant.includes("H16")
+      ? "16px"
+      : props.$variant.includes("H14")
+      ? "14px"
+      : props.$variant.includes("H13")
+      ? "13px"
+      : props.$variant.includes("H12")
+      ? "12px"
+      : "18px"};
+  color: ${(props) =>
+    props.$variant.includes("W")
+      ? props.theme.color.white
+      : props.$variant.includes("H16CAT")
+      ? props.theme.color.black
+      : props.$variant.includes("UNIT")
+      ? props?.theme?.color?.greyTertiary
+      : props.theme.color.black};
+  text-align: ${(props) =>
+    props.$variant.includes("H16CAT") ? "center" : "left"};
+  text-decoration: ${(props) =>
+    props?.$variant.includes("STRIKED") ? "line-through" : "none"};
+  padding: ${(props) =>
+    props.$variant.includes("NAV")
+      ? "14px 13px "
+      : props.$variant.includes("32 0 16")
+      ? "32px 0 16px"
+      : props.$variant.includes("15 0")
+      ? "15px 0"
+      : props.$variant.includes("0 0 8")
+      ? "0 0 8px"
+      : (props) => (props.$variant.includes("P12") ? "12px" : 0)};
+`;
+
+export const SCLINK = styled(Link)<{ $variant: string }>`
+  font-size: ${(props) =>
+    props?.$variant.includes("A20")
+      ? "20px"
+      : props?.$variant.includes("A14")
+      ? "14px"
+      : props?.$variant.includes("A12")
+      ? "12px"
+      : "16px"};
+  color: ${(props) =>
+    props.$variant.includes("GR")
+      ? props.theme.color.greenPrimary
+      : props.theme.color.greyTertiary};
+  font-weight: ${(props) => (props.$variant.includes("600") ? 600 : 400)};
+  text-transform: ${(props) =>
+    props.$variant.includes("CAPS") ? "capitalize" : "lowercase"};
+  cursor: pointer;
+  ${(props) =>
+    props?.$variant.includes("Hover") &&
+    `&:hover{
+    color:green;
+    transition:color .7s ease-in-out;
+    font-weight:600
+  }`}
+`;
+
+export const OfferPriceHolder = styled.div<{ $variant: string }>`
+  display: flex;
+  flex-direction: ${(props) =>
+    props.$variant.includes("productCard") ? "column" : "row"};
+  align-items: center;
+  column-gap: 5px;
+`;
+export const VariantSelector = styled.div<{ $selectedVariant: boolean }>`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 1px solid
+    ${(props) =>
+      props.$selectedVariant
+        ? props.theme.color.greenPrimary
+        : props.theme.color.txtTertiary};
+  background-color: ${(props) =>
+    props.$selectedVariant ? props.theme.background.lightGreen : "transparent"};
+  width: 130px;
+  padding: 10px;
+  border-radius: 12px;
+  row-gap: 5px;
+`;
+export const VariantSelectorContainer = styled.div`
+  display: flex;
+  column-gap: 10px;
+`;
+export const VariantSelectorOfferCardWrapper = styled.span`
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  span {
+    position: absolute;
+    top: 0;
+    font-size: 9px;
+    color: white;
+    left: 50%;
+    transform: translate(-50%, 0);
+    width: 52%;
+  }
+`;
+export const SCContainer = styled.div<{ $variant: string }>`
+  padding: ${(props) =>
+    props.$variant.includes("p010")
+      ? "0 10px"
+      : props.$variant.includes("p-5-0")
+      ? "5px 0"
+      : props.$variant.includes("p15")
+      ? "15px"
+      : props.$variant.includes("p-15-0")
+      ? "15px 0"
+      : 0};
+  width: ${(props) =>
+    props.$variant.includes("w-4/5")
+      ? "80%"
+      : props.$variant.includes("w-3/5")
+      ? "60%"
+      : props.$variant.includes("w-2/5")
+      ? "40%"
+      : props.$variant.includes("w-full")
+      ? "100%"
+      : props.$variant.includes("w-1/5")
+      ? "20%"
+      : props.$variant.includes("w-1/2")
+      ? "50%"
+      : props.$variant.includes("w-3/10")
+      ? "30%"
+      : ""};
+  background-color: ${(props) =>
+    props.$variant?.includes("bg-gray") ? "#f8f8f8" : "transparent"};
+`;
+export const BorderLessInput = styled.input`
+  border: none;
+  width: 100%;
+  padding: 10px 0;
+  background: transparent;
+  caret-color: rgb(0, 0, 0, 0.4);
+  font-size: 16px;
+  font-weight: 600;
+  opacity: 0.6;
+`;
+export const CheckoutBtn = styled.button`
+  display: flex;
+  width: 100%;
+  background: ${(props) => props.theme.background.greenPrimary};
+  padding: 20px;
+  margin: 50px 0;
+  border-radius: 12px;
+  border: none;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  color: white;
+  justify-content: center;
+  transition: all 0.7s;
+  &:hover {
+    background: ${(props) => props.theme.color.greyTertiary};
+  }
+`;
+export const SCScrollBox = styled.div<{ $boxHeight: string }>`
+  max-height: ${(props) => (props.$boxHeight ? props.$boxHeight : "100%")};
+  overflow: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 export const FooterAbout = styled.div`
   padding: 50px 0;
   display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(var(--auto-grid-min-size), 1fr)
-  );
-  --auto-grid-min-size: 12rem;
+  max-width: 1300px;
+  margin: auto;
+  grid-template-columns: repeat(4, 1fr);
   grid-gap: 1rem;
-  @media screen and (max-width: 1020px) {
-    grid-template-columns: repeat(6, 1fr);
+  @media screen and (max-width: 1440px) {
+    grid-template-columns: repeat(3, 1fr);
+    .col {
+      margin: 0 10px;
+    }
   }
   @media screen and (max-width: 720px) {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    .col {
+      margin: 0 10px;
+    }
   }
   @media screen and (max-width: 480px) {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(1, 1fr);
+    .col {
+      margin: 0 10px;
+    }
   }
   .col {
-    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    border: 1px solid #e8e8e8;
     padding: 20px 10px;
     border-radius: 12px;
   }
@@ -1656,5 +1972,21 @@ export const FooterAbout = styled.div`
 
   .footerAboutIcon {
     margin: 0 12px;
+  }
+`;
+
+export const Rights = styled.section`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: #fff;
+  max-width: 1440px;
+  margin: auto;
+  padding: 10px 0px;
+  border-top: 1px solid #d8d8d8 .Icon {
+    margin: 0 4px;
+    cursor: pointer;
   }
 `;

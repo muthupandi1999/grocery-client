@@ -1,33 +1,36 @@
-import React, { useState } from "react";
-import { Text, SubText } from "../AddToCart";
+import React from "react";
+import { Text, SubText } from "../cart";
 import { AddButton } from "@/app/components/buttons/Buttons";
-import { UnitDiv } from "@/app/assets/style/productCardStyle";
 import {
   ProductWrapper,
   ProductImageContainer,
   ProductImage,
   ProductInfoDetails,
+  SCTitle,
 } from "@/app/assets/style";
+import { useRouter } from "next/navigation";
 
-function CartProductCart({ e }: { e: any }) {
-  const [count, setCount] = useState(e.quantity);
+function CartProductCart({ e, onClose }: any) {
+  const router = useRouter();
 
-  
   return (
-    <ProductWrapper>
+    <ProductWrapper
+      onClick={() => {
+        router.push(`/product/prid/${e?.id}`);
+        onClose();
+      }}
+    >
       <ProductImageContainer>
-        <ProductImage src={e?.product?.image?.image}></ProductImage>
+        <ProductImage src={e?.image}></ProductImage>
       </ProductImageContainer>
       <ProductInfoDetails>
-        <SubText padding="0 0 4px 0" style={{ width: "90%" }}>
-          {e?.product?.name}
-        </SubText>
-        <UnitDiv
-          style={{ margin: "0px" }}
-        >{`${e?.selectedVariant?.values}${e?.selectedVariant?.unit}`}</UnitDiv>
-        <Text style={{ fontSize: "12px" }}>${e?.selectedVariant?.price}</Text>
+        <SCTitle $variant="H13UNIT">{e?.name}</SCTitle>
+        <SCTitle $variant="H13UNIT">
+          {`${e?.selectedvariant?.values} ${e?.selectedvariant?.unit}`}
+        </SCTitle>
+        <Text style={{ fontSize: "12px" }}>${e?.selectedvariant?.price}</Text>
       </ProductInfoDetails>
-      <AddButton variables={e} quantity={e?.quantity} onClick={undefined} disable={undefined}  subListId={undefined} selectedSortOption={undefined} />
+      <AddButton variant={"cartCard"} data={e} productId={e?.id} />
     </ProductWrapper>
   );
 }

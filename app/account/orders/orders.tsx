@@ -7,7 +7,7 @@ import Pagination from "@mui/material/Pagination";
 import OrderStatusSlider from "./statusSlider";
 import { Drawer } from "@mui/material";
 import AirportShuttleIcon from "@mui/icons-material/AirportShuttle";
-import OrderDetailsCard from "@/app/components/models/viewOrderDetails";
+import OrderDetailsCard from "@/app/components/elements/viewOrderDetails";
 export const OrdersWrappers = styled.div`
   h3.title {
     font-size: 24px;
